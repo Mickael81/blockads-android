@@ -18,16 +18,16 @@
   <br><br>
   <h4>Download</h4>
   <a href="https://apt.izzysoft.de/packages/app.pwhs.blockads">
-    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" height="65" alt="Get it at IzzyOnDroid">
+    <img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroidButtonGreyBorder_nofont.png" height="54" alt="Get it at IzzyOnDroid">
   </a>
   <a href="https://f-droid.org/packages/app.pwhs.blockads">
-    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="65" alt="Get it on F-Droid">
+    <img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="80" alt="Get it on F-Droid">
   </a>
   <a href="https://blockads.pwhs.app/testing">
-    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="65" alt="Get it on Google Play">
+    <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="80" alt="Get it on Google Play">
   </a>
   <a href="https://github.com/pass-with-high-score/blockads-android/releases">
-    <img src="https://raw.githubusercontent.com/NeoApplications/Neo-Backup/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="65">
+    <img src="https://raw.githubusercontent.com/NeoApplications/Neo-Backup/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="54">
   </a>
 </div> 
 
