@@ -34,14 +34,12 @@ import app.pwhs.blockads.ui.theme.TextSecondary
 @Composable
 fun CustomDnsDialog(
     upstreamDns: String,
-    fallbackDns: String,
     onDismiss: () -> Unit,
-    onSave: (String, String) -> Unit,
+    onSave: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     // Build display value from current settings
     var editDns by remember { mutableStateOf(upstreamDns) }
-    var editFallback by remember { mutableStateOf(fallbackDns) }
 
     // Detect protocol from input
     val detectedProtocol by remember {
@@ -118,29 +116,11 @@ fun CustomDnsDialog(
                         )
                     }
                 }
-
-                // Show fallback DNS only for Plain DNS
-                if (detectedProtocol == DnsProtocol.PLAIN || detectedProtocol == null) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        stringResource(R.string.settings_fallback_dns),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = editFallback,
-                        onValueChange = { editFallback = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("1.1.1.1") },
-                        singleLine = true,
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                }
             }
         },
         confirmButton = {
             TextButton(
-                onClick = { onSave(editDns, editFallback) },
+                onClick = { onSave(editDns) },
                 enabled = editDns.isNotBlank()
             ) {
                 Text(stringResource(R.string.dns_custom_save))

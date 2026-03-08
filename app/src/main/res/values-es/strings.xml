@@ -202,6 +202,10 @@
     <string name="settings_doq_server_url">URL del servidor DoQ</string>
     <string name="settings_upstream_dns">Servidor DNS principal</string>
     <string name="settings_fallback_dns">Servidor DNS de respaldo</string>
+    <string name="settings_fallback_dns_desc">El DNS de respaldo se usa cuando el servidor DNS principal falla. Siempre usa protocolo UDP simple.</string>
+    <string name="settings_fallback_dns_short_desc">Se usa cuando falla el DNS principal (UDP simple)</string>
+    <string name="dns_category_fallback">Respaldo</string>
+    <string name="settings_fallback_dns_not_set">No configurado (sin respaldo)</string>
     <string name="settings_custom_dns_server">Servidor DNS personalizado</string>
     <string name="settings_custom_dns_hint">Introduce IP para DNS simple, https:// para DoH, tls:// para DoT o quic:// para DoQ</string>
     <string name="settings_detected_plain">DNS simple</string>
@@ -218,6 +222,9 @@
     <string name="dns_response_custom_ip">IP personalizada (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Devuelve una dirección de ruta nula (predeterminado)</string>
     <string name="settings_clear_logs">Borrar todos los registros</string>
+    <string name="dns_error_notification_title">Error de configuración DNS</string>
+    <string name="dns_error_notification_no_fallback">La conexión %1$s a %2$s está fallando. Sin DNS de respaldo — los sitios web pueden no cargar. Verifica la configuración DNS.</string>
+    <string name="dns_error_notification_both_failed">La conexión %1$s a %2$s y el respaldo %3$s están fallando. Los sitios web pueden no cargar. Verifica la configuración DNS.</string>
     <string name="filter_setup_title">Configuración de filtros</string>
     <string name="filter_setup_desc">Gestionar listas de filtros integradas y personalizadas</string>
     <string name="filter_built_in">Integrados</string>

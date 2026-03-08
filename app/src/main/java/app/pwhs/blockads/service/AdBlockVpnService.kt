@@ -81,6 +81,8 @@ class AdBlockVpnService : VpnService() {
         const val ACTION_RESTART = "app.pwhs.blockads.RESTART_VPN"
         private const val FIREWALL_NOTIFICATION_COOLDOWN_MS = 60_000L // 1 minute per app
         private const val FIREWALL_NOTIFICATION_ID_BASE = 1000
+        private const val DNS_ERROR_NOTIFICATION_ID = 2000
+        private const val DNS_ERROR_COOLDOWN_MS = 300_000L // 5 minutes
 
         /**
          * Request a VPN restart to apply new settings.
@@ -150,6 +152,11 @@ class AdBlockVpnService : VpnService() {
 
     @Volatile
     private var isReconnecting = false
+
+    // Rate-limit DNS error notifications to avoid flooding
+    @Volatile
+    private var lastDnsErrorNotificationTime = 0L
+    private val consecutiveDnsFailures = AtomicLong(0)
 
     /** Current connecting phase for progress notification */
     @Volatile
@@ -765,8 +772,8 @@ class AdBlockVpnService : VpnService() {
         // Try primary DNS server first
         var success = tryDnsQuery(query, outputStream, outputLock, upstreamDns, dohUrl, dnsProtocol, false)
 
-        // If primary fails and fallback is different, try fallback (with PLAIN protocol as fallback)
-        if (!success && fallbackDns != upstreamDns) {
+        // If primary fails and fallback is configured and different, try fallback (with PLAIN protocol)
+        if (!success && fallbackDns.isNotBlank() && fallbackDns != upstreamDns) {
             Timber
                 .w("Primary DNS ($upstreamDns) failed for ${query.domain}, trying fallback ($fallbackDns) with PLAIN protocol")
             success = tryDnsQuery(
@@ -780,12 +787,21 @@ class AdBlockVpnService : VpnService() {
             )
         }
 
-        // If both failed, return SERVFAIL
+        // If both failed, return SERVFAIL and notify user
         if (!success) {
+            val failCount = consecutiveDnsFailures.incrementAndGet()
             Timber
-                .e("Both primary and fallback DNS failed for ${query.domain}, returning SERVFAIL")
+                .e("Both primary and fallback DNS failed for ${query.domain}, returning SERVFAIL (consecutive: $failCount)")
             val servfailResponse = DnsPacketParser.buildServfailResponse(query)
             writeToTun(outputStream, outputLock, servfailResponse, "SERVFAIL")
+
+            // Notify user after 3+ consecutive failures (avoids one-off timeouts)
+            if (failCount >= 3) {
+                sendDnsErrorNotification(upstreamDns, fallbackDns, dnsProtocol)
+            }
+        } else {
+            // Reset failure counter on any success
+            consecutiveDnsFailures.set(0)
         }
     }
 
@@ -1221,6 +1237,54 @@ class AdBlockVpnService : VpnService() {
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
+    }
+
+    private fun sendDnsErrorNotification(upstreamDns: String, fallbackDns: String, protocol: DnsProtocol) {
+        val now = System.currentTimeMillis()
+        if ((now - lastDnsErrorNotificationTime) < DNS_ERROR_COOLDOWN_MS) return
+        lastDnsErrorNotificationTime = now
+
+        createAlertNotificationChannel()
+
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 4, intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val protocolName = when (protocol) {
+            DnsProtocol.DOH -> "DoH"
+            DnsProtocol.DOT -> "DoT"
+            DnsProtocol.DOQ -> "DoQ"
+            DnsProtocol.PLAIN -> "Plain"
+        }
+        val title = getString(R.string.dns_error_notification_title)
+        val text = if (fallbackDns.isBlank()) {
+            getString(R.string.dns_error_notification_no_fallback, protocolName, upstreamDns)
+        } else {
+            getString(R.string.dns_error_notification_both_failed, protocolName, upstreamDns, fallbackDns)
+        }
+
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder(this, ALERT_CHANNEL_ID)
+        } else {
+            @Suppress("DEPRECATION")
+            Notification.Builder(this)
+        }
+
+        val notification = builder
+            .setContentTitle(title)
+            .setContentText(text)
+            .setStyle(Notification.BigTextStyle().bigText(text))
+            .setSmallIcon(R.drawable.ic_error)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.notify(DNS_ERROR_NOTIFICATION_ID, notification)
     }
 
     // Rate-limit firewall notifications to avoid flooding

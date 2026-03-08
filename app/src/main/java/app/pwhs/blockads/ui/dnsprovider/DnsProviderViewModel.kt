@@ -20,13 +20,6 @@ class DnsProviderViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    val upstreamDns: StateFlow<String> = appPrefs.upstreamDns
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AppPreferences.DEFAULT_UPSTREAM_DNS
-        )
-
     val fallbackDns: StateFlow<String> = appPrefs.fallbackDns
         .stateIn(
             viewModelScope,
@@ -105,7 +98,14 @@ class DnsProviderViewModel(
         }
     }
 
-    fun setCustomDns(upstream: String, fallback: String) {
+    fun setFallbackDns(dns: String) {
+        viewModelScope.launch {
+            appPrefs.setFallbackDns(dns.trim())
+            AdBlockVpnService.requestRestart(getApplication<Application>().applicationContext)
+        }
+    }
+
+    fun setCustomDns(upstream: String) {
         val trimmed = upstream.trim()
         if (trimmed.isBlank()) return // Guard against empty input
 
@@ -142,10 +142,6 @@ class DnsProviderViewModel(
                     appPrefs.setDnsProtocol(DnsProtocol.PLAIN)
                     appPrefs.setUpstreamDns(trimmed)
                 }
-            }
-            val fallbackTrimmed = fallback.trim()
-            if (fallbackTrimmed.isNotBlank()) {
-                appPrefs.setFallbackDns(fallbackTrimmed)
             }
             AdBlockVpnService.requestRestart(getApplication<Application>().applicationContext)
         }

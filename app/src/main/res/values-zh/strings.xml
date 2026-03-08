@@ -202,6 +202,10 @@
     <string name="settings_doq_server_url">DoQ 服务器 URL</string>
     <string name="settings_upstream_dns">上游DNS服务器</string>
     <string name="settings_fallback_dns">备用DNS服务器</string>
+    <string name="settings_fallback_dns_desc">备用DNS在主DNS服务器失败时使用。始终使用纯UDP协议。</string>
+    <string name="settings_fallback_dns_short_desc">主DNS故障时使用（纯UDP）</string>
+    <string name="dns_category_fallback">备用</string>
+    <string name="settings_fallback_dns_not_set">未设置（无备用）</string>
     <string name="settings_save_custom_dns">Save DNS</string>
     <string name="settings_dns_response_type">DNS响应类型</string>
     <string name="settings_dns_response_type_desc">被拦截域名的响应类型</string>
@@ -210,6 +214,9 @@
     <string name="dns_response_custom_ip">自定义IP (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">返回空路由地址（默认）</string>
     <string name="settings_clear_logs">清除所有日志</string>
+    <string name="dns_error_notification_title">DNS配置错误</string>
+    <string name="dns_error_notification_no_fallback">%1$s连接%2$s失败。未配置备用DNS — 网站可能无法加载。请检查DNS设置。</string>
+    <string name="dns_error_notification_both_failed">%1$s连接%2$s和备用%3$s均失败。网站可能无法加载。请检查DNS设置。</string>
     <string name="filter_setup_title">过滤器设置</string>
     <string name="filter_setup_desc">管理内置和自定义过滤列表</string>
     <string name="filter_built_in">内置</string>

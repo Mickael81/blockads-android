@@ -232,6 +232,10 @@
     <string name="settings_doq_server_url">URL máy chủ DoQ</string>
     <string name="settings_upstream_dns">Máy chủ DNS</string>
     <string name="settings_fallback_dns">Máy chủ DNS dự phòng</string>
+    <string name="settings_fallback_dns_desc">DNS dự phòng được sử dụng khi máy chủ DNS chính gặp lỗi. Luôn sử dụng giao thức UDP thuần.</string>
+    <string name="settings_fallback_dns_short_desc">Dùng khi DNS chính gặp lỗi (UDP thuần)</string>
+    <string name="dns_category_fallback">Dự phòng</string>
+    <string name="settings_fallback_dns_not_set">Chưa đặt (không có dự phòng)</string>
     <string name="settings_custom_dns_server">Máy chủ DNS tùy chỉnh</string>
     <string name="settings_custom_dns_hint">Nhập IP cho DNS thường, https:// cho DoH, tls:// cho DoT, hoặc quic:// cho DoQ</string>
     <string name="settings_detected_plain">DNS thường</string>
@@ -248,6 +252,9 @@
     <string name="dns_response_custom_ip">IP tùy chỉnh (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Trả về địa chỉ null route (mặc định)</string>
     <string name="settings_clear_logs">Xóa tất cả nhật ký</string>
+    <string name="dns_error_notification_title">Lỗi cấu hình DNS</string>
+    <string name="dns_error_notification_no_fallback">Kết nối %1$s đến %2$s đang lỗi. Không có DNS dự phòng — trang web có thể không tải được. Kiểm tra cài đặt DNS.</string>
+    <string name="dns_error_notification_both_failed">Kết nối %1$s đến %2$s và dự phòng %3$s đều đang lỗi. Trang web có thể không tải được. Kiểm tra cài đặt DNS.</string>
 
     <!-- Filter Setup Screen -->
     <string name="filter_setup_title">Cài đặt bộ lọc</string>

@@ -31,6 +31,8 @@ import app.pwhs.blockads.ui.dnsprovider.component.CategoryHeader
 import app.pwhs.blockads.ui.dnsprovider.component.CustomDnsCard
 import app.pwhs.blockads.ui.dnsprovider.component.CustomDnsDialog
 import app.pwhs.blockads.ui.dnsprovider.component.DnsProviderCard
+import app.pwhs.blockads.ui.dnsprovider.component.FallbackDnsCard
+import app.pwhs.blockads.ui.dnsprovider.component.FallbackDnsDialog
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -47,10 +49,10 @@ fun DnsProviderScreen(
     val selectedProviderId by viewModel.selectedProviderId.collectAsStateWithLifecycle()
     val customDnsEnabled by viewModel.customDnsEnabled.collectAsStateWithLifecycle()
     val customDnsDisplay by viewModel.customDnsDisplay.collectAsStateWithLifecycle()
-    val upstreamDns by viewModel.upstreamDns.collectAsStateWithLifecycle()
     val fallbackDns by viewModel.fallbackDns.collectAsStateWithLifecycle()
 
     var showCustomDialog by remember { mutableStateOf(false) }
+    var showFallbackDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
@@ -126,6 +128,18 @@ fun DnsProviderScreen(
                 )
             }
 
+            // Standalone Fallback DNS (always visible for all configurations)
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                CategoryHeader(stringResource(R.string.dns_category_fallback))
+            }
+            item {
+                FallbackDnsCard(
+                    fallbackDns = fallbackDns,
+                    onClick = { showFallbackDialog = true }
+                )
+            }
+
             item { Spacer(modifier = Modifier.height(16.dp)) }
         }
     }
@@ -133,12 +147,23 @@ fun DnsProviderScreen(
     if (showCustomDialog) {
         CustomDnsDialog(
             upstreamDns = customDnsDisplay,
-            fallbackDns = fallbackDns,
             onDismiss = { showCustomDialog = false },
-            onSave = { upstream, fallback ->
-                viewModel.setCustomDns(upstream, fallback)
+            onSave = { upstream ->
+                viewModel.setCustomDns(upstream)
                 showCustomDialog = false
             }
         )
     }
+
+    if (showFallbackDialog) {
+        FallbackDnsDialog(
+            fallbackDns = fallbackDns,
+            onDismiss = { showFallbackDialog = false },
+            onSave = { dns ->
+                viewModel.setFallbackDns(dns)
+                showFallbackDialog = false
+            }
+        )
+    }
 }
+

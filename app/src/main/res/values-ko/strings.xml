@@ -202,6 +202,10 @@
     <string name="settings_doq_server_url">DoQ 서버 URL</string>
     <string name="settings_upstream_dns">업스트림 DNS 서버</string>
     <string name="settings_fallback_dns">대체 DNS 서버</string>
+    <string name="settings_fallback_dns_desc">대체 DNS는 기본 DNS 서버가 실패할 때 사용됩니다. 항상 일반 UDP 프로토콜을 사용합니다.</string>
+    <string name="settings_fallback_dns_short_desc">기본 DNS 장애 시 백업으로 사용 (일반 UDP)</string>
+    <string name="dns_category_fallback">대체</string>
+    <string name="settings_fallback_dns_not_set">설정되지 않음 (백업 없음)</string>
     <string name="settings_save_custom_dns">Save DNS</string>
     <string name="settings_dns_response_type">DNS 응답 유형</string>
     <string name="settings_dns_response_type_desc">차단된 도메인에 대한 응답 유형</string>
@@ -210,6 +214,9 @@
     <string name="dns_response_custom_ip">사용자 정의 IP (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">널 라우트 주소 반환 (기본값)</string>
     <string name="settings_clear_logs">모든 로그 지우기</string>
+    <string name="dns_error_notification_title">DNS 설정 오류</string>
+    <string name="dns_error_notification_no_fallback">%2$s에 대한 %1$s 연결이 실패하고 있습니다. 대체 DNS 미설정 — 웹사이트가 로드되지 않을 수 있습니다. DNS 설정을 확인하세요.</string>
+    <string name="dns_error_notification_both_failed">%2$s에 대한 %1$s 연결과 대체 %3$s 모두 실패하고 있습니다. 웹사이트가 로드되지 않을 수 있습니다. DNS 설정을 확인하세요.</string>
     <string name="filter_setup_title">필터 설정</string>
     <string name="filter_setup_desc">내장 &amp; 사용자 정의 필터 목록 관리</string>
     <string name="filter_built_in">내장</string>

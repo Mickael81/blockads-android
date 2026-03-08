@@ -271,7 +271,7 @@ fun SettingsScreen(
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                "$upstreamDns / $fallbackDns",
+                                if (fallbackDns.isBlank()) upstreamDns else "$upstreamDns / $fallbackDns",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.secondary
                             )

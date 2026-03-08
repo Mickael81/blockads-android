@@ -232,6 +232,10 @@
     <string name="settings_doq_server_url">URL-адрес сервера DoQ</string>
     <string name="settings_upstream_dns">Основной DNS-сервер</string>
     <string name="settings_fallback_dns">Резервный DNS-сервер</string>
+    <string name="settings_fallback_dns_desc">Резервный DNS используется при сбое основного DNS-сервера. Всегда использует протокол UDP.</string>
+    <string name="settings_fallback_dns_short_desc">Используется при сбое основного DNS (UDP)</string>
+    <string name="dns_category_fallback">Резервный</string>
+    <string name="settings_fallback_dns_not_set">Не задан (без резерва)</string>
     <string name="settings_custom_dns_server">Пользовательский DNS-сервер</string>
     <string name="settings_custom_dns_hint">Введите IP для обычного DNS, https:// для DoH, tls:// для DoT или quic:// для DoQ</string>
     <string name="settings_detected_plain">Обычный DNS</string>
@@ -248,6 +252,9 @@
     <string name="dns_response_custom_ip">Пользовательский IP (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Возвращать null-route адрес (по умолчанию)</string>
     <string name="settings_clear_logs">Очистить все журналы</string>
+    <string name="dns_error_notification_title">Ошибка конфигурации DNS</string>
+    <string name="dns_error_notification_no_fallback">Подключение %1$s к %2$s не удаётся. Резервный DNS не настроен — сайты могут не загружаться. Проверьте настройки DNS.</string>
+    <string name="dns_error_notification_both_failed">Подключение %1$s к %2$s и резервный %3$s не работают. Сайты могут не загружаться. Проверьте настройки DNS.</string>
 
     <!-- Filter Setup Screen -->
     <string name="filter_setup_title">Настройка фильтров</string>

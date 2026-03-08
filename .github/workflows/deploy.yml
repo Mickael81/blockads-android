@@ -62,9 +62,6 @@ jobs:
       - name: Decode Play Store key
         run: echo "${{ secrets.PLAY_STORE_KEY_BASE64 }}" | base64 --decode > fastlane/play-store-key.json
 
-      # Bundled filter lists are committed to the repo for reproducible builds.
-      # Run ./scripts/bundle_filters.sh before tagging a release to update them.
-
       # Build & Deploy
       - name: Grant execute permission
         run: chmod +x gradlew

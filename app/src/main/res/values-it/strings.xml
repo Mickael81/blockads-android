@@ -233,6 +233,10 @@
     <string name="settings_upstream_dns_placeholder" translatable="false">8.8.8.8</string>
     <string name="settings_fallback_dns">Server DNS di Fallback</string>
     <string name="settings_fallback_dns_placeholder" translatable="false">1.1.1.1</string>
+    <string name="settings_fallback_dns_desc">Il DNS di fallback viene utilizzato quando il server DNS principale fallisce. Utilizza sempre il protocollo UDP semplice.</string>
+    <string name="settings_fallback_dns_short_desc">Usato quando il DNS principale fallisce (UDP semplice)</string>
+    <string name="dns_category_fallback">Fallback</string>
+    <string name="settings_fallback_dns_not_set">Non impostato (nessun backup)</string>
     <string name="settings_custom_dns_server">Server DNS Personalizzato</string>
     <string name="settings_custom_dns_placeholder" translatable="false">8.8.8.8, https://…, tls://…</string>
     <string name="settings_custom_dns_hint">Inserisci IP per DNS Normale, https:// per DoH, o tls:// per DoT</string>
@@ -251,6 +255,9 @@
     <string name="dns_response_custom_ip">IP Personalizzato (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Restituisce un indirizzo di null route (predefinito)</string>
     <string name="settings_clear_logs">Cancella Tutti i Log</string>
+    <string name="dns_error_notification_title">Errore configurazione DNS</string>
+    <string name="dns_error_notification_no_fallback">La connessione %1$s a %2$s sta fallendo. Nessun DNS di fallback configurato — i siti web potrebbero non caricarsi. Controlla le impostazioni DNS.</string>
+    <string name="dns_error_notification_both_failed">La connessione %1$s a %2$s e il fallback %3$s stanno entrambi fallendo. I siti web potrebbero non caricarsi. Controlla le impostazioni DNS.</string>
 
     <!-- Schermata Configurazione Filtri -->
     <string name="filter_setup_title">Configurazione Filtri</string>

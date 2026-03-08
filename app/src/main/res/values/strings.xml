@@ -236,6 +236,10 @@
     <string name="settings_upstream_dns_placeholder" translatable="false">8.8.8.8</string>
     <string name="settings_fallback_dns">Fallback DNS Server</string>
     <string name="settings_fallback_dns_placeholder" translatable="false">1.1.1.1</string>
+    <string name="settings_fallback_dns_desc">Fallback DNS is used when your primary DNS server fails. It always uses plain UDP protocol.</string>
+    <string name="settings_fallback_dns_short_desc">Used as backup when primary DNS fails (plain UDP)</string>
+    <string name="dns_category_fallback">Fallback</string>
+    <string name="settings_fallback_dns_not_set">Not set (no backup)</string>
     <string name="settings_custom_dns_server">Custom DNS Server</string>
     <string name="settings_custom_dns_placeholder" translatable="false">8.8.8.8, https://…, tls://…, quic://…</string>
     <string name="settings_custom_dns_hint">Enter IP for Plain DNS, https:// for DoH, tls:// for DoT, or quic:// for DoQ</string>
@@ -255,6 +259,9 @@
     <string name="dns_response_custom_ip">Custom IP (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Return a null route address (default)</string>
     <string name="settings_clear_logs">Clear All Logs</string>
+    <string name="dns_error_notification_title">DNS configuration error</string>
+    <string name="dns_error_notification_no_fallback">%1$s connection to %2$s is failing. No fallback DNS configured — websites may not load. Check your DNS settings.</string>
+    <string name="dns_error_notification_both_failed">%1$s connection to %2$s and fallback %3$s are both failing. Websites may not load. Check your DNS settings.</string>
 
     <!-- Filter Setup Screen -->
     <string name="filter_setup_title">Filter Setup</string>

@@ -202,6 +202,10 @@
     <string name="settings_doq_server_url">URL เซิร์ฟเวอร์ DoQ</string>
     <string name="settings_upstream_dns">เซิร์ฟเวอร์ DNS ต้นทาง</string>
     <string name="settings_fallback_dns">เซิร์ฟเวอร์ DNS สำรอง</string>
+    <string name="settings_fallback_dns_desc">DNS สำรองจะถูกใช้เมื่อ DNS หลักล้มเหลว ใช้โปรโตคอล UDP เสมอ</string>
+    <string name="settings_fallback_dns_short_desc">ใช้เมื่อ DNS หลักล้มเหลว (UDP ธรรมดา)</string>
+    <string name="dns_category_fallback">สำรอง</string>
+    <string name="settings_fallback_dns_not_set">ไม่ได้ตั้งค่า (ไม่มีสำรอง)</string>
     <string name="settings_custom_dns_server">เซิร์ฟเวอร์ DNS ที่กำหนดเอง</string>
     <string name="settings_custom_dns_hint">ป้อน IP สำหรับ DNS ธรรมดา, https:// สำหรับ DoH, tls:// สำหรับ DoT หรือ quic:// สำหรับ DoQ</string>
     <string name="settings_detected_plain">DNS ธรรมดา</string>
@@ -218,6 +222,9 @@
     <string name="dns_response_custom_ip">IP ที่กำหนดเอง (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">ส่งคืนที่อยู่ null route (ค่าเริ่มต้น)</string>
     <string name="settings_clear_logs">ล้างบันทึกทั้งหมด</string>
+    <string name="dns_error_notification_title">ข้อผิดพลาดการตั้งค่า DNS</string>
+    <string name="dns_error_notification_no_fallback">การเชื่อมต่อ %1$s ไปยัง %2$s ล้มเหลว ไม่ได้ตั้ง DNS สำรอง — เว็บไซต์อาจโหลดไม่ได้ ตรวจสอบการตั้งค่า DNS</string>
+    <string name="dns_error_notification_both_failed">การเชื่อมต่อ %1$s ไปยัง %2$s และสำรอง %3$s ล้มเหลวทั้งคู่ เว็บไซต์อาจโหลดไม่ได้ ตรวจสอบการตั้งค่า DNS</string>
     <string name="filter_setup_title">ตั้งค่าตัวกรอง</string>
     <string name="filter_setup_desc">จัดการรายการตัวกรองในตัวและที่กำหนดเอง</string>
     <string name="filter_built_in">ในตัว</string>

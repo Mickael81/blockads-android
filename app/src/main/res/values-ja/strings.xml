@@ -202,6 +202,10 @@
     <string name="settings_doq_server_url">DoQ サーバー URL</string>
     <string name="settings_upstream_dns">上流DNSサーバー</string>
     <string name="settings_fallback_dns">フォールバックDNSサーバー</string>
+    <string name="settings_fallback_dns_desc">フォールバックDNSは、プライマリDNSサーバーが失敗した場合に使用されます。常にプレーンUDPプロトコルを使用します。</string>
+    <string name="settings_fallback_dns_short_desc">プライマリDNS障害時のバックアップ（プレーンUDP）</string>
+    <string name="dns_category_fallback">フォールバック</string>
+    <string name="settings_fallback_dns_not_set">未設定（バックアップなし）</string>
     <string name="settings_custom_dns_server">カスタムDNSサーバー</string>
     <string name="settings_custom_dns_hint">プレーンDNSにはIP、DoHにはhttps://、DoTにはtls://、DoQにはquic://を入力</string>
     <string name="settings_detected_plain">プレーンDNS</string>
@@ -218,6 +222,9 @@
     <string name="dns_response_custom_ip">カスタムIP (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">ヌルルートアドレスを返します (デフォルト)</string>
     <string name="settings_clear_logs">すべてのログを消去</string>
+    <string name="dns_error_notification_title">DNS設定エラー</string>
+    <string name="dns_error_notification_no_fallback">%2$sへの%1$s接続が失敗しています。フォールバックDNS未設定 — ウェブサイトが読み込めない可能性があります。DNS設定を確認してください。</string>
+    <string name="dns_error_notification_both_failed">%2$sへの%1$s接続とフォールバック%3$sの両方が失敗しています。ウェブサイトが読み込めない可能性があります。DNS設定を確認してください。</string>
     <string name="filter_setup_title">フィルター設定</string>
     <string name="filter_setup_desc">組み込みとカスタムのフィルターリストを管理</string>
     <string name="filter_built_in">組み込み</string>
