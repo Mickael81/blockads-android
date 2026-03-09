@@ -21,6 +21,7 @@ data class DnsLogEntry(
     val queryType: String = "A",
     val responseTimeMs: Long = 0,
     val appName: String = "",
+    val packageName: String = "",
     val resolvedIp: String = "",
     val blockedBy: String = ""
 )

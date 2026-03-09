@@ -45,9 +45,12 @@ type FirewallChecker interface {
 	// sourcePort: the source UDP port of the DNS query
 	// sourceIP: the source IP address bytes
 	// destIP: the destination IP address bytes
-	// destPort: the destination port (typically 53)
-	// Returns the app name if blocked (non-empty), or empty string if allowed.
-	ShouldBlock(sourcePort int, sourceIP []byte, destIP []byte, destPort int) string
+	ShouldBlock(appName string) bool
+}
+
+// AppResolver interface to allow Kotlin to return the AppName for a connection
+type AppResolver interface {
+	ResolveApp(sourcePort int, sourceIP []byte, destIP []byte, destPort int) string
 }
 
 // SocketProtector is the interface for protecting sockets from VPN routing loop.
@@ -60,26 +63,28 @@ type SocketProtector interface {
 // Engine is the main DNS tunnel engine.
 // All exported methods use gomobile-compatible types.
 type Engine struct {
+	protocol        string
+	primaryDNS      string
+	fallbackDNS     string
+	dohURL          string
+	responseType    ResponseType
+	logCallback     LogCallback
 	resolver        *Resolver
 	safeSearch      *SafeSearch
 	domainChecker   DomainChecker
 	firewallChecker FirewallChecker
+	appResolver     AppResolver
 
-	mu           sync.Mutex
-	running      bool
-	tunFile      *os.File
-	logCallback  LogCallback
-	responseType ResponseType
+	adTrie  *MmapTrie
+	secTrie *MmapTrie
+
+	mu      sync.Mutex
+	running bool
+	tunFile *os.File
 
 	// Stats
 	totalQueries   atomic.Int64
 	blockedQueries atomic.Int64
-
-	// DNS Config state
-	protocol    string
-	primaryDNS  string
-	fallbackDNS string
-	dohURL      string
 }
 
 // Stats holds engine statistics.
@@ -97,15 +102,57 @@ func NewEngine() *Engine {
 }
 
 // SetDomainChecker sets the Kotlin-side domain checker.
-// This is called before Start() to provide the blocking logic.
+// This is called before Start() to provide the blocking logic for rules not in the trie (like Custom Rules).
 func (e *Engine) SetDomainChecker(checker DomainChecker) {
 	e.domainChecker = checker
+}
+
+// SetTries loads the native memory-mapped domain tries for blazing-fast lookups in Go.
+// It accepts the absolute paths to the ad and security binary trie files.
+func (e *Engine) SetTries(adTriePath string, secTriePath string) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+
+	// Close old ones if they exist
+	if e.adTrie != nil {
+		e.adTrie.Close()
+		e.adTrie = nil
+	}
+	if e.secTrie != nil {
+		e.secTrie.Close()
+		e.secTrie = nil
+	}
+
+	if adTriePath != "" {
+		t, err := LoadMmapTrie(adTriePath)
+		if err != nil {
+			logf("Failed to load Ad Trie: %v", err)
+		} else {
+			e.adTrie = t
+			logf("Loaded Ad Trie recursively from Go native Mmap")
+		}
+	}
+
+	if secTriePath != "" {
+		t, err := LoadMmapTrie(secTriePath)
+		if err != nil {
+			logf("Failed to load Security Trie: %v", err)
+		} else {
+			e.secTrie = t
+			logf("Loaded Security Trie recursively from Go native Mmap")
+		}
+	}
 }
 
 // SetFirewallChecker sets the Kotlin-side firewall checker.
 // This is called before Start() to enable per-app DNS blocking.
 func (e *Engine) SetFirewallChecker(checker FirewallChecker) {
 	e.firewallChecker = checker
+}
+
+// SetAppResolver sets the Kotlin-side app name resolver for logging who made the request.
+func (e *Engine) SetAppResolver(resolver AppResolver) {
+	e.appResolver = resolver
 }
 
 // SetLogCallback sets the callback for DNS query events.
@@ -230,6 +277,15 @@ func (e *Engine) Stop() {
 		// DO NOT set e.resolver = nil to prevent panics in concurrent handleDNSQuery routines
 	}
 	e.safeSearch.ClearCache()
+
+	if e.adTrie != nil {
+		e.adTrie.Close()
+		e.adTrie = nil
+	}
+	if e.secTrie != nil {
+		e.secTrie.Close()
+		e.secTrie = nil
+	}
 }
 
 // IsRunning returns whether the engine is currently running.
@@ -254,15 +310,20 @@ func (e *Engine) handleDNSQuery(queryInfo *DNSQueryInfo) {
 	startTime := time.Now()
 	domain := strings.ToLower(queryInfo.Domain)
 
-	// Firewall check (per-app blocking via Kotlin callback)
-	if e.firewallChecker != nil {
-		appName := e.firewallChecker.ShouldBlock(
+	// Fetch App Name for logging (and firewall)
+	appName := ""
+	if e.appResolver != nil {
+		appName = e.appResolver.ResolveApp(
 			int(queryInfo.SourcePort),
 			[]byte(queryInfo.SourceIP),
 			[]byte(queryInfo.DestIP),
 			int(queryInfo.DestPort),
 		)
-		if appName != "" {
+	}
+
+	// Firewall check (per-app blocking via Kotlin callback)
+	if e.firewallChecker != nil && appName != "" {
+		if e.firewallChecker.ShouldBlock(appName) {
 			e.handleFirewallBlock(queryInfo, appName, startTime)
 			return
 		}
@@ -271,7 +332,7 @@ func (e *Engine) handleDNSQuery(queryInfo *DNSQueryInfo) {
 	// SafeSearch check
 	ssResult := e.safeSearch.Check(domain, queryInfo.QueryType)
 	if ssResult.Action == ActionRedirect {
-		if e.handleSafeSearchRedirect(queryInfo, ssResult.RedirectDomain, startTime) {
+		if e.handleSafeSearchRedirect(queryInfo, ssResult.RedirectDomain, appName, startTime) {
 			return
 		}
 		// If redirect IP resolution failed, fall through to normal resolution
@@ -279,24 +340,35 @@ func (e *Engine) handleDNSQuery(queryInfo *DNSQueryInfo) {
 
 	// YouTube restricted mode check
 	if isYT, ytDomain := e.safeSearch.CheckYouTube(domain, queryInfo.QueryType); isYT {
-		if e.handleSafeSearchRedirect(queryInfo, ytDomain, startTime) {
+		if e.handleSafeSearchRedirect(queryInfo, ytDomain, appName, startTime) {
 			return
 		}
 	}
 
-	// Domain blocking check (via Kotlin callback)
+	// Fast Native Go Domain blocking check via Mmap Trie
+	if e.secTrie != nil && e.secTrie.ContainsOrParent(domain) {
+		e.handleBlockedDomain(queryInfo, "security", appName, startTime)
+		return
+	}
+	if e.adTrie != nil && e.adTrie.ContainsOrParent(domain) {
+		e.handleBlockedDomain(queryInfo, "filter_list", appName, startTime)
+		return
+	}
+
+	// Fallback/Custom Domain blocking check (via Kotlin callback)
+	// This captures custom block/allow rules that aren't in the trie.
 	if e.domainChecker != nil && e.domainChecker.IsBlocked(domain) {
 		blockedBy := e.domainChecker.GetBlockReason(domain)
-		e.handleBlockedDomain(queryInfo, blockedBy, startTime)
+		e.handleBlockedDomain(queryInfo, blockedBy, appName, startTime)
 		return
 	}
 
 	// Forward to upstream DNS
-	e.handleForward(queryInfo, startTime)
+	e.handleForward(queryInfo, appName, startTime)
 }
 
 // handleSafeSearchRedirect handles a SafeSearch/YouTube redirect.
-func (e *Engine) handleSafeSearchRedirect(queryInfo *DNSQueryInfo, redirectDomain string, startTime time.Time) bool {
+func (e *Engine) handleSafeSearchRedirect(queryInfo *DNSQueryInfo, redirectDomain, appName string, startTime time.Time) bool {
 	// Check cache first
 	ip := e.safeSearch.GetCachedIP(redirectDomain)
 	if ip == nil {
@@ -316,7 +388,7 @@ func (e *Engine) handleSafeSearchRedirect(queryInfo *DNSQueryInfo, redirectDomai
 	e.totalQueries.Add(1)
 
 	elapsed := time.Since(startTime).Milliseconds()
-	e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, "", ip.String(), "")
+	e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, appName, ip.String(), "")
 	return true
 }
 
@@ -342,7 +414,7 @@ func (e *Engine) handleFirewallBlock(queryInfo *DNSQueryInfo, appName string, st
 }
 
 // handleBlockedDomain handles a blocked domain.
-func (e *Engine) handleBlockedDomain(queryInfo *DNSQueryInfo, blockedBy string, startTime time.Time) {
+func (e *Engine) handleBlockedDomain(queryInfo *DNSQueryInfo, blockedBy, appName string, startTime time.Time) {
 	var response []byte
 	switch e.responseType {
 	case ResponseNXDomain:
@@ -358,12 +430,12 @@ func (e *Engine) handleBlockedDomain(queryInfo *DNSQueryInfo, blockedBy string, 
 	e.blockedQueries.Add(1)
 
 	elapsed := time.Since(startTime).Milliseconds()
-	logf("BLOCKED: %s (by: %s)", queryInfo.Domain, blockedBy)
-	e.notifyLog(queryInfo.Domain, true, queryInfo.QueryType, elapsed, "", "", blockedBy)
+	logf("BLOCKED: %s (by: %s, app: %s)", queryInfo.Domain, blockedBy, appName)
+	e.notifyLog(queryInfo.Domain, true, queryInfo.QueryType, elapsed, appName, "", blockedBy)
 }
 
 // handleForward forwards a DNS query to upstream and writes the response.
-func (e *Engine) handleForward(queryInfo *DNSQueryInfo, startTime time.Time) {
+func (e *Engine) handleForward(queryInfo *DNSQueryInfo, appName string, startTime time.Time) {
 	resp, err := e.resolver.Resolve(queryInfo.RawDNSPayload)
 	if err != nil {
 		logf("DNS resolve failed for %s: %v", queryInfo.Domain, err)
@@ -372,7 +444,7 @@ func (e *Engine) handleForward(queryInfo *DNSQueryInfo, startTime time.Time) {
 		e.totalQueries.Add(1)
 
 		elapsed := time.Since(startTime).Milliseconds()
-		e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, "", "", "")
+		e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, appName, "", "")
 		return
 	}
 
@@ -381,7 +453,7 @@ func (e *Engine) handleForward(queryInfo *DNSQueryInfo, startTime time.Time) {
 	e.totalQueries.Add(1)
 
 	elapsed := time.Since(startTime).Milliseconds()
-	e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, "", "", "")
+	e.notifyLog(queryInfo.Domain, false, queryInfo.QueryType, elapsed, appName, "", "")
 }
 
 // writeToTUN writes a packet to the TUN device.

@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import tunnel.AppResolver
 import tunnel.DomainChecker
 import tunnel.FirewallChecker
 import tunnel.LogCallback
@@ -85,24 +86,38 @@ class GoTunnelAdapter(
     }
 
     /**
-     * Set up the firewall checker for per-app DNS blocking.
-     * Uses [AppNameResolver] to map source port → UID → package name,
-     * then checks [FirewallManager.shouldBlock].
+     * Set up the app resolver to get the AppName for every DNS query (used for logging).
+     * Uses [AppNameResolver] to map source port → UID → app name.
      */
-    private fun setupFirewallChecker() {
-        engine.setFirewallChecker(FirewallChecker { sourcePort, sourceIP, destIP, destPort ->
-            val fwManager = firewallManagerProvider() ?: return@FirewallChecker ""
+    private fun setupAppResolver() {
+        engine.setAppResolver(AppResolver { sourcePort, sourceIP, destIP, destPort ->
             try {
                 val identity = appNameResolver.resolveIdentity(
                     sourcePort.toInt(), sourceIP, destIP, destPort.toInt()
                 )
-                if (identity.packageName.isEmpty()) return@FirewallChecker ""
-                return@FirewallChecker if (fwManager.shouldBlock(identity.packageName)) {
-                    identity.appName.ifEmpty { identity.packageName }
-                } else ""
+                if (identity.packageName.isEmpty()) return@AppResolver ""
+                identity.packageName
+            } catch (e: Exception) {
+                Timber.e(e, "App resolve failed")
+                ""
+            }
+        })
+    }
+
+    /**
+     * Set up the firewall checker for per-app DNS blocking.
+     * Receives the already resolved appName from Go, and checks [FirewallManager.shouldBlock].
+     */
+    private fun setupFirewallChecker() {
+        engine.setFirewallChecker(FirewallChecker { appName ->
+            val fwManager = firewallManagerProvider() ?: return@FirewallChecker false
+            try {
+                if (appName.isEmpty()) return@FirewallChecker false
+                // appName here is actually the packageName from AppResolver
+                fwManager.shouldBlock(appName)
             } catch (e: Exception) {
                 Timber.e(e, "Firewall check failed")
-                return@FirewallChecker ""
+                false
             }
         })
     }
@@ -111,15 +126,29 @@ class GoTunnelAdapter(
      * Set the DNS log callback.
      */
     private fun setupLogCallback() {
-        engine.setLogCallback { domain, blocked, queryType, responseTimeMs, appName, resolvedIP, blockedBy ->
+        engine.setLogCallback { domain, blocked, queryType, responseTimeMs, packageNameOrAppName, resolvedIP, blockedBy ->
             scope.launch(Dispatchers.IO) {
                 try {
+                    // Try to resolve the user-friendly App Name string from the package name
+                    val friendlyAppName = if (packageNameOrAppName.isNotEmpty() && packageNameOrAppName.contains(".")) {
+                        try {
+                            val pm = vpnService.packageManager
+                            val info = pm.getApplicationInfo(packageNameOrAppName, 0)
+                            pm.getApplicationLabel(info).toString()
+                        } catch (e: Exception) {
+                            packageNameOrAppName
+                        }
+                    } else {
+                        packageNameOrAppName
+                    }
+
                     val entry = DnsLogEntry(
                         domain = domain,
                         isBlocked = blocked,
                         queryType = dnsQueryTypeToString(queryType.toInt()),
                         responseTimeMs = responseTimeMs,
-                        appName = appName,
+                        appName = friendlyAppName,
+                        packageName = packageNameOrAppName,
                         resolvedIp = resolvedIP,
                         blockedBy = blockedBy,
                         timestamp = System.currentTimeMillis(),
@@ -142,9 +171,13 @@ class GoTunnelAdapter(
         if (isRunning) return
         isRunning = true
 
+        setupAppResolver()
         setupDomainChecker()
         setupFirewallChecker()
         setupLogCallback()
+
+        // Give Go the paths to the Mmap logs so it can read them natively for max speed
+        updateTries()
 
         val fd = vpnInterface.fd
         Timber.d("Starting Go tunnel engine with fd=$fd")
@@ -170,6 +203,16 @@ class GoTunnelAdapter(
         isRunning = false
         engine.stop()
         Timber.d("Go tunnel engine stopped")
+    }
+
+    /**
+     * Update the Go engine with the latest Trie file paths dynamically.
+     */
+    fun updateTries() {
+        engine.setTries(
+            filterRepo.getAdTriePath() ?: "",
+            filterRepo.getSecurityTriePath() ?: ""
+        )
     }
 
     /**

@@ -1,6 +1,8 @@
 package app.pwhs.blockads.ui.home
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -79,6 +81,7 @@ import app.pwhs.blockads.util.formatCount
 import app.pwhs.blockads.util.formatDataSize
 import app.pwhs.blockads.util.formatTimeSince
 import app.pwhs.blockads.util.formatUptimeShort
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import org.koin.androidx.compose.koinViewModel
@@ -574,32 +577,59 @@ fun HomeScreen(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         recentBlocked.forEach { entry ->
                             val dotColor =
                                 if (entry.blockedBy == FilterListRepository.BLOCK_REASON_SECURITY)
                                     SecurityOrange else DangerRed
+                            val recentAppIcon: Drawable? = remember(entry.packageName) {
+                                if (entry.packageName.isNotEmpty() && entry.packageName.contains(".")) {
+                                    try {
+                                        context.packageManager.getApplicationIcon(entry.packageName)
+                                    } catch (e: Exception) { null }
+                                } else null
+                            }
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(8.dp)
-                                        .clip(CircleShape)
-                                        .background(dotColor)
-                                )
+                                if (recentAppIcon != null) {
+                                    Image(
+                                        painter = rememberDrawablePainter(drawable = recentAppIcon),
+                                        contentDescription = entry.appName,
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(RoundedCornerShape(4.dp))
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(8.dp)
+                                            .clip(CircleShape)
+                                            .background(dotColor)
+                                    )
+                                }
                                 Spacer(modifier = Modifier.width(12.dp))
-                                Text(
-                                    text = entry.domain,
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.weight(1f)
-                                )
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = entry.domain,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    if (entry.appName.isNotEmpty()) {
+                                        Text(
+                                            text = entry.appName,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = TextSecondary,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
                                 Text(
                                     text = formatTimeSince(entry.timestamp),
                                     style = MaterialTheme.typography.labelSmall,

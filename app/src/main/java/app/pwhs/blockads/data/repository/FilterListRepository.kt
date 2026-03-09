@@ -248,6 +248,16 @@ class FilterListRepository(
 
     val domainCount: Int get() = _domainCountFlow.value
 
+    fun getAdTriePath(): String? {
+        val file = File(trieDir, "ad_domains.trie")
+        return if (file.exists()) file.absolutePath else null
+    }
+
+    fun getSecurityTriePath(): String? {
+        val file = File(trieDir, "security_domains.trie")
+        return if (file.exists()) file.absolutePath else null
+    }
+
     /**
      * Check if a domain or any of its parent domains matches a condition.
      *

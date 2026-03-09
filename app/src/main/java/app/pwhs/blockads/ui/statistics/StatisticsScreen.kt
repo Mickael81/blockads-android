@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -56,6 +57,12 @@ import app.pwhs.blockads.ui.theme.TextSecondary
 import app.pwhs.blockads.util.formatCount
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import android.graphics.drawable.Drawable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
@@ -379,6 +386,15 @@ fun StatisticsScreen(
                 ) {
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         topApps.forEachIndexed { index, app ->
+                            val context = LocalContext.current
+                            val appIcon: Drawable? = androidx.compose.runtime.remember(app.packageName) {
+                                if (app.packageName.isNotEmpty() && app.packageName.contains(".")) {
+                                    try {
+                                        context.packageManager.getApplicationIcon(app.packageName)
+                                    } catch (e: Exception) { null }
+                                } else null
+                            }
+
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -392,6 +408,32 @@ fun StatisticsScreen(
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.width(24.dp)
                                 )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                if (appIcon != null) {
+                                    Image(
+                                        painter = rememberDrawablePainter(drawable = appIcon),
+                                        contentDescription = app.appName,
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(RoundedCornerShape(6.dp))
+                                    )
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .clip(CircleShape)
+                                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = app.appName.take(1).uppercase(),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
                                         text = app.appName,
@@ -400,15 +442,30 @@ fun StatisticsScreen(
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis
                                     )
+                                    if (app.packageName.isNotEmpty()) {
+                                        Text(
+                                            text = app.packageName,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = TextSecondary,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    }
+                                }
+                                Column(horizontalAlignment = Alignment.End) {
                                     Text(
-                                        text = stringResource(
-                                            R.string.stats_app_queries_blocked,
-                                            formatCount(app.totalQueries),
-                                            formatCount(app.blockedQueries)
-                                        ),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = TextSecondary
+                                        text = formatCount(app.totalQueries),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.SemiBold
                                     )
+                                    if (app.blockedQueries > 0) {
+                                        Text(
+                                            text = "${formatCount(app.blockedQueries)} blocked",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = DangerRed
+                                        )
+                                    }
                                 }
                             }
                         }

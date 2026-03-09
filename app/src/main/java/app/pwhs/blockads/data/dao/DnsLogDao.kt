@@ -123,13 +123,13 @@ interface DnsLogDao {
 
     @Query(
         """
-        SELECT appName,
+        SELECT appName, packageName,
                COUNT(*) AS totalQueries,
                SUM(CASE WHEN isBlocked = 1 THEN 1 ELSE 0 END) AS blockedQueries
         FROM dns_logs
         WHERE appName != ''
           AND (:since IS NULL OR timestamp > :since)
-        GROUP BY appName
+        GROUP BY appName, packageName
     """
     )
     fun getPerAppStats(since: Long? = null): Flow<List<AppStat>>
@@ -164,11 +164,11 @@ interface DnsLogDao {
 
     @Query(
         """
-        SELECT appName, COUNT(*) AS totalQueries,
+        SELECT appName, packageName, COUNT(*) AS totalQueries,
                SUM(CASE WHEN isBlocked = 1 THEN 1 ELSE 0 END) AS blockedQueries
         FROM dns_logs
         WHERE appName != ''
-        GROUP BY appName
+        GROUP BY appName, packageName
         ORDER BY totalQueries DESC
         LIMIT :limit
     """

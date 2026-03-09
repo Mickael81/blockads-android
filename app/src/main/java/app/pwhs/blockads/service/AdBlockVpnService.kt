@@ -32,13 +32,14 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 /**
@@ -64,15 +65,12 @@ class AdBlockVpnService : VpnService() {
         private const val REVOKED_NOTIFICATION_ID = 2
         private const val CHANNEL_ID = "blockads_vpn_channel"
         private const val ALERT_CHANNEL_ID = "blockads_vpn_alert_channel"
-        private const val FIREWALL_CHANNEL_ID = "blockads_firewall_channel"
         private const val NETWORK_STABILIZATION_DELAY_MS = 2000L
         private const val RESTART_CLEANUP_DELAY_MS = 1000L
         const val ACTION_START = "app.pwhs.blockads.START_VPN"
         const val ACTION_STOP = "app.pwhs.blockads.STOP_VPN"
         const val ACTION_PAUSE_1H = "app.pwhs.blockads.PAUSE_VPN_1H"
         const val ACTION_RESTART = "app.pwhs.blockads.RESTART_VPN"
-        private const val FIREWALL_NOTIFICATION_COOLDOWN_MS = 60_000L // 1 minute per app
-        private const val FIREWALL_NOTIFICATION_ID_BASE = 1000
 
         /**
          * Request a VPN restart to apply new settings.
@@ -402,6 +400,15 @@ class AdBlockVpnService : VpnService() {
                 )
                 goTunnelAdapter.setBlockResponseType(dnsResponseType)
                 goTunnelAdapter.configureSafeSearch(safeSearchEnabled, youtubeRestrictedMode)
+
+                // Dynamically update Go Engine Native Tries whenever filters change (enabled/disabled/deleted)
+                // We use drop(1) because start() already calls updateTries() once on boot.
+                launch {
+                    filterRepo.domainCountFlow.drop(1).collectLatest { count ->
+                        Timber.d("Filter count changed to $count. Dynamically updating Native Go Tries.")
+                        goTunnelAdapter.updateTries()
+                    }
+                }
                 
                 vpnInterface?.let {
                     // start() blocks the coroutine while reading from TUN
@@ -637,54 +644,6 @@ class AdBlockVpnService : VpnService() {
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
-    }
-
-    private fun createFirewallNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                FIREWALL_CHANNEL_ID,
-                getString(R.string.firewall_channel_name),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = getString(R.string.firewall_channel_description)
-                setShowBadge(false)
-            }
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
-        }
-    }
-
-    // Rate-limit firewall notifications to avoid flooding
-    private val lastFirewallNotificationTime = ConcurrentHashMap<String, Long>()
-    private fun sendFirewallNotification(appName: String, packageName: String) {
-        if (packageName.isEmpty()) return
-
-        val now = System.currentTimeMillis()
-        val lastTime = lastFirewallNotificationTime[packageName]
-        if (lastTime != null && (now - lastTime) < FIREWALL_NOTIFICATION_COOLDOWN_MS) return
-        lastFirewallNotificationTime[packageName] = now
-
-        createFirewallNotificationChannel()
-
-        val displayName = appName.ifEmpty { packageName }
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, FIREWALL_CHANNEL_ID)
-        } else {
-            @Suppress("DEPRECATION")
-            Notification.Builder(this)
-        }
-
-        val notification = builder
-            .setContentTitle(getString(R.string.firewall_notification_title))
-            .setContentText(getString(R.string.firewall_notification_text, displayName))
-            .setSmallIcon(R.drawable.ic_shield_on)
-            .setAutoCancel(true)
-            .build()
-
-        val notificationId =
-            FIREWALL_NOTIFICATION_ID_BASE + (packageName.hashCode() and 0x7FFFFFFF) % 500
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.notify(notificationId, notification)
     }
 
     private fun showRevokedNotification() {
