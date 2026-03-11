@@ -304,8 +304,10 @@ fun FirewallScreen(
                 }
             } else {
                 HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 12.dp),
                     state = pagerState,
-                    modifier = Modifier.fillMaxSize()
                 ) { page ->
                     val appsForPage = when (page) {
                         0 -> userApps
