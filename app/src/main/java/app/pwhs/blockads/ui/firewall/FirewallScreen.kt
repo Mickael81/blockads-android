@@ -16,7 +16,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,7 +24,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
@@ -39,6 +37,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -56,7 +55,6 @@ import app.pwhs.blockads.ui.firewall.component.FirewallRuleDialog
 import app.pwhs.blockads.ui.theme.TextSecondary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -64,7 +62,7 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FirewallScreen(
-    navigator: DestinationsNavigator, modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier,
     viewModel: FirewallViewModel = koinViewModel()
 ) {
     val firewallEnabled by viewModel.firewallEnabled.collectAsStateWithLifecycle()
@@ -75,7 +73,7 @@ fun FirewallScreen(
     var searchQuery by remember { mutableStateOf("") }
     var configurePackage by remember { mutableStateOf<String?>(null) }
     // 0 = All, 1 = Enabled (blocked), 2 = Disabled
-    var filterOption by remember { mutableStateOf(0) }
+    var filterOption by remember { mutableIntStateOf(0) }
 
     val rulesMap = remember(firewallRules) {
         firewallRules.associateBy { it.packageName }
@@ -133,14 +131,6 @@ fun FirewallScreen(
                             stringResource(R.string.firewall_count, enabledCount),
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
-                        )
-                    }
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
                         )
                     }
                 },
@@ -364,8 +354,6 @@ fun FirewallScreen(
                         }
                     }
                 }
-                // App list
-
             }
         }
     }

@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -58,6 +57,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -84,6 +84,9 @@ import app.pwhs.blockads.util.formatUptimeShort
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.generated.destinations.LogScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.StatisticsScreenDestination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
@@ -91,6 +94,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    navigator: DestinationsNavigator,
     onRequestVpnPermission: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel()
@@ -119,6 +123,20 @@ fun HomeScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = "https://adblock.turtlecute.org/".toUri()
+                        }
+                        context.startActivity(intent)
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_bug),
+                            contentDescription = stringResource(R.string.test_block_ads),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
                 title = {
                     if (isLoading) {
                         Row(
@@ -162,15 +180,17 @@ fun HomeScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = "https://adblock.turtlecute.org/".toUri()
-                        }
-                        context.startActivity(intent)
-                    }) {
+                    IconButton(onClick = { navigator.navigate(StatisticsScreenDestination) }) {
                         Icon(
-                            imageVector = Icons.Outlined.BugReport,
-                            contentDescription = stringResource(R.string.test_block_ads),
+                            painter = painterResource(R.drawable.ic_chart_bar),
+                            contentDescription = stringResource(R.string.nav_statistics),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = { navigator.navigate(LogScreenDestination) }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_history),
+                            contentDescription = stringResource(R.string.nav_logs),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -577,7 +597,7 @@ fun HomeScreen(
                     ),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                Column(modifier = Modifier.padding(vertical = 4.dp)) {
+                    Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         recentBlocked.forEach { entry ->
                             val dotColor =
                                 if (entry.blockedBy == FilterListRepository.BLOCK_REASON_SECURITY)
@@ -586,7 +606,9 @@ fun HomeScreen(
                                 if (entry.packageName.isNotEmpty() && entry.packageName.contains(".")) {
                                     try {
                                         context.packageManager.getApplicationIcon(entry.packageName)
-                                    } catch (e: Exception) { null }
+                                    } catch (e: Exception) {
+                                        null
+                                    }
                                 } else null
                             }
                             Row(

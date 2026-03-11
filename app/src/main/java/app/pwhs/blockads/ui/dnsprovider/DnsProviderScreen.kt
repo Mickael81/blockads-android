@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,14 +34,12 @@ import app.pwhs.blockads.ui.dnsprovider.component.FallbackDnsDialog
 import app.pwhs.blockads.ui.event.UiEventEffect
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Destination<RootGraph>
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DnsProviderScreen(
-    navigator: DestinationsNavigator,
     modifier: Modifier = Modifier,
     viewModel: DnsProviderViewModel = koinViewModel()
 ) {
@@ -67,11 +63,9 @@ fun DnsProviderScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.dns_provider_title)) },
-                navigationIcon = {
-                    IconButton(onClick = { navigator.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.accessibility_navigate_back))
-                    }
-                }
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                )
             )
         }
     ) { padding ->
@@ -148,6 +142,9 @@ fun DnsProviderScreen(
             }
 
             item { Spacer(modifier = Modifier.height(16.dp)) }
+            item {
+                Spacer(modifier = Modifier.height(200.dp))
+            }
         }
     }
 
@@ -155,14 +152,15 @@ fun DnsProviderScreen(
         CustomDnsDialog(
             upstreamDns = customDnsDisplay,
             errorText = customDnsError,
-            onDismiss = { 
-                showCustomDialog = false 
+            onDismiss = {
+                showCustomDialog = false
                 customDnsError = null
             },
             onSave = { upstream ->
                 val parsed = viewModel.getParsedHost(upstream)
                 if (parsed.equals(fallbackDns, ignoreCase = true) ||
-                    upstream.trim().equals(fallbackDns, ignoreCase = true)) {
+                    upstream.trim().equals(fallbackDns, ignoreCase = true)
+                ) {
                     customDnsError = duplicateErrorMsg
                 } else {
                     viewModel.setCustomDns(upstream)
@@ -177,8 +175,8 @@ fun DnsProviderScreen(
         FallbackDnsDialog(
             fallbackDns = fallbackDns,
             errorText = fallbackDnsError,
-            onDismiss = { 
-                showFallbackDialog = false 
+            onDismiss = {
+                showFallbackDialog = false
                 fallbackDnsError = null
             },
             onSave = { dns ->

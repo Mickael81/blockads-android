@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DeleteSweep
@@ -46,7 +47,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,6 +71,7 @@ import app.pwhs.blockads.ui.theme.TextSecondary
 import app.pwhs.blockads.ui.theme.WhitelistAmber
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 
 @Destination<RootGraph>
@@ -78,6 +79,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LogScreen(
     modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator,
     viewModel: LogViewModel = koinViewModel()
 ) {
     val logs by viewModel.logs.collectAsStateWithLifecycle()
@@ -109,6 +111,14 @@ fun LogScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
                 title = {
                     if (selectionMode) {
                         Text(

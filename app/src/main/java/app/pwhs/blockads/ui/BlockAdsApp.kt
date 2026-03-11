@@ -1,17 +1,7 @@
 package app.pwhs.blockads.ui
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.automirrored.outlined.List
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Shield
-import androidx.compose.material.icons.outlined.BarChart
-import androidx.compose.material.icons.outlined.Shield
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,68 +22,62 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.pwhs.blockads.R
+import app.pwhs.blockads.data.datastore.AppPreferences
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.DnsProviderScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.FilterSetupScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.LogScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.FirewallScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SettingsScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.StatisticsScreenDestination
 import com.ramcosta.composedestinations.navigation.dependency
 import com.ramcosta.composedestinations.rememberNavHostEngine
 import com.ramcosta.composedestinations.spec.Direction
-import timber.log.Timber
-import androidx.compose.ui.Modifier
-import app.pwhs.blockads.data.datastore.AppPreferences
 import org.koin.compose.koinInject
+import timber.log.Timber
 
 sealed class Screen(
     val destination: Direction,
     val route: String,
     @StringRes val labelRes: Int,
-    val selectedIcon: ImageVector,
-    val unselectedIcon: ImageVector
+    @DrawableRes val icon: Int,
 ) {
     data object Home :
         Screen(
             destination = HomeScreenDestination(),
             route = HomeScreenDestination.route,
             labelRes = R.string.nav_home,
-            selectedIcon = Icons.Filled.Home,
-            unselectedIcon = Icons.Outlined.Home
+            icon = R.drawable.ic_home,
         )
-
-    data object Logs : Screen(
-        destination = LogScreenDestination(),
-        route = LogScreenDestination.route,
-        labelRes = R.string.nav_logs,
-        selectedIcon = Icons.AutoMirrored.Filled.List,
-        unselectedIcon = Icons.AutoMirrored.Outlined.List
-    )
-
-    data object Statistics : Screen(
-        destination = StatisticsScreenDestination(),
-        route = StatisticsScreenDestination.route,
-        labelRes = R.string.nav_statistics,
-        selectedIcon = Icons.Filled.BarChart,
-        unselectedIcon = Icons.Outlined.BarChart
-    )
 
     data object FilterSetup : Screen(
         destination = FilterSetupScreenDestination(),
         route = FilterSetupScreenDestination.route,
         labelRes = R.string.nav_filter,
-        selectedIcon = Icons.Filled.Shield,
-        unselectedIcon = Icons.Outlined.Shield
+        icon = R.drawable.ic_shield,
     )
+
+    data object Firewall : Screen(
+        destination = FirewallScreenDestination(),
+        route = FirewallScreenDestination.route,
+        labelRes = R.string.settings_firewall,
+        icon = R.drawable.ic_fire,
+    )
+
+    data object Whitelist : Screen(
+        destination = DnsProviderScreenDestination(),
+        route = DnsProviderScreenDestination.route,
+        labelRes = R.string.dns_provider_title,
+        icon = R.drawable.ic_dns,
+    )
+
 
     data object Settings :
         Screen(
             destination = SettingsScreenDestination(),
             route = SettingsScreenDestination.route,
             labelRes = R.string.nav_settings,
-            selectedIcon = Icons.Filled.Settings,
-            unselectedIcon = Icons.Outlined.Settings
+            icon = R.drawable.ic_setting,
         )
 }
 
@@ -101,17 +86,17 @@ fun BlockAdsApp(onRequestVpnPermission: () -> Unit, modifier: Modifier = Modifie
     val engine = rememberNavHostEngine()
     val navController = engine.rememberNavController()
     val screens =
-        listOf(Screen.Home, Screen.Statistics, Screen.FilterSetup, Screen.Logs, Screen.Settings)
+        listOf(Screen.Home, Screen.FilterSetup, Screen.Firewall, Screen.Whitelist, Screen.Settings)
     val newBackStackEntry by navController.currentBackStackEntryAsState()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
     val route = newBackStackEntry?.destination?.route
     val showBottomBar = route in listOf(
         HomeScreenDestination.route,
-        StatisticsScreenDestination.route,
-        LogScreenDestination.route,
-        SettingsScreenDestination.route,
-        FilterSetupScreenDestination.route
+        FilterSetupScreenDestination.route,
+        FirewallScreenDestination.route,
+        DnsProviderScreenDestination.route,
+        SettingsScreenDestination.route
     )
 
     val appPrefs: AppPreferences = koinInject()
@@ -141,7 +126,7 @@ fun BlockAdsApp(onRequestVpnPermission: () -> Unit, modifier: Modifier = Modifie
                             },
                             icon = {
                                 Icon(
-                                    imageVector = if (selected) screen.selectedIcon else screen.unselectedIcon,
+                                    painter = painterResource(screen.icon),
                                     contentDescription = stringResource(screen.labelRes)
                                 )
                             },

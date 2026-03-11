@@ -60,9 +60,13 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
 
@@ -71,6 +75,7 @@ import java.util.Locale
 @Composable
 fun StatisticsScreen(
     modifier: Modifier = Modifier,
+    navigator: DestinationsNavigator,
     viewModel: StatisticsViewModel = koinViewModel()
 ) {
     val totalCount by viewModel.totalCount.collectAsStateWithLifecycle()
@@ -90,6 +95,14 @@ fun StatisticsScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    IconButton(onClick = { navigator.navigateUp() }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                },
                 title = {
                     Text(
                         text = stringResource(R.string.stats_title),

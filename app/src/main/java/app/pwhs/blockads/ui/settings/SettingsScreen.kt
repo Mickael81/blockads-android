@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.DeleteForever
-import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FilterList
@@ -98,9 +97,6 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val autoReconnect by viewModel.autoReconnect.collectAsStateWithLifecycle()
-    val upstreamDns by viewModel.upstreamDns.collectAsStateWithLifecycle()
-    val fallbackDns by viewModel.fallbackDns.collectAsStateWithLifecycle()
-    val customDnsDisplay by viewModel.customDnsDisplay.collectAsStateWithLifecycle()
     val filterLists by viewModel.filterLists.collectAsStateWithLifecycle()
     val whitelistDomains by viewModel.whitelistDomains.collectAsStateWithLifecycle()
     val blocklistDomainsCount by viewModel.blocklistDomainsCount.collectAsStateWithLifecycle()
@@ -253,45 +249,6 @@ fun SettingsScreen(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Dns,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Spacer(modifier = Modifier.width(16.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.dns_select_server),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                if (fallbackDns.isBlank()) customDnsDisplay else "$customDnsDisplay / $fallbackDns",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.secondary
-                            )
-                        }
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowForwardIos,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    )
-
                     // DNS Response Type
                     Row(
                         modifier = Modifier

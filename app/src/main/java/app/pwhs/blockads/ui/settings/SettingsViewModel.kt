@@ -12,15 +12,14 @@ import app.pwhs.blockads.data.dao.FirewallRuleDao
 import app.pwhs.blockads.data.dao.ProtectionProfileDao
 import app.pwhs.blockads.data.dao.WhitelistDomainDao
 import app.pwhs.blockads.data.datastore.AppPreferences
-import app.pwhs.blockads.data.entities.DnsProtocol
 import app.pwhs.blockads.data.entities.FilterList
 import app.pwhs.blockads.data.entities.FilterListBackup
 import app.pwhs.blockads.data.entities.FirewallRule
 import app.pwhs.blockads.data.entities.FirewallRuleBackup
 import app.pwhs.blockads.data.entities.ProfileManager
+import app.pwhs.blockads.data.entities.RuleType
 import app.pwhs.blockads.data.entities.SettingsBackup
 import app.pwhs.blockads.data.entities.WhitelistDomain
-import app.pwhs.blockads.data.entities.RuleType
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.service.AdBlockVpnService
 import app.pwhs.blockads.ui.event.UiEvent
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -54,45 +52,6 @@ class SettingsViewModel(
 
     val autoReconnect: StateFlow<Boolean> = appPrefs.autoReconnect
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-
-    val upstreamDns: StateFlow<String> = appPrefs.upstreamDns
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AppPreferences.DEFAULT_UPSTREAM_DNS
-        )
-
-    val fallbackDns: StateFlow<String> = appPrefs.fallbackDns
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(5000),
-            AppPreferences.DEFAULT_FALLBACK_DNS
-        )
-
-    /**
-     * Unified display value for the custom DNS input.
-     * Shows the current DNS server in the format the user originally entered:
-     * - Plain DNS: IP address (e.g., "8.8.8.8")
-     * - DoH: full URL (e.g., "https://dns.google/dns-query")
-     * - DoT: tls:// prefix + server (e.g., "tls://dns.google")
-     * - DoQ: quic:// prefix + server (e.g., "quic://dns.adguard-dns.com")
-     */
-    val customDnsDisplay: StateFlow<String> = combine(
-        appPrefs.dnsProtocol,
-        appPrefs.upstreamDns,
-        appPrefs.dohUrl
-    ) { protocol, upstream, doh ->
-        when (protocol) {
-            DnsProtocol.DOH -> doh
-            DnsProtocol.DOT -> "tls://$upstream"
-            DnsProtocol.DOQ -> if (doh.startsWith("quic://", ignoreCase = true)) doh else "quic://${doh.removePrefix("https://")}"
-            DnsProtocol.PLAIN -> upstream
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
-        AppPreferences.DEFAULT_UPSTREAM_DNS
-    )
 
     val filterLists: StateFlow<List<FilterList>> = filterListDao.getAll()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
