@@ -12,7 +12,7 @@ import (
 //
 // Scans for <head> (case-insensitive) in the response stream and injects
 // lightweight <link> and <script> tags pointing to the local asset server
-// (local.blockads.app). The actual CSS/JS is served from memory by the
+// (local.pwhs.app). The actual CSS/JS is served from memory by the
 // local asset server — see mitm_local_server.go.
 //
 // This replaces the old approach of injecting raw CSS/JS inline (~50-100KB)
@@ -21,9 +21,9 @@ import (
 
 // injectionTags are the lightweight tags injected after <head>.
 // The browser fetches these via HTTPS through the MITM proxy, which
-// intercepts "local.blockads.app" and serves assets from memory.
-const injectionTags = `<link rel="stylesheet" href="https://local.blockads.app/cosmetic.css">` +
-	`<script src="https://local.blockads.app/killer.js"></script>`
+// intercepts "local.pwhs.app" and serves assets from memory.
+const injectionTags = `<link rel="stylesheet" href="https://local.pwhs.app/cosmetic.css">` +
+	`<script src="https://local.pwhs.app/killer.js"></script>`
 
 // headTagBytes is the pattern to search for (case-insensitive matching done manually).
 var headTagBytes = []byte("<head") // matches both <head> and <head ...attributes>
@@ -36,7 +36,7 @@ var (
 )
 
 // SetCosmeticCSS sets the cosmetic filter CSS that will be served by the
-// local asset server at https://local.blockads.app/cosmetic.css.
+// local asset server at https://local.pwhs.app/cosmetic.css.
 // Called from Kotlin after parsing EasyList cosmetic rules.
 func SetCosmeticCSS(css string) {
 	cosmeticMu.Lock()

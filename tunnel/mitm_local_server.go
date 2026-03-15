@@ -8,14 +8,14 @@ import (
 )
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Local Asset Server — fake domain "local.blockads.app"
+// Local Asset Server — fake domain "local.pwhs.app"
 //
 // Instead of injecting thousands of bytes of raw CSS/JS inline into every HTML
 // page (which bloats the response and delays rendering), we inject lightweight
 // <link> and <script> tags pointing to this fake domain:
 //
-//   <link rel="stylesheet" href="https://local.blockads.app/cosmetic.css">
-//   <script src="https://local.blockads.app/killer.js"></script>
+//   <link rel="stylesheet" href="https://local.pwhs.app/cosmetic.css">
+//   <script src="https://local.pwhs.app/killer.js"></script>
 //
 // When the browser fetches these URLs through the MITM proxy, the proxy
 // recognises the hostname and serves the assets directly from memory — no
@@ -29,9 +29,9 @@ import (
 // ─────────────────────────────────────────────────────────────────────────────
 
 // LocalAssetHost is the fake hostname the proxy intercepts to serve assets.
-const LocalAssetHost = "local.blockads.app"
+const LocalAssetHost = "local.pwhs.app"
 
-// ServeLocalAsset handles HTTP requests to local.blockads.app.
+// ServeLocalAsset handles HTTP requests to local.pwhs.app.
 // Returns true if the request was handled (caller should NOT forward upstream).
 // Returns false if the path is unknown (caller can 404).
 func ServeLocalAsset(req *http.Request) *http.Response {
@@ -164,9 +164,9 @@ type readCloserStr struct {
 
 func (readCloserStr) Close() error { return nil }
 
-// ── Pre-generate cert for local.blockads.app at proxy startup ────────────────
+// ── Pre-generate cert for local.pwhs.app at proxy startup ────────────────
 
-// WarmLocalAssetCert pre-generates the TLS certificate for local.blockads.app
+// WarmLocalAssetCert pre-generates the TLS certificate for local.pwhs.app
 // so the first request doesn't incur cert generation latency.
 func (cm *CertManager) WarmLocalAssetCert() {
 	start := time.Now()

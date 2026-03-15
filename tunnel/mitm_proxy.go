@@ -300,7 +300,7 @@ func (p *MitmProxy) mitmIntercept(clientConn net.Conn, host, hostname string) {
 	p.relayHTTP(clientTLS, serverConn, hostname)
 }
 
-// serveLocalAssetDirect handles CONNECT requests to local.blockads.app.
+// serveLocalAssetDirect handles CONNECT requests to local.pwhs.app.
 // Instead of dialling an upstream server, it performs the TLS handshake
 // with the client using a dynamically generated cert and then serves
 // assets directly from memory.
@@ -308,7 +308,7 @@ func (p *MitmProxy) serveLocalAssetDirect(clientConn net.Conn, hostname string) 
 	// Tell the client the tunnel is established
 	clientConn.Write([]byte("HTTP/1.1 200 Connection Established\r\n\r\n"))
 
-	// Get a dynamic TLS cert for local.blockads.app
+	// Get a dynamic TLS cert for local.pwhs.app
 	tlsConfig, err := p.certMgr.GetTLSConfigForHost(hostname)
 	if err != nil {
 		logf("Local asset server: cert failed for %s: %v", hostname, err)
@@ -368,7 +368,7 @@ func (p *MitmProxy) relayHTTP(clientConn net.Conn, serverConn net.Conn, hostname
 		reqHost := hostOnly(req.Host)
 
 		// ── Local Asset Server sub-request ──────────────────────────
-		// If the browser requests local.blockads.app resources inside
+		// If the browser requests local.pwhs.app resources inside
 		// an existing MITM'd connection, serve from memory inline.
 		if IsLocalAssetHost(reqHost) {
 			resp := ServeLocalAsset(req)
