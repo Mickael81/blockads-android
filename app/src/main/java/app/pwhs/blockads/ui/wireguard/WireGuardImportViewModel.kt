@@ -20,17 +20,6 @@ import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-/**
- * One-shot UI events for the WireGuard import screen.
- */
-sealed class WireGuardUiEvent {
-    /** Config saved & routing mode set — UI should navigate back or show success. */
-    data object ConfigSaved : WireGuardUiEvent()
-
-    /** Config cleared — UI should reflect that WireGuard is no longer active. */
-    data object ConfigCleared : WireGuardUiEvent()
-}
-
 class WireGuardImportViewModel(
     application: Application,
 ) : AndroidViewModel(application), KoinComponent {
@@ -142,11 +131,6 @@ class WireGuardImportViewModel(
     }
 
     fun clearError() {
-        _error.value = null
-    }
-
-    fun clearConfig() {
-        _config.value = null
         _error.value = null
     }
 }
