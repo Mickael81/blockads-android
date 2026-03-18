@@ -288,6 +288,7 @@ class AdBlockVpnService : VpnService() {
                 filterRepo.loadCustomRules()
 
                 filterRepo.seedDefaultsIfNeeded()
+                filterRepo.fetchAndSyncRemoteFilterLists()
                 val result = filterRepo.loadAllEnabledFilters()
                 Timber.d("Filters loaded: ${result.getOrDefault(0)} domains")
 

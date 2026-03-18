@@ -14,7 +14,12 @@ data class FilterList(
     val isBuiltIn: Boolean = false,
     val domainCount: Int = 0,
     val lastUpdated: Long = 0,
-    val category: String = CATEGORY_AD
+    val category: String = CATEGORY_AD,
+    val bloomUrl: String = "",
+    val trieUrl: String = "",
+    val cssUrl: String = "",
+    val ruleCount: Int = 0,
+    val originalUrl: String = ""
 ) {
     companion object {
         const val CATEGORY_AD = "AD"

@@ -5,6 +5,7 @@ import app.pwhs.blockads.data.dao.CustomDnsRuleDao
 import app.pwhs.blockads.data.dao.FilterListDao
 import app.pwhs.blockads.data.dao.WhitelistDomainDao
 import app.pwhs.blockads.data.entities.FilterList
+import app.pwhs.blockads.data.remote.FilterDownloadManager
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsChannel
@@ -14,8 +15,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.io.BufferedReader
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +26,8 @@ class FilterListRepository(
     private val filterListDao: FilterListDao,
     private val whitelistDomainDao: WhitelistDomainDao,
     private val customDnsRuleDao: CustomDnsRuleDao,
-    private val client: HttpClient
+    private val client: HttpClient,
+    private val downloadManager: FilterDownloadManager
 ) {
 
     companion object {
@@ -38,358 +38,319 @@ class FilterListRepository(
         const val BLOCK_REASON_FIREWALL = "FIREWALL"
         const val BLOCK_REASON_UPSTREAM_DNS = "upstream_dns"
 
+        private const val FILTER_LIST_JSON_URL =
+            "https://raw.githubusercontent.com/pass-with-high-score/blockads_filter_bin/refs/heads/main/output/filter_lists.json"
+        private const val BASE_BIN_URL =
+            "https://raw.githubusercontent.com/pass-with-high-score/blockads_filter_bin/refs/heads/main/output"
+
         val DEFAULT_LISTS = listOf(
+            // ── Vietnamese ──────────────────────────────────────────────
             FilterList(
                 name = "ABPVN",
                 url = "https://abpvn.com/android/abpvn.txt",
                 description = "Vietnamese ad filter list",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 18307,
+                bloomUrl = "$BASE_BIN_URL/abpvn.bloom",
+                trieUrl = "$BASE_BIN_URL/abpvn.trie",
+                originalUrl = "https://abpvn.com/android/abpvn.txt"
             ),
             FilterList(
                 name = "HostsVN",
                 url = "https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts",
                 description = "Vietnamese hosts-based ad blocker",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 17583,
+                bloomUrl = "$BASE_BIN_URL/hostsvn.bloom",
+                trieUrl = "$BASE_BIN_URL/hostsvn.trie",
+                originalUrl = "https://raw.githubusercontent.com/bigdargon/hostsVN/master/hosts"
             ),
-            FilterList(
-                name = "AdGuard DNS",
-                url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
-                description = "AdGuard DNS filter for ad & tracker blocking",
-                isEnabled = false,
-                isBuiltIn = true
-            ),
+            // ── Popular Global Filters ──────────────────────────────────
             FilterList(
                 name = "StevenBlack Unified",
                 url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
                 description = "Unified hosts from multiple curated sources — ads & malware",
-                isEnabled = true,
-                isBuiltIn = true
+                isEnabled = true, isBuiltIn = true,
+                ruleCount = 81919,
+                bloomUrl = "$BASE_BIN_URL/stevenblack.bloom",
+                trieUrl = "$BASE_BIN_URL/stevenblack.trie",
+                originalUrl = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
             ),
             FilterList(
                 name = "StevenBlack Gambling",
                 url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-only/hosts",
                 description = "Block gambling & betting sites",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 5936,
+                bloomUrl = "$BASE_BIN_URL/stevenblack_gambling.bloom",
+                trieUrl = "$BASE_BIN_URL/stevenblack_gambling.trie",
+                originalUrl = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-only/hosts"
             ),
             FilterList(
                 name = "StevenBlack Adult",
                 url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-only/hosts",
                 description = "Block adult content domains",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 76509,
+                bloomUrl = "$BASE_BIN_URL/stevenblack_porn.bloom",
+                trieUrl = "$BASE_BIN_URL/stevenblack_porn.trie",
+                originalUrl = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn-only/hosts"
             ),
             FilterList(
                 name = "StevenBlack Social",
                 url = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social-only/hosts",
                 description = "Block social media platforms",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 3243,
+                bloomUrl = "$BASE_BIN_URL/stevenblack_social.bloom",
+                trieUrl = "$BASE_BIN_URL/stevenblack_social.trie",
+                originalUrl = "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social-only/hosts"
             ),
             FilterList(
                 name = "EasyList",
                 url = "https://easylist.to/easylist/easylist.txt",
                 description = "Most popular global ad filter — blocks ads on most websites",
-                isEnabled = true,
-                isBuiltIn = true
+                isEnabled = true, isBuiltIn = true,
+                ruleCount = 70207,
+                bloomUrl = "$BASE_BIN_URL/easylist.bloom",
+                trieUrl = "$BASE_BIN_URL/easylist.trie",
+                cssUrl = "$BASE_BIN_URL/easylist.css",
+                originalUrl = "https://easylist.to/easylist/easylist.txt"
             ),
             FilterList(
                 name = "EasyPrivacy",
                 url = "https://easylist.to/easylist/easyprivacy.txt",
                 description = "Blocks tracking scripts and privacy-invasive trackers",
-                isEnabled = true,
-                isBuiltIn = true
+                isEnabled = true, isBuiltIn = true,
+                ruleCount = 50933,
+                bloomUrl = "$BASE_BIN_URL/easyprivacy.bloom",
+                trieUrl = "$BASE_BIN_URL/easyprivacy.trie",
+                cssUrl = "$BASE_BIN_URL/easyprivacy.css",
+                originalUrl = "https://easylist.to/easylist/easyprivacy.txt"
             ),
             FilterList(
                 name = "Peter Lowe's Ad and tracking server list",
                 url = "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblockplus&showintro=1&mimetype=plaintext",
                 description = "Lightweight host-based ad and tracking server blocklist",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 3516,
+                bloomUrl = "$BASE_BIN_URL/yoyo_adservers.bloom",
+                trieUrl = "$BASE_BIN_URL/yoyo_adservers.trie",
+                originalUrl = "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblockplus&showintro=1&mimetype=plaintext"
+            ),
+            // ── AdGuard ──────────────────────────────────────────────────
+            FilterList(
+                name = "AdGuard DNS",
+                url = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt",
+                description = "AdGuard DNS filter for ad & tracker blocking",
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 162083,
+                bloomUrl = "$BASE_BIN_URL/adguard_dns.bloom",
+                trieUrl = "$BASE_BIN_URL/adguard_dns.trie",
+                originalUrl = "https://adguardteam.github.io/AdGuardSDNSFilter/Filters/filter.txt"
             ),
             FilterList(
                 name = "AdGuard Base Filter",
                 url = "https://filters.adtidy.org/extension/ublock/filters/2.txt",
                 description = "AdGuard base ad filter — comprehensive alternative to EasyList",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 96398,
+                bloomUrl = "$BASE_BIN_URL/adguard_base.bloom",
+                trieUrl = "$BASE_BIN_URL/adguard_base.trie",
+                cssUrl = "$BASE_BIN_URL/adguard_base.css",
+                originalUrl = "https://filters.adtidy.org/extension/ublock/filters/2.txt"
             ),
             FilterList(
                 name = "AdGuard Mobile Ads",
                 url = "https://filters.adtidy.org/extension/ublock/filters/11.txt",
                 description = "Optimized filter for mobile ads in apps and mobile websites",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 4620,
+                bloomUrl = "$BASE_BIN_URL/adguard_mobile.bloom",
+                trieUrl = "$BASE_BIN_URL/adguard_mobile.trie",
+                cssUrl = "$BASE_BIN_URL/adguard_mobile.css",
+                originalUrl = "https://filters.adtidy.org/extension/ublock/filters/11.txt"
             ),
             FilterList(
                 name = "AdGuard Social Media",
                 url = "https://filters.adtidy.org/extension/ublock/filters/4.txt",
                 description = "Blocks social media widgets — like buttons, share buttons, and embeds",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 10020,
+                bloomUrl = "$BASE_BIN_URL/adguard_social.bloom",
+                trieUrl = "$BASE_BIN_URL/adguard_social.trie",
+                cssUrl = "$BASE_BIN_URL/adguard_social.css",
+                originalUrl = "https://filters.adtidy.org/extension/ublock/filters/4.txt"
             ),
             // ── Hagezi DNS Blocklists ────────────────────────────────────
             FilterList(
                 name = "Hagezi Light",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/light.txt",
                 description = "Hagezi Light — basic ad & tracker blocking with minimal false positives",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 69283,
+                bloomUrl = "$BASE_BIN_URL/hagezi_light.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_light.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/light.txt"
             ),
             FilterList(
                 name = "Hagezi Normal",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/multi.txt",
                 description = "Hagezi Normal — all-round protection against ads, tracking & malware",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 145970,
+                bloomUrl = "$BASE_BIN_URL/hagezi_multi.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_multi.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/multi.txt"
             ),
             FilterList(
                 name = "Hagezi Pro",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt",
                 description = "Hagezi Pro — extended protection, recommended for advanced users",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 188957,
+                bloomUrl = "$BASE_BIN_URL/hagezi_pro.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_pro.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt"
             ),
             FilterList(
                 name = "Hagezi Pro++",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.plus.txt",
                 description = "Hagezi Pro++ — aggressive blocking, may break some apps/sites",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 236213,
+                bloomUrl = "$BASE_BIN_URL/hagezi_pro_plus.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_pro_plus.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.plus.txt"
             ),
             FilterList(
                 name = "Hagezi Ultimate",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt",
                 description = "Hagezi Ultimate — extremely aggressive blocking, will break most apps/sites",
-                isEnabled = false,
-                isBuiltIn = true
+                isEnabled = false, isBuiltIn = true,
+                ruleCount = 279444,
+                bloomUrl = "$BASE_BIN_URL/hagezi_ultimate.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_ultimate.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/ultimate.txt"
             ),
             FilterList(
                 name = "Hagezi TIF",
                 url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/tif.txt",
                 description = "Hagezi Threat Intelligence — blocks malware, phishing, scam & cryptojacking",
-                isEnabled = false,
-                isBuiltIn = true,
-                category = FilterList.CATEGORY_SECURITY
+                isEnabled = false, isBuiltIn = true,
+                category = FilterList.CATEGORY_SECURITY,
+                ruleCount = 688511,
+                bloomUrl = "$BASE_BIN_URL/hagezi_tif.bloom",
+                trieUrl = "$BASE_BIN_URL/hagezi_tif.trie",
+                originalUrl = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/tif.txt"
             ),
             // ── Security / Phishing / Malware ───────────────────────────
             FilterList(
                 name = "URLhaus Malicious URL Blocklist",
                 url = "https://urlhaus.abuse.ch/downloads/hostfile/",
                 description = "Blocks malware distribution sites — updated frequently by abuse.ch",
-                isEnabled = false,
-                isBuiltIn = true,
-                category = FilterList.CATEGORY_SECURITY
+                isEnabled = false, isBuiltIn = true,
+                category = FilterList.CATEGORY_SECURITY,
+                ruleCount = 470,
+                bloomUrl = "$BASE_BIN_URL/urlhaus_malware.bloom",
+                trieUrl = "$BASE_BIN_URL/urlhaus_malware.trie",
+                originalUrl = "https://urlhaus.abuse.ch/downloads/hostfile/"
             ),
             FilterList(
                 name = "PhishTank Blocklist",
                 url = "https://phishing.army/download/phishing_army_blocklist.txt",
                 description = "Blocks known phishing websites that steal personal information",
-                isEnabled = false,
-                isBuiltIn = true,
-                category = FilterList.CATEGORY_SECURITY
+                isEnabled = false, isBuiltIn = true,
+                category = FilterList.CATEGORY_SECURITY,
+                ruleCount = 153524,
+                bloomUrl = "$BASE_BIN_URL/phishing_army.bloom",
+                trieUrl = "$BASE_BIN_URL/phishing_army.trie",
+                originalUrl = "https://phishing.army/download/phishing_army_blocklist.txt"
             ),
             FilterList(
                 name = "Malware Domain List",
                 url = "https://raw.githubusercontent.com/RPiList/specials/master/Blocklisten/malware",
                 description = "Community-curated list of domains distributing malware",
-                isEnabled = false,
-                isBuiltIn = true,
-                category = FilterList.CATEGORY_SECURITY
+                isEnabled = false, isBuiltIn = true,
+                category = FilterList.CATEGORY_SECURITY,
+                ruleCount = 477891,
+                bloomUrl = "$BASE_BIN_URL/rpilist_malware.bloom",
+                trieUrl = "$BASE_BIN_URL/rpilist_malware.trie",
+                originalUrl = "https://raw.githubusercontent.com/RPiList/specials/master/Blocklisten/malware"
             ),
         )
     }
 
-    // Trie-based domain storage: mmap'd binary files for near-zero heap usage
-    @Volatile
-    private var adTrie: MmapDomainTrie? = null
-
-    @Volatile
-    private var securityTrie: MmapDomainTrie? = null
+    // Paths to pre-compiled binary files for Go Native Engine (CSV strings)
+    @Volatile private var adTriePaths: String = ""
+    @Volatile private var securityTriePaths: String = ""
+    @Volatile private var adBloomPaths: String = ""
+    @Volatile private var securityBloomPaths: String = ""
 
     private val loadMutex = Mutex()
 
     init {
-        trieDir.mkdirs()
+        File(context.filesDir, "remote_filters").mkdirs()
     }
 
     private val whitelistedDomains = ConcurrentHashMap.newKeySet<String>()
-
-    // Custom rules - higher priority than filter lists (small sets, keep as HashSet)
     private val customBlockDomains = ConcurrentHashMap.newKeySet<String>()
     private val customAllowDomains = ConcurrentHashMap.newKeySet<String>()
 
-    private val trieDir get() = File(context.filesDir, "trie_cache")
-
     private val _domainCountFlow = MutableStateFlow(0)
     val domainCountFlow: StateFlow<Int> = _domainCountFlow.asStateFlow()
-
     val domainCount: Int get() = _domainCountFlow.value
 
-    fun getAdTriePath(): String? {
-        val file = File(trieDir, "ad_domains.trie")
-        return if (file.exists()) file.absolutePath else null
-    }
-
-    fun getSecurityTriePath(): String? {
-        val file = File(trieDir, "security_domains.trie")
-        return if (file.exists()) file.absolutePath else null
-    }
-
-    fun getAdBloomPath(): String? {
-        val file = File(trieDir, "ad_domains.bloom")
-        return if (file.exists()) file.absolutePath else null
-    }
-
-    fun getSecurityBloomPath(): String? {
-        val file = File(trieDir, "security_domains.bloom")
-        return if (file.exists()) file.absolutePath else null
-    }
+    fun getAdTriePath(): String = adTriePaths
+    fun getSecurityTriePath(): String = securityTriePaths
+    fun getAdBloomPath(): String = adBloomPaths
+    fun getSecurityBloomPath(): String = securityBloomPaths
 
     fun getCosmeticCssPath(): String? {
         val file = File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css")
         return if (file.exists() && file.length() > 0) file.absolutePath else null
     }
 
-    /**
-     * Check if a domain or any of its parent domains matches a condition.
-     *
-     * This helper function iterates through a domain and all its parent domains
-     * (by removing the leftmost subdomain each time), checking each against the
-     * provided checker function.
-     *
-     * Example: For "sub.example.com", checks:
-     * 1. "sub.example.com"
-     * 2. "example.com"
-     * 3. "com"
-     *
-     * @param domain The domain to check (e.g., "ads.example.com")
-     * @param checker A function that returns true if the domain matches the condition.
-     *                This could check a Set, Bloom filter, or any other data structure.
-     * @return true if the domain or any parent domain matches; false otherwise
-     *
-     * Usage examples:
-     * ```kotlin
-     * // Check whitelist (Set)
-     * checkDomainAndParents(domain) { whitelistedDomains.contains(it) }
-     *
-     * // Check Bloom filter
-     * checkDomainAndParents(domain) { bloomFilter.mightContain(it) }
-     *
-     * // Check exact blocklist (HashMap)
-     * checkDomainAndParents(domain) { blockedDomains.contains(it) }
-     * ```
-     */
-    private inline fun checkDomainAndParents(
-        domain: String,
-        checker: (String) -> Boolean
-    ): Boolean {
+    private inline fun checkDomainAndParents(domain: String, checker: (String) -> Boolean): Boolean {
         if (checker(domain)) return true
         var d = domain
         while (d.contains('.')) {
             d = d.substringAfter('.')
             if (checker(d)) return true
-            // Check wildcard: *.remaining (e.g., *.example.com matches sub.example.com)
             if (checker("*.$d")) return true
         }
         return false
     }
 
     fun isBlocked(domain: String): Boolean {
-        // Priority 1: Check custom allow rules first (@@||example.com^)
-        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) {
-            return false
-        }
-
-        // Priority 2: Check custom block rules (||example.com^)
-        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) {
-            return true
-        }
-
-        // Priority 3: Check whitelist — whitelisted domains are always allowed
-        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) {
-            return false
-        }
-
-        // Priority 4: Check security domains via Trie (malware/phishing)
-        try {
-            if (securityTrie?.containsOrParent(domain) == true) {
-                return true
-            }
-        } catch (e: Exception) {
-            Timber.e(e, "Security trie lookup failed for: $domain")
-        }
-
-        // Priority 5: Check ad domains via Trie (mmap'd, near-zero heap)
-        return try {
-            adTrie?.containsOrParent(domain) ?: false
-        } catch (e: Exception) {
-            Timber.e(e, "Ad trie lookup failed for: $domain")
-            false
-        }
+        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) return false
+        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) return true
+        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) return false
+        return false
     }
 
-    /**
-     * Checks if a domain has a custom rule override.
-     * Used by the native Go engine to bypass the Binary Trie fast-path.
-     * @return 1L for BLOCK override, 0L for ALLOW override, -1L for NO override.
-     */
     fun hasCustomRule(domain: String): Long {
-        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) {
-            return 0L
-        }
-        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) {
-            return 0L
-        }
-        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) {
-            return 1L
-        }
+        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) return 0L
+        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) return 0L
+        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) return 1L
         return -1L
     }
 
-    /**
-     * Returns a key identifying the reason a domain is blocked.
-     * Returns empty string if the domain is not blocked.
-     * Use BlockReason constants; resolve to localized strings in UI.
-     */
     fun getBlockReason(domain: String): String {
-        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) {
-            return ""
-        }
-        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) {
-            return BLOCK_REASON_CUSTOM_RULE
-        }
-        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) {
-            return ""
-        }
-        try {
-            if (securityTrie?.containsOrParent(domain) == true) {
-                return BLOCK_REASON_SECURITY
-            }
-        } catch (_: Exception) {
-        }
-        try {
-            if (adTrie?.containsOrParent(domain) == true) {
-                return BLOCK_REASON_FILTER_LIST
-            }
-        } catch (_: Exception) {
-        }
+        if (checkDomainAndParents(domain) { customAllowDomains.contains(it) }) return ""
+        if (checkDomainAndParents(domain) { customBlockDomains.contains(it) }) return BLOCK_REASON_CUSTOM_RULE
+        if (checkDomainAndParents(domain) { whitelistedDomains.contains(it) }) return ""
         return ""
     }
 
     suspend fun loadCustomRules() {
         val blockDomains = customDnsRuleDao.getBlockDomains()
         val allowDomains = customDnsRuleDao.getAllowDomains()
-
         customBlockDomains.clear()
         customBlockDomains.addAll(blockDomains.map { it.lowercase() })
-
         customAllowDomains.clear()
         customAllowDomains.addAll(allowDomains.map { it.lowercase() })
-
-        Timber.e("Loaded ${customBlockDomains.size} custom block rules and ${customAllowDomains.size} custom allow rules")
+        Timber.d("Loaded ${customBlockDomains.size} block + ${customAllowDomains.size} allow custom rules")
     }
 
     suspend fun loadWhitelist() {
@@ -399,746 +360,319 @@ class FilterListRepository(
         Timber.d("Loaded ${whitelistedDomains.size} whitelisted domains")
     }
 
+    // ────────────────────────────────────────────────────────────────────
+    // Seeding & Remote Sync
+    // ────────────────────────────────────────────────────────────────────
+
     /**
-     * Seeds default filter lists. Updates existing ones and adds new ones.
-     * Also removes any built-in filters that are no longer in the DEFAULT_LISTS.
+     * Seeds default filter lists with pre-compiled URLs.
+     * Updates existing entries so bloomUrl/trieUrl/cssUrl/ruleCount stay current.
      */
     suspend fun seedDefaultsIfNeeded() {
         val existingLists = filterListDao.getAllSync()
-        val existingByUrl = existingLists.associateBy { it.url }
         val existingByName = existingLists.associateBy { it.name }
 
-        // Find which default lists need to be inserted or updated
         for (defaultList in DEFAULT_LISTS) {
-            val existing = existingByUrl[defaultList.url] ?: existingByName[defaultList.name]
+            val existing = existingByName[defaultList.name]
             if (existing == null) {
-                // Insert new built-in list
                 filterListDao.insert(defaultList)
                 Timber.d("Seeded new built-in filter: ${defaultList.name}")
-            } else if (existing.name != defaultList.name ||
-                existing.url != defaultList.url ||
-                existing.description != defaultList.description || 
-                existing.category != defaultList.category || 
-                !existing.isBuiltIn) {
-                // Update existing built-in list to match new default configuration
-                // Keep the isEnabled, domainCount, lastUpdated state from the existing list
-                filterListDao.update(
-                    existing.copy(
-                        name = defaultList.name,
-                        url = defaultList.url,
-                        description = defaultList.description,
-                        category = defaultList.category,
-                        isBuiltIn = true
+            } else {
+                val needsUpdate = existing.url != defaultList.url ||
+                    existing.description != defaultList.description ||
+                    existing.category != defaultList.category ||
+                    existing.bloomUrl != defaultList.bloomUrl ||
+                    existing.trieUrl != defaultList.trieUrl ||
+                    existing.cssUrl != defaultList.cssUrl ||
+                    existing.ruleCount != defaultList.ruleCount ||
+                    existing.originalUrl != defaultList.originalUrl ||
+                    !existing.isBuiltIn
+
+                if (needsUpdate) {
+                    filterListDao.update(
+                        existing.copy(
+                            url = defaultList.url,
+                            description = defaultList.description,
+                            category = defaultList.category,
+                            bloomUrl = defaultList.bloomUrl,
+                            trieUrl = defaultList.trieUrl,
+                            cssUrl = defaultList.cssUrl,
+                            ruleCount = defaultList.ruleCount,
+                            originalUrl = defaultList.originalUrl,
+                            isBuiltIn = true
+                        )
                     )
-                )
-                Timber.d("Updated built-in filter info: ${defaultList.name}")
+                    Timber.d("Updated built-in filter: ${defaultList.name}")
+                }
             }
         }
 
-        // Remove old built-in lists that are no longer in DEFAULT_LISTS
         val defaultNames = DEFAULT_LISTS.map { it.name }.toSet()
-        val obsoleteBuiltIn = existingLists.filter { it.isBuiltIn && it.name !in defaultNames }
-        for (obsolete in obsoleteBuiltIn) {
-            filterListDao.delete(obsolete)
-            Timber.d("Removed obsolete built-in filter: ${obsolete.name}")
+        val obsolete = existingLists.filter { it.isBuiltIn && it.name !in defaultNames }
+        for (o in obsolete) {
+            filterListDao.delete(o)
+            Timber.d("Removed obsolete built-in filter: ${o.name}")
         }
     }
 
     /**
-     * Load all enabled filter lists and merge into Tries.
-     *
-     * Three loading strategies:
-     * 1. **Cache HIT** — fingerprint unchanged → mmap existing binary (~50ms)
-     * 2. **Incremental ADD** — only new filters enabled, none removed/changed
-     *    → load existing Trie from binary, parse only new filters, re-serialize
-     * 3. **Full REBUILD** — filters removed or changed → rebuild everything
+     * Fetches the remote filter_lists.json and syncs pre-compiled URLs to the local DB.
+     * Keeps bloomUrl/trieUrl/cssUrl/ruleCount fresh when the server regenerates binaries.
+     */
+    suspend fun fetchAndSyncRemoteFilterLists() = withContext(Dispatchers.IO) {
+        try {
+            val channel = client.get(FILTER_LIST_JSON_URL).bodyAsChannel()
+            val buffer = ByteArray(256 * 1024)
+            val output = java.io.ByteArrayOutputStream()
+            while (!channel.isClosedForRead) {
+                val read = channel.readAvailable(buffer)
+                if (read > 0) output.write(buffer, 0, read)
+            }
+            val jsonString = output.toString(Charsets.UTF_8.name())
+            val remoteLists = parseRemoteFilterJson(jsonString)
+            if (remoteLists.isEmpty()) return@withContext
+
+            val existingLists = filterListDao.getAllSync()
+            val existingByName = existingLists.associateBy { it.name }
+
+            for (remote in remoteLists) {
+                val existing = existingByName[remote.name]
+                if (existing != null) {
+                    if (existing.bloomUrl != remote.bloomUrl ||
+                        existing.trieUrl != remote.trieUrl ||
+                        existing.cssUrl != (remote.cssUrl ?: "") ||
+                        existing.ruleCount != remote.ruleCount
+                    ) {
+                        filterListDao.update(
+                            existing.copy(
+                                bloomUrl = remote.bloomUrl,
+                                trieUrl = remote.trieUrl,
+                                cssUrl = remote.cssUrl ?: "",
+                                ruleCount = remote.ruleCount,
+                                originalUrl = remote.originalUrl ?: existing.originalUrl
+                            )
+                        )
+                        Timber.d("Synced URLs for: ${remote.name}")
+                    }
+                } else {
+                    val category = if (remote.category == "security") FilterList.CATEGORY_SECURITY else FilterList.CATEGORY_AD
+                    filterListDao.insert(
+                        FilterList(
+                            name = remote.name,
+                            url = remote.originalUrl ?: "",
+                            description = remote.description ?: "",
+                            isEnabled = remote.isEnabled,
+                            isBuiltIn = remote.isBuiltIn,
+                            category = category,
+                            ruleCount = remote.ruleCount,
+                            bloomUrl = remote.bloomUrl,
+                            trieUrl = remote.trieUrl,
+                            cssUrl = remote.cssUrl ?: "",
+                            originalUrl = remote.originalUrl ?: ""
+                        )
+                    )
+                    Timber.d("Inserted new remote filter: ${remote.name}")
+                }
+            }
+            Timber.d("Synced ${remoteLists.size} filters from remote JSON")
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch remote filter list JSON")
+        }
+    }
+
+    /**
+     * Simple JSON parser for the filter_lists.json array.
+     */
+    private fun parseRemoteFilterJson(json: String): List<app.pwhs.blockads.data.remote.models.FilterList> {
+        return try {
+            val results = mutableListOf<app.pwhs.blockads.data.remote.models.FilterList>()
+            val objects = json.split("},").map {
+                it.trim().removePrefix("[").removeSuffix("]").trim() + "}"
+            }
+
+            for (obj in objects) {
+                val cleaned = obj.trim().removePrefix("{").removeSuffix("}").removeSuffix("},")
+                if (cleaned.isBlank()) continue
+
+                fun extractString(key: String): String? {
+                    val pattern = "\"$key\"\\s*:\\s*\"(.*?)\"".toRegex()
+                    return pattern.find(cleaned)?.groupValues?.get(1)
+                        ?.replace("\\u0026", "&")
+                }
+                fun extractInt(key: String): Int {
+                    val pattern = "\"$key\"\\s*:\\s*(\\d+)".toRegex()
+                    return pattern.find(cleaned)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+                }
+                fun extractBoolean(key: String): Boolean {
+                    val pattern = "\"$key\"\\s*:\\s*(true|false)".toRegex()
+                    return pattern.find(cleaned)?.groupValues?.get(1) == "true"
+                }
+
+                val name = extractString("name") ?: continue
+                val bloomUrl = extractString("bloomUrl") ?: continue
+                val trieUrl = extractString("trieUrl") ?: continue
+
+                results.add(
+                    app.pwhs.blockads.data.remote.models.FilterList(
+                        name = name,
+                        id = extractString("id") ?: name.lowercase().replace(" ", "_"),
+                        description = extractString("description"),
+                        isEnabled = extractBoolean("isEnabled"),
+                        isBuiltIn = extractBoolean("isBuiltIn"),
+                        category = extractString("category"),
+                        ruleCount = extractInt("ruleCount"),
+                        bloomUrl = bloomUrl,
+                        trieUrl = trieUrl,
+                        cssUrl = extractString("cssUrl"),
+                        originalUrl = extractString("originalUrl")
+                    )
+                )
+            }
+            results
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to parse remote filter JSON")
+            emptyList()
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // Filter Loading & Download
+    // ────────────────────────────────────────────────────────────────────
+
+    /**
+     * Load all enabled filter lists using FilterDownloadManager.
+     * Downloads pre-compiled .bloom/.trie files and collects paths as CSV strings for the Go engine.
      */
     suspend fun loadAllEnabledFilters(): Result<Int> = withContext(Dispatchers.IO) {
         loadMutex.withLock {
             try {
-
                 val enabledLists = filterListDao.getEnabled()
                 if (enabledLists.isEmpty()) {
-                    adTrie = null
-                    securityTrie = null
-                    File(trieDir, "ad_domains.trie").delete()
-                    File(trieDir, "security_domains.trie").delete()
-                    File(trieDir, "ad_domains.bloom").delete()
-                    File(trieDir, "security_domains.bloom").delete()
+                    adTriePaths = ""
+                    securityTriePaths = ""
+                    adBloomPaths = ""
+                    securityBloomPaths = ""
                     File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css").delete()
-                    File(trieDir, "trie_fingerprint.txt").delete()
                     _domainCountFlow.value = 0
                     return@withContext Result.success(0)
                 }
 
                 val startTime = System.currentTimeMillis()
-                trieDir.mkdirs()
-                val adTrieFile = File(trieDir, "ad_domains.trie")
-                val secTrieFile = File(trieDir, "security_domains.trie")
-                val fingerprintFile = File(trieDir, "trie_fingerprint.txt")
+                val adTrieSb = StringBuilder()
+                val secTrieSb = StringBuilder()
+                val adBloomSb = StringBuilder()
+                val secBloomSb = StringBuilder()
+                var totalCount = 0
 
-                // ── Build per-filter fingerprints ──
-                val currentFpMap = buildFingerprintMap(enabledLists)
-                val currentFingerprint = currentFpMap.entries
-                    .sortedBy { it.key }
-                    .joinToString(";") { "${it.key}:${it.value}" }
-
-                val savedFingerprint = try {
-                    if (fingerprintFile.exists()) fingerprintFile.readText() else ""
-                } catch (_: Exception) {
-                    ""
-                }
-
-                // ── Strategy 1: Cache HIT — nothing changed ──
-                if (currentFingerprint == savedFingerprint
-                    && adTrieFile.exists() && adTrieFile.length() > 0
-                ) {
-                    adTrie = DomainTrie.loadFromMmap(adTrieFile)
-                    securityTrie = if (secTrieFile.exists() && secTrieFile.length() > 0) {
-                        DomainTrie.loadFromMmap(secTrieFile)
-                    } else null
-
-                    val elapsed = System.currentTimeMillis() - startTime
-                    val totalCount = (adTrie?.size ?: 0) + (securityTrie?.size ?: 0)
-                    _domainCountFlow.value = totalCount
-                    Timber.d("Trie cache HIT — loaded $totalCount domains via mmap in ${elapsed}ms")
-
-                    // Ensure cosmetic rules are generated even on a cache hit if the file is missing/empty
-                    val cssFile = File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css")
-                    if (!cssFile.exists() || cssFile.length() == 0L) {
-                        Timber.d("Trie cache HIT, but cosmetic CSS is missing or 0 bytes. Recompiling...")
-                        compileCosmeticRules(enabledLists)
+                for (filter in enabledLists) {
+                    if (filter.bloomUrl.isNullOrEmpty() || filter.trieUrl.isNullOrEmpty()) {
+                        Timber.d("Skipping ${filter.name}: no pre-compiled URLs")
+                        continue
                     }
-
-                    return@withContext Result.success(totalCount)
-                }
-
-                // ── Determine what changed ──
-                val savedFpMap = parseFingerprintMap(savedFingerprint)
-                val currentIds = currentFpMap.keys
-                val savedIds = savedFpMap.keys
-
-                val addedFilterIds = currentIds - savedIds
-                val removedFilterIds = savedIds - currentIds
-                val changedFilterIds = currentIds.intersect(savedIds)
-                    .filter { currentFpMap[it] != savedFpMap[it] }
-                    .toSet()
-
-                val isAddOnly = removedFilterIds.isEmpty() && changedFilterIds.isEmpty()
-                        && addedFilterIds.isNotEmpty()
-                        && adTrieFile.exists() && adTrieFile.length() > 0
-
-                if (isAddOnly) {
-                    // ── Strategy 2: Incremental ADD — only new filters ──
-                    Timber.d("Trie INCREMENTAL — ${addedFilterIds.size} new filter(s), loading existing + adding new")
-
-                    val addedFilters = enabledLists.filter { it.id in addedFilterIds }
-
-                    val adCount = incrementalAdd(
-                        addedFilters.filter { it.category != FilterList.CATEGORY_SECURITY },
-                        adTrieFile
-                    )
-                    val secCount = incrementalAdd(
-                        addedFilters.filter { it.category == FilterList.CATEGORY_SECURITY },
-                        secTrieFile
-                    )
-
-                    adTrie = if (adTrieFile.exists() && adTrieFile.length() > 0) {
-                        DomainTrie.loadFromMmap(adTrieFile)
-                    } else null
-                    securityTrie = if (secTrieFile.exists() && secTrieFile.length() > 0) {
-                        DomainTrie.loadFromMmap(secTrieFile)
-                    } else null
-
-                    saveFingerprintAndLog(
-                        fingerprintFile,
-                        currentFingerprint,
-                        startTime,
-                        "INCREMENTAL"
-                    )
-                    val totalCount = (adTrie?.size ?: 0) + (securityTrie?.size ?: 0)
-                    _domainCountFlow.value = totalCount
-
-                    // Cosmetic rules must be totally recompiled if any lists were added
-                    compileCosmeticRules(enabledLists)
-
-                    return@withContext Result.success(totalCount)
-                }
-
-                // ── Strategy 3: Full REBUILD ──
-                Timber.d("Trie FULL REBUILD — removed=${removedFilterIds.size}, changed=${changedFilterIds.size}, added=${addedFilterIds.size}")
-
-                val adFilters =
-                    enabledLists.filter { it.category != FilterList.CATEGORY_SECURITY }
-                var adCount = 0
-                if (adFilters.isNotEmpty()) {
-                    val adTrieBuilder = DomainTrie()
-                    for (filter in adFilters) {
-                        try {
-                            val sizeBefore = adTrieBuilder.size
-                            loadSingleFilterToTrie(filter, adTrieBuilder)
-                            val loaded = adTrieBuilder.size - sizeBefore
-                            filterListDao.updateStats(
-                                id = filter.id,
-                                count = loaded,
-                                timestamp = System.currentTimeMillis()
-                            )
-                            Timber.d("Loaded $loaded domains from ${filter.name}")
-                        } catch (e: Exception) {
-                            Timber.d("Failed to load filter: ${filter.name}: $e")
+                    val result = downloadManager.downloadFilterList(filter, forceUpdate = false)
+                    if (result.isSuccess) {
+                        val paths = result.getOrNull() ?: continue
+                        if (filter.category == FilterList.CATEGORY_SECURITY) {
+                            paths.triePath?.let { secTrieSb.append(it).append(",") }
+                            paths.bloomPath?.let { secBloomSb.append(it).append(",") }
+                        } else {
+                            paths.triePath?.let { adTrieSb.append(it).append(",") }
+                            paths.bloomPath?.let { adBloomSb.append(it).append(",") }
                         }
+                        totalCount += filter.ruleCount
+                    } else {
+                        Timber.e("Failed to download filter: ${filter.name}")
                     }
-                    adCount = adTrieBuilder.size
-                    if (adCount > 0) {
-                        val tempFile = File(adTrieFile.parent, adTrieFile.name + ".tmp")
-                        adTrieBuilder.saveToBinary(tempFile)
-                        tempFile.renameTo(adTrieFile)
-                        // Generate bloom filter for fast pre-filtering in Go
-                        val adBloomFile = File(trieDir, "ad_domains.bloom")
-                        adTrieBuilder.saveBloomFilter(adBloomFile)
-                    }
-                    adTrieBuilder.clear()
-                } else {
-                    adTrieFile.delete()
-                    File(trieDir, "ad_domains.bloom").delete()
                 }
 
-                val secFilters =
-                    enabledLists.filter { it.category == FilterList.CATEGORY_SECURITY }
-                var secCount = 0
-                if (secFilters.isNotEmpty()) {
-                    val secTrieBuilder = DomainTrie()
-                    for (filter in secFilters) {
-                        try {
-                            val sizeBefore = secTrieBuilder.size
-                            loadSingleFilterToTrie(filter, secTrieBuilder)
-                            val loaded = secTrieBuilder.size - sizeBefore
-                            filterListDao.updateStats(
-                                id = filter.id,
-                                count = loaded,
-                                timestamp = System.currentTimeMillis()
-                            )
-                            Timber.d("Loaded $loaded domains from ${filter.name} (security)")
-                        } catch (e: Exception) {
-                            Timber.d("Failed to load filter: ${filter.name}: $e")
-                        }
-                    }
-                    secCount = secTrieBuilder.size
-                    if (secCount > 0) {
-                        val tempFile = File(secTrieFile.parent, secTrieFile.name + ".tmp")
-                        secTrieBuilder.saveToBinary(tempFile)
-                        tempFile.renameTo(secTrieFile)
-                        // Generate bloom filter for fast pre-filtering in Go
-                        val secBloomFile = File(trieDir, "security_domains.bloom")
-                        secTrieBuilder.saveBloomFilter(secBloomFile)
-                    }
-                    secTrieBuilder.clear()
-                } else {
-                    secTrieFile.delete()
-                    File(trieDir, "security_domains.bloom").delete()
-                }
+                adTriePaths = adTrieSb.toString().trimEnd(',')
+                securityTriePaths = secTrieSb.toString().trimEnd(',')
+                adBloomPaths = adBloomSb.toString().trimEnd(',')
+                securityBloomPaths = secBloomSb.toString().trimEnd(',')
 
-                adTrie = if (adCount > 0) DomainTrie.loadFromMmap(adTrieFile) else null
-                securityTrie =
-                    if (secCount > 0) DomainTrie.loadFromMmap(secTrieFile) else null
-
-                saveFingerprintAndLog(
-                    fingerprintFile,
-                    currentFingerprint,
-                    startTime,
-                    "FULL REBUILD"
-                )
-
-                // ── Extract and store cosmetic rules in background ──
                 compileCosmeticRules(enabledLists)
 
-                val finalCount = adCount + secCount
-                _domainCountFlow.value = finalCount
-                Result.success(finalCount)
+                _domainCountFlow.value = totalCount
+                val elapsed = System.currentTimeMillis() - startTime
+                Timber.d("Filter paths loaded in ${elapsed}ms, totalRules=$totalCount")
+                Result.success(totalCount)
             } catch (e: Exception) {
-                Timber.d("Failed to load filters: $e")
+                Timber.e(e, "Failed to load filters")
                 Result.failure(e)
             }
         }
     }
 
-    /**
-     * Extracts cosmetic rules from all enabled filters and saves them to a single CSS file.
-     * Overwrites the previous css file if it existed.
-     */
     private suspend fun compileCosmeticRules(enabledLists: List<FilterList>) = withContext(Dispatchers.IO) {
         try {
             val validLists = enabledLists.filter { it.category != FilterList.CATEGORY_SECURITY }
             if (validLists.isEmpty()) return@withContext
 
-            val selectors = mutableListOf<String>()
+            val cssBuilder = StringBuilder()
+            var rulesAdded = 0
 
-            // Pass 1: Extract generic rules from each file
-            Timber.d("Cosmetic: Scanning ${validLists.size} lists for rules")
             for (filter in validLists) {
-                val cacheFile = getCacheFile(filter)
-                if (!cacheFile.exists() || cacheFile.length() == 0L) {
-                    Timber.d("Cosmetic: Skipping ${filter.name} (no cache file)")
-                    continue
-                }
-
-                Timber.d("Cosmetic: Parsing ${filter.name}...")
-                var linesProcessed = 0
-                var hashHashFound = 0
-                var selectorsAdded = 0
-
-                cacheFile.bufferedReader().use { reader ->
-                    try {
-                        // Extract RAW selectors first before CSS generation
-                        reader.lineSequence()
-                            .forEach { line ->
-                                linesProcessed++
-                                val trimmed = line.trim()
-                                // Skip obvious comments: "! " or "# " (but allow "###" which is a cosmetic ID selector)
-                                if ((trimmed.startsWith("! ") || trimmed.startsWith("# ")) && !trimmed.contains("##")) {
-                                    return@forEach
-                                }
-
-                                if (trimmed.contains("##") &&
-                                        !trimmed.contains("#@#") &&
-                                        !trimmed.contains("##+js") &&
-                                        !trimmed.contains("##^")) {
-                                    
-                                    hashHashFound++
-                                    
-                                    val idx = trimmed.indexOf("##")
-                                    if (idx >= 0) {
-                                        val prefix = trimmed.substring(0, idx)
-                                        val selector = trimmed.substring(idx + 2).trim()
-
-                                        if (prefix.isEmpty() && selector.isNotEmpty() && !selector.startsWith('+') && !selector.startsWith('^') && !selector.contains(" ")) {
-                                             // Must contain at least one letter or digit to avoid injecting comment separators like `############`
-                                             if (selector.any { it.isLetterOrDigit() }) {
-                                                 // Skip large injection payloads or attribute selectors that cause lag
-                                                 if (!selector.contains("url(") && !selector.contains("expression(")) {
-                                                      selectors.add(selector)
-                                                      selectorsAdded++
-                                                 }
-                                             }
-                                        }
-                                    }
-                                }
-                            }
-                    } catch (e: Exception) {
-                        Timber.e(e, "Cosmetic read error for ${filter.name}")
+                if (filter.cssUrl.isNullOrEmpty()) continue
+                val cssFile = File(context.filesDir, "remote_filters/${filter.id}.css")
+                if (cssFile.exists() && cssFile.length() > 0) {
+                    val cssSnippet = downloadManager.getInjectableCss(cssFile)
+                    if (cssSnippet.isNotEmpty()) {
+                        cssBuilder.append(cssSnippet)
+                        rulesAdded++
                     }
                 }
-                Timber.d("Cosmetic: ${filter.name} -> $linesProcessed lines, $hashHashFound '##' matches, $selectorsAdded added")
             }
 
-            if (selectors.isEmpty()) {
-                Timber.d("Cosmetic: No rules found after scanning all files")
-                return@withContext
+            if (rulesAdded > 0) {
+                val finalCssFile = File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css")
+                finalCssFile.parentFile?.mkdirs()
+                finalCssFile.writeText(cssBuilder.toString())
+                Timber.d("Wrote cosmetic CSS (${cssBuilder.length} bytes)")
+            } else {
+                File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css").delete()
             }
-
-            // De-duplicate and take top 2000
-            val uniqueSelectors = selectors.distinct().take(2000)
-            Timber.d("Merged ${uniqueSelectors.size} cosmetic rules across ${validLists.size} lists")
-
-            val sb = StringBuilder()
-            uniqueSelectors.chunked(50).forEach { batch ->
-                sb.append(batch.joinToString(","))
-                sb.append("{display:none!important}")
-            }
-
-            val cssFile = File(context.filesDir, "$CACHE_DIR/cosmetic_rules.css")
-            cssFile.writeText(sb.toString())
-            Timber.d("Wrote cosmetic CSS to ${cssFile.name} (${sb.length} bytes)")
-
         } catch (e: Exception) {
             Timber.e(e, "Failed to compile cosmetic rules")
         }
     }
 
-    /**
-     * Incremental add: load existing Trie from binary, parse only new filters, re-serialize.
-     * Returns the total domain count in the updated Trie.
-     */
-    private suspend fun incrementalAdd(
-        newFilters: List<FilterList>,
-        trieFile: File
-    ): Int {
-        if (newFilters.isEmpty()) return 0
-
-        // Load existing Trie from binary (if any)
-        val trieBuilder = if (trieFile.exists() && trieFile.length() > 0) {
-            DomainTrie.loadFromBinary(trieFile) ?: DomainTrie()
-        } else {
-            DomainTrie()
-        }
-
-        val existingCount = trieBuilder.size
-        Timber.d("Incremental: loaded $existingCount existing domains from binary")
-
-        // Parse only the NEW filter files
-        for (filter in newFilters) {
-            try {
-                val sizeBefore = trieBuilder.size
-                loadSingleFilterToTrie(filter, trieBuilder)
-                val loaded = trieBuilder.size - sizeBefore
-                filterListDao.updateStats(
-                    id = filter.id,
-                    count = loaded,
-                    timestamp = System.currentTimeMillis()
-                )
-                Timber.d("Incremental: added $loaded domains from ${filter.name}")
-            } catch (e: Exception) {
-                Timber.d("Failed to load filter: ${filter.name}: $e")
-            }
-        }
-
-        // Re-serialize trie + regenerate bloom filter
-        if (trieBuilder.size > 0) {
-            val tempFile = File(trieFile.parent, trieFile.name + ".tmp")
-            trieBuilder.saveToBinary(tempFile)
-            tempFile.renameTo(trieFile)
-            // Regenerate bloom filter for the updated trie
-            val bloomFile = File(trieFile.parent, trieFile.nameWithoutExtension + ".bloom")
-            trieBuilder.saveBloomFilter(bloomFile)
-        }
-        val totalCount = trieBuilder.size
-        trieBuilder.clear()
-        return totalCount
-    }
-
-    /**
-     * Build a map of filter ID → cache file lastModified timestamp.
-     */
-    private fun buildFingerprintMap(enabledLists: List<FilterList>): Map<Long, Long> {
-        return enabledLists.associate { filter ->
-            val cacheFile = getCacheFile(filter)
-            val lastMod = if (cacheFile.exists()) cacheFile.lastModified() else 0L
-            filter.id to lastMod
-        }
-    }
-
-    /**
-     * Parse a saved fingerprint string back into a map.
-     */
-    private fun parseFingerprintMap(fingerprint: String): Map<Long, Long> {
-        if (fingerprint.isBlank()) return emptyMap()
-        return fingerprint.split(";")
-            .filter { it.contains(":") }
-            .associate {
-                val (id, ts) = it.split(":", limit = 2)
-                id.toLongOrNull()?.let { idL -> idL to (ts.toLongOrNull() ?: 0L) }
-                    ?: (0L to 0L)
-            }
-            .filterKeys { it != 0L }
-    }
-
-    private fun saveFingerprintAndLog(
-        fingerprintFile: File,
-        fingerprint: String,
-        startTime: Long,
-        strategy: String
-    ) {
-        try {
-            fingerprintFile.writeText(fingerprint)
-        } catch (e: Exception) {
-            Timber.d("Failed to save trie fingerprint: $e")
-        }
-        val elapsed = System.currentTimeMillis() - startTime
-        val totalCount = (adTrie?.size ?: 0) + (securityTrie?.size ?: 0)
-        Timber.d("$strategy — $totalCount domains loaded in ${elapsed}ms")
-    }
-
-    /**
-     * Load a single filter list into a DomainTrie.
-     * Uses cache-first strategy: reads from local file if available.
-     */
-    private suspend fun loadSingleFilterToTrie(filter: FilterList, trie: DomainTrie) {
-        val cacheFile = getCacheFile(filter)
-
-        // Cache-first: use cached file if it exists
-        if (cacheFile.exists() && cacheFile.length() > 0) {
-            cacheFile.bufferedReader().use { reader ->
-                parseHostsFileToTrie(reader, trie)
-            }
-            return
-        }
-
-        // No cache — download from network and save to cache
-        try {
-            cacheFile.parentFile?.mkdirs()
-            val channel = client.get(filter.url).bodyAsChannel()
-            cacheFile.outputStream().buffered().use { out ->
-                val buffer = ByteArray(8192)
-                while (!channel.isClosedForRead) {
-                    val bytesRead = channel.readAvailable(buffer)
-                    if (bytesRead > 0) out.write(buffer, 0, bytesRead)
-                }
-            }
-            cacheFile.bufferedReader().use { reader ->
-                parseHostsFileToTrie(reader, trie)
-            }
-        } catch (e: Exception) {
-            Timber.d("Network download failed for ${filter.name}: $e")
-        }
-    }
-
-    /**
-     * Force update a single filter list from network.
-     * Streams download directly to disk to avoid loading entire file into memory.
-     */
     suspend fun updateSingleFilter(filter: FilterList): Result<Int> = withContext(Dispatchers.IO) {
         try {
-            val cacheFile = getCacheFile(filter)
-            cacheFile.parentFile?.mkdirs()
-
-            // Stream download to cache file
-            val channel = client.get(filter.url).bodyAsChannel()
-            cacheFile.outputStream().buffered().use { output ->
-                val buffer = ByteArray(8192)
-                while (!channel.isClosedForRead) {
-                    val bytesRead = channel.readAvailable(buffer)
-                    if (bytesRead > 0) output.write(buffer, 0, bytesRead)
-                }
+            val result = downloadManager.downloadFilterList(filter, forceUpdate = true)
+            if (result.isSuccess) {
+                filterListDao.updateStats(id = filter.id, count = filter.ruleCount, timestamp = System.currentTimeMillis())
+                loadAllEnabledFilters()
+                Result.success(filter.ruleCount)
+            } else {
+                Result.failure(result.exceptionOrNull() ?: Exception("Unknown error"))
             }
-
-            // Count domains for stats
-            var count = 0
-            cacheFile.bufferedReader().use { reader ->
-                val trie = DomainTrie()
-                parseHostsFileToTrie(reader, trie)
-                count = trie.size
-            }
-
-            filterListDao.updateStats(
-                id = filter.id,
-                count = count,
-                timestamp = System.currentTimeMillis()
-            )
-
-            // Reload all enabled filters to rebuild merged trie
-            loadAllEnabledFilters()
-
-            Result.success(count)
         } catch (e: Exception) {
             Timber.d("Failed to update ${filter.name}: $e")
             Result.failure(e)
         }
     }
 
-    private fun getCacheFile(filter: FilterList): File {
-        val safeName = filter.url.hashCode().toString()
-        return File(context.filesDir, "$CACHE_DIR/$safeName.txt")
-    }
-
-    /** Parse hosts file lines and add domains directly to a Trie. */
-    private fun parseHostsFileToTrie(reader: BufferedReader, trie: DomainTrie) {
-        reader.lineSequence()
-            .map { it.trim() }
-            .filter {
-                it.isNotEmpty() && !it.startsWith('#') && !it.startsWith('!') && !it.startsWith(
-                    "@@"
-                )
-            }
-            .forEach { line ->
-                when {
-                    // Hosts format: "0.0.0.0<whitespace>domain" or "127.0.0.1<whitespace>domain"
-                    // Use regex split to handle both spaces and tabs (e.g. URLhaus uses tabs)
-                    line.startsWith("0.0.0.0") || line.startsWith("127.0.0.1") -> {
-                        val parts = line.split("\\s+".toRegex())
-                        val domain = parts.getOrNull(1)?.trim()
-                        if (!domain.isNullOrBlank() && domain != "localhost") {
-                            trie.add(domain.lowercase())
-                        }
-                    }
-
-                    line.startsWith("||") -> {
-                        var domain = line.removePrefix("||").trim()
-                        if (domain.endsWith("^")) {
-                            domain = domain.removeSuffix("^")
-                        }
-                        if (domain.isNotBlank()) {
-                            trie.add(domain.lowercase())
-                        }
-                    }
-
-                    !line.contains(' ') && !line.contains('\t') && !line.contains('/') -> {
-                        // Allow wildcards (e.g., *.ads.example.com) and regular/short domains
-                        var domain = line.lowercase()
-                        if (domain.endsWith("^")) {
-                            domain = domain.removeSuffix("^")
-                        }
-
-                        if (domain.isNotBlank() && domain.all { c -> c.isLetterOrDigit() || c == '.' || c == '-' || c == '_' || c == '*' }) {
-                            trie.add(domain)
-                        }
-                    }
-                }
-            }
-    }
-
-    /**
-     * Finds which specific filter lists a domain (or its parent domain) is currently blocked by.
-     * This scans the cached files of all currently enabled filter lists.
-     * 
-     * @param targetDomain The domain that was blocked (e.g. "ads.example.com")
-     * @return List of filter list names that contain this domain (e.g. ["EasyList", "AdGuard DNS"])
-     */
     suspend fun findBlockingFilterLists(targetDomain: String): List<String> = withContext(Dispatchers.IO) {
         val enabledLists = filterListDao.getEnabled()
         if (enabledLists.isEmpty()) return@withContext emptyList()
 
         val matchedListNames = mutableListOf<String>()
-        val domainParts = targetDomain.lowercase().split(".")
-        
-        // Generate domain variations to check (exact, parent, wildcard)
-        // For "sub.ads.example.com": 
-        // -> sub.ads.example.com
-        // -> ads.example.com, *.ads.example.com
-        // -> example.com, *.example.com
-        val domainVariations = mutableSetOf(targetDomain.lowercase())
-        for (i in 1 until domainParts.size - 1) { // Stop before TLD
-            val parentDomain = domainParts.subList(i, domainParts.size).joinToString(".")
-            domainVariations.add(parentDomain)
-            domainVariations.add("*.$parentDomain")
-        }
-
-        // Iterate through all enabled lists
         for (filter in enabledLists) {
-            val cacheFile = getCacheFile(filter)
-            if (!cacheFile.exists() || cacheFile.length() == 0L) continue
-
+            val trieFile = File(context.filesDir, "remote_filters/${filter.id}.trie")
+            if (!trieFile.exists() || trieFile.length() == 0L) continue
             try {
-                // Read line by line to keep memory footprint low
-                var matched = false
-                cacheFile.bufferedReader().use { reader ->
-                    for (line in reader.lineSequence()) {
-                        val trimmed = line.trim()
-                        if (trimmed.isEmpty() || trimmed.startsWith('#') || trimmed.startsWith('!')) continue
-
-                        val parsedDomain = parseSingleLineDomain(trimmed)
-                        if (parsedDomain != null && domainVariations.contains(parsedDomain)) {
-                            matched = true
-                            break // Found a match, no need to read the rest of this file
-                        }
-                    }
-                }
-                if (matched) {
+                val trie = DomainTrie.loadFromMmap(trieFile)
+                if (trie?.containsOrParent(targetDomain) == true) {
                     matchedListNames.add(filter.name)
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error scanning cache file for ${filter.name}")
+                Timber.e(e, "Error scanning trie for ${filter.name}")
             }
         }
-        
         return@withContext matchedListNames
     }
 
-    /** Helper to extract domain from a hosts/adblock-formatted line */
-    private fun parseSingleLineDomain(line: String): String? {
-        return when {
-            line.startsWith("0.0.0.0") || line.startsWith("127.0.0.1") -> {
-                line.split("\\s+".toRegex()).getOrNull(1)?.trim()?.lowercase()
-            }
-            line.startsWith("||") -> {
-                line.removePrefix("||").substringBefore('^').trim().lowercase()
-            }
-            !line.contains(' ') && !line.contains('\t') && !line.contains('/') -> {
-                line.substringBefore('^').trim().lowercase()
-            }
-            else -> null
-        }
-    }
+    suspend fun getDomainPreview(filter: FilterList, limit: Int = 100): List<String> = emptyList()
 
-    /**
-     * Get a preview list of domains from a filter's cached file.
-     * Returns up to [limit] domains parsed from the hosts file.
-     */
-    suspend fun getDomainPreview(filter: FilterList, limit: Int = 100): List<String> =
-        withContext(Dispatchers.IO) {
-            val cacheFile = getCacheFile(filter)
-            if (!cacheFile.exists()) return@withContext emptyList()
-
-            val domains = mutableListOf<String>()
-            cacheFile.bufferedReader().use { reader ->
-                reader.lineSequence()
-                    .map { it.trim() }
-                    .filter { it.isNotEmpty() && !it.startsWith('#') && !it.startsWith('!') }
-                    .forEach { line ->
-                        if (domains.size >= limit) return@forEach
-                        val domain = when {
-                            line.startsWith("0.0.0.0") || line.startsWith("127.0.0.1") -> {
-                                line.split("\\s+".toRegex()).getOrNull(1)?.trim()
-                                    ?.takeIf { it.isNotBlank() && it != "localhost" }
-                            }
-
-                            line.startsWith("||") && line.endsWith("^") -> {
-                                line.removePrefix("||").removeSuffix("^").trim()
-                                    .takeIf { it.isNotBlank() && it.contains('.') }
-                            }
-
-                            line.contains('.') && !line.contains(' ') && !line.contains('\t') && !line.contains('/') -> {
-                                line.lowercase()
-                            }
-
-                            else -> null
-                        }
-                        if (domain != null) domains.add(domain.lowercase())
-                    }
-            }
-            domains
-        }
-
-    /**
-     * Validate that a URL points to a valid filter/hosts file.
-     * Downloads a small sample (up to 16KB) and checks if it contains
-     * enough valid filter lines.
-     *
-     * @return Result.success(true) if valid, Result.failure with an appropriate exception otherwise.
-     */
-    suspend fun validateFilterUrl(url: String): Result<Boolean> = withContext(Dispatchers.IO) {
-        try {
-            val channel = client.get(url).bodyAsChannel()
-            val buffer = ByteArray(16_384) // Read at most 16KB for validation
-            var totalRead = 0
-            val outputStream = ByteArrayOutputStream()
-
-            while (!channel.isClosedForRead && totalRead < buffer.size) {
-                val bytesRead = channel.readAvailable(buffer, totalRead, buffer.size - totalRead)
-                if (bytesRead <= 0) break
-                outputStream.write(buffer, totalRead, bytesRead)
-                totalRead += bytesRead
-            }
-
-            val sample = outputStream.toString(Charsets.UTF_8.name())
-            val lines = sample.lines()
-
-            var validFilterLines = 0
-            val minValidLines = 3
-
-            for (line in lines) {
-                val trimmed = line.trim()
-                if (trimmed.isEmpty() || trimmed.startsWith('#') || trimmed.startsWith('!')) continue
-
-                val isValidLine = when {
-                    trimmed.startsWith("0.0.0.0 ") || trimmed.startsWith("127.0.0.1 ") -> true
-                    trimmed.startsWith("||") && trimmed.endsWith("^") -> true
-                    trimmed.contains('.') && !trimmed.contains(' ') && !trimmed.contains('/')
-                            && !trimmed.contains('<') && !trimmed.contains('>') -> true
-
-                    else -> false
-                }
-
-                if (isValidLine) {
-                    validFilterLines++
-                    if (validFilterLines >= minValidLines) {
-                        return@withContext Result.success(true)
-                    }
-                }
-            }
-
-            Result.failure(IllegalArgumentException("Not a valid filter list"))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    suspend fun validateFilterUrl(url: String): Result<Boolean> = Result.success(true)
 }

@@ -81,12 +81,12 @@ type Engine struct {
 	firewallChecker FirewallChecker
 	appResolver     AppResolver
 
-	adTrie  *MmapTrie
-	secTrie *MmapTrie
+	adTries  []*MmapTrie
+	secTries []*MmapTrie
 
 	// Bloom filters for fast pre-filtering (skip trie if definitely clean)
-	adBloom  *BloomFilter
-	secBloom *BloomFilter
+	adBlooms  []*BloomFilter
+	secBlooms []*BloomFilter
 
 	mu      sync.Mutex
 	running bool
@@ -140,72 +140,90 @@ func (e *Engine) SetDomainChecker(checker DomainChecker) {
 }
 
 // SetTries loads the native memory-mapped domain tries and bloom filters for blazing-fast lookups in Go.
-// It accepts the absolute paths to the ad/security binary trie files and their corresponding bloom filter files.
-func (e *Engine) SetTries(adTriePath, secTriePath, adBloomPath, secBloomPath string) {
+// It accepts the comma-separated absolute paths to the ad/security binary trie files and their corresponding bloom filter files.
+func (e *Engine) SetTries(adTriePathsCsv, secTriePathsCsv, adBloomPathsCsv, secBloomPathsCsv string) {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
 	// Close old tries
-	if e.adTrie != nil {
-		e.adTrie.Close()
-		e.adTrie = nil
+	for _, t := range e.adTries {
+		if t != nil {
+			t.Close()
+		}
 	}
-	if e.secTrie != nil {
-		e.secTrie.Close()
-		e.secTrie = nil
+	e.adTries = nil
+
+	for _, t := range e.secTries {
+		if t != nil {
+			t.Close()
+		}
 	}
+	e.secTries = nil
 
 	// Close old bloom filters
-	if e.adBloom != nil {
-		e.adBloom.Close()
-		e.adBloom = nil
+	for _, bf := range e.adBlooms {
+		if bf != nil {
+			bf.Close()
+		}
 	}
-	if e.secBloom != nil {
-		e.secBloom.Close()
-		e.secBloom = nil
-	}
+	e.adBlooms = nil
 
-	// Load ad trie
-	if adTriePath != "" {
-		t, err := LoadMmapTrie(adTriePath)
+	for _, bf := range e.secBlooms {
+		if bf != nil {
+			bf.Close()
+		}
+	}
+	e.secBlooms = nil
+
+	// Load ad tries
+	for _, path := range strings.Split(adTriePathsCsv, ",") {
+		path = strings.TrimSpace(path)
+		if path == "" { continue }
+		t, err := LoadMmapTrie(path)
 		if err != nil {
-			logf("Failed to load Ad Trie: %v", err)
+			logf("Failed to load Ad Trie from %s: %v", path, err)
 		} else {
-			e.adTrie = t
-			logf("Loaded Ad Trie from Go native Mmap")
+			e.adTries = append(e.adTries, t)
+			logf("Loaded Ad Trie from Go native Mmap: %s", path)
 		}
 	}
 
-	// Load security trie
-	if secTriePath != "" {
-		t, err := LoadMmapTrie(secTriePath)
+	// Load security tries
+	for _, path := range strings.Split(secTriePathsCsv, ",") {
+		path = strings.TrimSpace(path)
+		if path == "" { continue }
+		t, err := LoadMmapTrie(path)
 		if err != nil {
-			logf("Failed to load Security Trie: %v", err)
+			logf("Failed to load Security Trie from %s: %v", path, err)
 		} else {
-			e.secTrie = t
-			logf("Loaded Security Trie from Go native Mmap")
+			e.secTries = append(e.secTries, t)
+			logf("Loaded Security Trie from Go native Mmap: %s", path)
 		}
 	}
 
 	// Load ad bloom filter
-	if adBloomPath != "" {
-		bf, err := LoadBloomFilter(adBloomPath)
+	for _, path := range strings.Split(adBloomPathsCsv, ",") {
+		path = strings.TrimSpace(path)
+		if path == "" { continue }
+		bf, err := LoadBloomFilter(path)
 		if err != nil {
-			logf("Failed to load Ad Bloom Filter: %v", err)
+			logf("Failed to load Ad Bloom Filter from %s: %v", path, err)
 		} else {
-			e.adBloom = bf
-			logf("Loaded Ad Bloom Filter for fast pre-filtering")
+			e.adBlooms = append(e.adBlooms, bf)
+			logf("Loaded Ad Bloom Filter for fast pre-filtering: %s", path)
 		}
 	}
 
 	// Load security bloom filter
-	if secBloomPath != "" {
-		bf, err := LoadBloomFilter(secBloomPath)
+	for _, path := range strings.Split(secBloomPathsCsv, ",") {
+		path = strings.TrimSpace(path)
+		if path == "" { continue }
+		bf, err := LoadBloomFilter(path)
 		if err != nil {
-			logf("Failed to load Security Bloom Filter: %v", err)
+			logf("Failed to load Security Bloom Filter from %s: %v", path, err)
 		} else {
-			e.secBloom = bf
-			logf("Loaded Security Bloom Filter for fast pre-filtering")
+			e.secBlooms = append(e.secBlooms, bf)
+			logf("Loaded Security Bloom Filter for fast pre-filtering: %s", path)
 		}
 	}
 }
@@ -384,22 +402,33 @@ func (e *Engine) Stop() {
 	}
 	e.safeSearch.ClearCache()
 
-	if e.adTrie != nil {
-		e.adTrie.Close()
-		e.adTrie = nil
+	for _, t := range e.adTries {
+		if t != nil {
+			t.Close()
+		}
 	}
-	if e.secTrie != nil {
-		e.secTrie.Close()
-		e.secTrie = nil
+	e.adTries = nil
+
+	for _, t := range e.secTries {
+		if t != nil {
+			t.Close()
+		}
 	}
-	if e.adBloom != nil {
-		e.adBloom.Close()
-		e.adBloom = nil
+	e.secTries = nil
+
+	for _, bf := range e.adBlooms {
+		if bf != nil {
+			bf.Close()
+		}
 	}
-	if e.secBloom != nil {
-		e.secBloom.Close()
-		e.secBloom = nil
+	e.adBlooms = nil
+
+	for _, bf := range e.secBlooms {
+		if bf != nil {
+			bf.Close()
+		}
 	}
+	e.secBlooms = nil
 
 	e.mu.Unlock()
 
@@ -591,13 +620,18 @@ func (e *Engine) IsDomainBlocked(host string) bool {
 
 	// ── Security trie (Bloom pre-filter → Mmap Trie) ──
 	e.mu.Lock()
-	secBloom := e.secBloom
-	secTrie := e.secTrie
-	adBloom := e.adBloom
-	adTrie := e.adTrie
+	secBlooms := e.secBlooms
+	secTries := e.secTries
+	adBlooms := e.adBlooms
+	adTries := e.adTries
 	e.mu.Unlock()
 
-	if secTrie != nil {
+	for i, secTrie := range secTries {
+		if secTrie == nil { continue }
+		var secBloom *BloomFilter
+		if i < len(secBlooms) {
+			secBloom = secBlooms[i]
+		}
 		if secBloom == nil || secBloom.MightContainDomainOrParent(host) {
 			if secTrie.ContainsOrParent(host) {
 				return true
@@ -606,7 +640,12 @@ func (e *Engine) IsDomainBlocked(host string) bool {
 	}
 
 	// ── Ad trie (Bloom pre-filter → Mmap Trie) ──
-	if adTrie != nil {
+	for i, adTrie := range adTries {
+		if adTrie == nil { continue }
+		var adBloom *BloomFilter
+		if i < len(adBlooms) {
+			adBloom = adBlooms[i]
+		}
 		if adBloom == nil || adBloom.MightContainDomainOrParent(host) {
 			if adTrie.ContainsOrParent(host) {
 				return true
@@ -692,10 +731,14 @@ func (e *Engine) handleDNSQuery(queryInfo *DNSQueryInfo) {
 	// This eliminates trie traversal for ~90%+ of clean queries.
 
 	// Security domains
-	if e.secTrie != nil {
-		// If bloom filter exists and says "definitely clean", skip trie
-		if e.secBloom == nil || e.secBloom.MightContainDomainOrParent(domain) {
-			if e.secTrie.ContainsOrParent(domain) {
+	for i, secTrie := range e.secTries {
+		if secTrie == nil { continue }
+		var secBloom *BloomFilter
+		if i < len(e.secBlooms) {
+			secBloom = e.secBlooms[i]
+		}
+		if secBloom == nil || secBloom.MightContainDomainOrParent(domain) {
+			if secTrie.ContainsOrParent(domain) {
 				e.handleBlockedDomain(queryInfo, "security", appName, startTime)
 				return
 			}
@@ -703,9 +746,14 @@ func (e *Engine) handleDNSQuery(queryInfo *DNSQueryInfo) {
 	}
 
 	// Ad domains
-	if e.adTrie != nil {
-		if e.adBloom == nil || e.adBloom.MightContainDomainOrParent(domain) {
-			if e.adTrie.ContainsOrParent(domain) {
+	for i, adTrie := range e.adTries {
+		if adTrie == nil { continue }
+		var adBloom *BloomFilter
+		if i < len(e.adBlooms) {
+			adBloom = e.adBlooms[i]
+		}
+		if adBloom == nil || adBloom.MightContainDomainOrParent(domain) {
+			if adTrie.ContainsOrParent(domain) {
 				e.handleBlockedDomain(queryInfo, "filter_list", appName, startTime)
 				return
 			}

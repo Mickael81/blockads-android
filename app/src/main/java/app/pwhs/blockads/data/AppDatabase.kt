@@ -24,7 +24,7 @@ import app.pwhs.blockads.data.entities.WhitelistDomain
 
 @Database(
     entities = [DnsLogEntry::class, FilterList::class, WhitelistDomain::class, DnsErrorEntry::class, CustomDnsRule::class, FirewallRule::class, ProtectionProfile::class, ProfileSchedule::class],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -180,6 +180,16 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_11_12 = object : Migration(11, 12) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE filter_lists ADD COLUMN bloomUrl TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE filter_lists ADD COLUMN trieUrl TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE filter_lists ADD COLUMN cssUrl TEXT NOT NULL DEFAULT ''")
+                db.execSQL("ALTER TABLE filter_lists ADD COLUMN ruleCount INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE filter_lists ADD COLUMN originalUrl TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -197,7 +207,8 @@ abstract class AppDatabase : RoomDatabase() {
                         MIGRATION_7_8,
                         MIGRATION_8_9,
                         MIGRATION_9_10,
-                        MIGRATION_10_11
+                        MIGRATION_10_11,
+                        MIGRATION_11_12
                     )
                     .fallbackToDestructiveMigration(false)
                     .build()

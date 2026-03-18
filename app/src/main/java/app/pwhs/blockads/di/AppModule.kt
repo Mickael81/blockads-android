@@ -4,6 +4,7 @@ import app.pwhs.blockads.BuildConfig
 import app.pwhs.blockads.data.AppDatabase
 import app.pwhs.blockads.data.datastore.AppPreferences
 import app.pwhs.blockads.data.entities.ProfileManager
+import app.pwhs.blockads.data.remote.FilterDownloadManager
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.ui.dnsprovider.DnsProviderViewModel
 import app.pwhs.blockads.ui.filter.detail.FilterDetailViewModel
@@ -81,7 +82,8 @@ val appModule = module {
     single { AppPreferences(androidContext()) }
 
     // Repository
-    single { FilterListRepository(androidContext(), get(), get(), get(), get()) }
+    single { FilterDownloadManager(androidContext(), get()) }
+    single { FilterListRepository(androidContext(), get(), get(), get(), get(), get()) }
 
     // Profile Manager
     single { ProfileManager(get(), get(), get(), get()) }
