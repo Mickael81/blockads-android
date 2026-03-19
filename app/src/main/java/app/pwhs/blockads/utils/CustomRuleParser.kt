@@ -1,4 +1,4 @@
-package app.pwhs.blockads.util
+package app.pwhs.blockads.utils
 
 import app.pwhs.blockads.data.entities.CustomDnsRule
 import app.pwhs.blockads.data.entities.RuleType

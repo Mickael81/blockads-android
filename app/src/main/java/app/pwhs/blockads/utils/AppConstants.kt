@@ -1,4 +1,4 @@
-package app.pwhs.blockads.util
+package app.pwhs.blockads.utils
 
 object AppConstants {
     const val AVG_AD_SIZE_KB = 50L

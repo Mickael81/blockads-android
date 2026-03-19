@@ -13,14 +13,13 @@ import app.pwhs.blockads.data.entities.toExport
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.service.AdBlockVpnService
 import app.pwhs.blockads.ui.customrules.data.ExportFormat
-import app.pwhs.blockads.util.CustomRuleParser
+import app.pwhs.blockads.utils.CustomRuleParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class CustomRulesViewModel(

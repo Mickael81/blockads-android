@@ -1,4 +1,4 @@
-package app.pwhs.blockads.util
+package app.pwhs.blockads.utils
 
 import android.content.Context
 import android.content.Intent

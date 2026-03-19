@@ -4,7 +4,7 @@ import android.os.ParcelFileDescriptor
 import app.pwhs.blockads.data.dao.DnsLogDao
 import app.pwhs.blockads.data.entities.DnsLogEntry
 import app.pwhs.blockads.data.repository.FilterListRepository
-import app.pwhs.blockads.util.AppNameResolver
+import app.pwhs.blockads.utils.AppNameResolver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +12,6 @@ import timber.log.Timber
 import tunnel.AppResolver
 import tunnel.DomainChecker
 import tunnel.FirewallChecker
-import tunnel.LogCallback
 import tunnel.SocketProtector
 
 /**

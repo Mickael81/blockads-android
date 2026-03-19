@@ -15,9 +15,9 @@ import app.pwhs.blockads.data.datastore.AppPreferences
 import app.pwhs.blockads.data.entities.WireGuardConfig
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.data.dao.FirewallRuleDao
-import app.pwhs.blockads.util.AppNameResolver
-import app.pwhs.blockads.util.BatteryMonitor
-import app.pwhs.blockads.util.startOfDayMillis
+import app.pwhs.blockads.utils.AppNameResolver
+import app.pwhs.blockads.utils.BatteryMonitor
+import app.pwhs.blockads.utils.startOfDayMillis
 import app.pwhs.blockads.widget.AdBlockWidgetProvider
 import app.pwhs.blockads.worker.VpnResumeWorker
 import androidx.work.OneTimeWorkRequestBuilder

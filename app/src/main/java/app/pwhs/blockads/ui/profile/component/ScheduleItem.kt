@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import app.pwhs.blockads.R
 import app.pwhs.blockads.data.entities.ProfileSchedule
 import app.pwhs.blockads.ui.theme.TextSecondary
-import app.pwhs.blockads.util.formatDays
-import app.pwhs.blockads.util.formatTime
+import app.pwhs.blockads.utils.formatDays
+import app.pwhs.blockads.utils.formatTime
 
 @Composable
 fun ScheduleItem(

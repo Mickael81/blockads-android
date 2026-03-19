@@ -1,4 +1,4 @@
-package app.pwhs.blockads.util
+package app.pwhs.blockads.utils
 
 import android.app.LocaleManager
 import android.content.Context

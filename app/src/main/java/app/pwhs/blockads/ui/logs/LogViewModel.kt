@@ -12,7 +12,7 @@ import app.pwhs.blockads.data.dao.WhitelistDomainDao
 import app.pwhs.blockads.ui.event.UiEvent
 import app.pwhs.blockads.ui.event.toast
 import app.pwhs.blockads.ui.logs.data.TimeRange
-import app.pwhs.blockads.util.CustomRuleParser
+import app.pwhs.blockads.utils.CustomRuleParser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

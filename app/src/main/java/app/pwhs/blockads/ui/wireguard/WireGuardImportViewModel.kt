@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import app.pwhs.blockads.data.datastore.AppPreferences
 import app.pwhs.blockads.data.entities.WireGuardConfig
 import app.pwhs.blockads.service.AdBlockVpnService
-import app.pwhs.blockads.util.WireGuardConfigParser
+import app.pwhs.blockads.utils.WireGuardConfigParser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

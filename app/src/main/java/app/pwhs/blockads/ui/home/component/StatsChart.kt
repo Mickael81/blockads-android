@@ -16,8 +16,8 @@ import app.pwhs.blockads.data.entities.WeeklyStat
 import app.pwhs.blockads.ui.theme.AccentBlue
 import app.pwhs.blockads.ui.theme.DangerRed
 import app.pwhs.blockads.ui.theme.TextSecondary
-import app.pwhs.blockads.util.dayFormat
-import app.pwhs.blockads.util.hourFormat
+import app.pwhs.blockads.utils.dayFormat
+import app.pwhs.blockads.utils.hourFormat
 import ir.ehsannarmani.compose_charts.LineChart
 import ir.ehsannarmani.compose_charts.models.DividerProperties
 import ir.ehsannarmani.compose_charts.models.DrawStyle

@@ -47,7 +47,7 @@ import app.pwhs.blockads.data.entities.DnsLogEntry
 import app.pwhs.blockads.ui.theme.DangerRed
 import app.pwhs.blockads.ui.theme.TextSecondary
 import app.pwhs.blockads.ui.theme.WhitelistAmber
-import app.pwhs.blockads.util.formatTimestamp
+import app.pwhs.blockads.utils.formatTimestamp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 
 @Composable

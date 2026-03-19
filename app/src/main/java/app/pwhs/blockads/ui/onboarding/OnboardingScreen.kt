@@ -71,7 +71,7 @@ import app.pwhs.blockads.ui.onboarding.component.PermissionStep
 import app.pwhs.blockads.ui.onboarding.component.ProtectionLevelStep
 import app.pwhs.blockads.ui.onboarding.data.OnboardingPage
 import app.pwhs.blockads.ui.theme.AccentBlue
-import app.pwhs.blockads.util.AppConstants.TOTAL_PAGES
+import app.pwhs.blockads.utils.AppConstants.TOTAL_PAGES
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 

@@ -1,4 +1,4 @@
-package app.pwhs.blockads.util
+package app.pwhs.blockads.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FamilyRestroom

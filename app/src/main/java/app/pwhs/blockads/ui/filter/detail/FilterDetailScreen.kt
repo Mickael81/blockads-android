@@ -59,8 +59,8 @@ import app.pwhs.blockads.R
 import app.pwhs.blockads.ui.event.UiEventEffect
 import app.pwhs.blockads.ui.theme.DangerRed
 import app.pwhs.blockads.ui.theme.TextSecondary
-import app.pwhs.blockads.util.formatCount
-import app.pwhs.blockads.util.formatDate
+import app.pwhs.blockads.utils.formatCount
+import app.pwhs.blockads.utils.formatDate
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf

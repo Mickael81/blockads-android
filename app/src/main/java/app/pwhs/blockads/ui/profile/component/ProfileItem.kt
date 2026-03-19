@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import app.pwhs.blockads.R
 import app.pwhs.blockads.data.entities.ProtectionProfile
 import app.pwhs.blockads.ui.theme.TextSecondary
-import app.pwhs.blockads.util.profileDescription
-import app.pwhs.blockads.util.profileIcon
+import app.pwhs.blockads.utils.profileDescription
+import app.pwhs.blockads.utils.profileIcon
 
 @Composable
 fun ProfileItem(
