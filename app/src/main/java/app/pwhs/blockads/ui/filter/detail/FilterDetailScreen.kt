@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Shield
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -42,6 +43,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -456,22 +458,22 @@ fun FilterDetailScreen(
     }
 
     if (showEditDialog) {
-        androidx.compose.material3.AlertDialog(
+        AlertDialog(
             onDismissRequest = { viewModel.closeEditDialog() },
-            title = { Text("Edit Custom Filter") },
+            title = { Text(stringResource(R.string.edit_custom_filter)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     androidx.compose.material3.OutlinedTextField(
                         value = editName,
                         onValueChange = { viewModel.setEditName(it) },
-                        label = { Text("Filter Name") },
+                        label = { Text(stringResource(R.string.filter_name)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
                     androidx.compose.material3.OutlinedTextField(
                         value = editUrl,
                         onValueChange = { viewModel.setEditUrl(it) },
-                        label = { Text("Filter URL/Domain") },
+                        label = { Text(stringResource(R.string.filter_url_domain)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -501,7 +503,7 @@ fun FilterDetailScreen(
                 }
             },
             dismissButton = {
-                androidx.compose.material3.TextButton(onClick = { viewModel.closeEditDialog() }) {
+                TextButton(onClick = { viewModel.closeEditDialog() }) {
                     Text(stringResource(R.string.cancel))
                 }
             }

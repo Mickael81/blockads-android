@@ -568,4 +568,7 @@
     <string name="domain_rules_title">Reglas de dominio</string>
     <string name="domain_rules_tab_whitelist">Lista blanca</string>
     <string name="domain_rules_tab_blocklist">Lista negra</string>
+    <string name="edit_custom_filter">Editar filtro personalizado</string>
+    <string name="filter_name">Nombre del filtro</string>
+    <string name="filter_url_domain">URL/Dominio del filtro</string>
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_custom_filter">Edit Custom Filter</string>
+    <string name="filter_name">Filter Name</string>
+    <string name="filter_url_domain">Filter URL/Domain</string>
+</resources>

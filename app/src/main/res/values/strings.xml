@@ -640,4 +640,7 @@
     <string name="https_filtering_cert_not_installed">Certificate not installed</string>
     <string name="https_filtering_cert_checking">Checking…</string>
     <string name="https_filtering_cert_vpn_required">Tap \"Verify Certificate\" to check</string>
+    <string name="edit_custom_filter">Edit Custom Filter</string>
+    <string name="filter_name">Filter Name</string>
+    <string name="filter_url_domain">Filter URL/Domain</string>
 </resources>

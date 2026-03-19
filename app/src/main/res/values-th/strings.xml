@@ -567,4 +567,7 @@
     <string name="domain_rules_title">กฎโดเมน</string>
     <string name="domain_rules_tab_whitelist">รายการที่อนุญาต</string>
     <string name="domain_rules_tab_blocklist">รายการที่บล็อก</string>
+    <string name="edit_custom_filter">แก้ไขตัวกรองแบบกำหนดเอง</string>
+    <string name="filter_name">ชื่อตัวกรอง</string>
+    <string name="filter_url_domain">URL/โดเมนของตัวกรอง</string>
 </resources>

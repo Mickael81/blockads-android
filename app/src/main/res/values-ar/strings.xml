@@ -583,4 +583,7 @@
     <string name="domain_rules_title">قواعد النطاق</string>
     <string name="domain_rules_tab_whitelist">القائمة البيضاء</string>
     <string name="domain_rules_tab_blocklist">قائمة الحظر</string>
+    <string name="edit_custom_filter">تعديل الفلتر المخصص</string>
+    <string name="filter_name">اسم الفلتر</string>
+    <string name="filter_url_domain">رابط/نطاق الفلتر</string>
 </resources>

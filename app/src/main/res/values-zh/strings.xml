@@ -568,4 +568,7 @@
     <string name="domain_rules_title">域名规则</string>
     <string name="domain_rules_tab_whitelist">白名单</string>
     <string name="domain_rules_tab_blocklist">黑名单</string>
+    <string name="edit_custom_filter">编辑自定义过滤器</string>
+    <string name="filter_name">过滤器名称</string>
+    <string name="filter_url_domain">过滤器 URL/域名</string>
 </resources>

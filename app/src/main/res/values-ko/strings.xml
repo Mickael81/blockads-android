@@ -567,4 +567,7 @@
     <string name="domain_rules_title">도메인 규칙</string>
     <string name="domain_rules_tab_whitelist">허용 목록</string>
     <string name="domain_rules_tab_blocklist">차단 목록</string>
+    <string name="edit_custom_filter">사용자 지정 필터 편집</string>
+    <string name="filter_name">필터 이름</string>
+    <string name="filter_url_domain">필터 URL/도메인</string>
 </resources>

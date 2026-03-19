@@ -639,4 +639,7 @@ Desteklenen formatlar:
     <string name="domain_rules_tab_whitelist">Beyaz Liste</string>
     <string name="domain_rules_tab_blocklist">Kara Liste</string>
     <string name="https_filtering_settings_desc">Tarayıcılarda reklamları görsel olarak gizle</string>
+    <string name="edit_custom_filter">Özel Filtreyi Düzenle</string>
+    <string name="filter_name">Filtre Adı</string>
+    <string name="filter_url_domain">Filtre URL/Alan Adı</string>
 </resources>

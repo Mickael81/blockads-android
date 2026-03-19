@@ -615,4 +615,7 @@
     <string name="domain_rules_title">Quy tắc tên miền</string>
     <string name="domain_rules_tab_whitelist">Danh sách trắng</string>
     <string name="domain_rules_tab_blocklist">Danh sách đen</string>
+    <string name="edit_custom_filter">Chỉnh sửa bộ lọc tùy chỉnh</string>
+    <string name="filter_name">Tên bộ lọc</string>
+    <string name="filter_url_domain">URL/Tên miền của bộ lọc</string>
 </resources>
