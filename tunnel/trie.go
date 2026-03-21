@@ -3,14 +3,15 @@ package tunnel
 import (
 	"encoding/binary"
 	"fmt"
-	"golang.org/x/sys/unix"
 	"os"
 	"strings"
+
+	"golang.org/x/sys/unix"
 )
 
 const (
 	trieMagic   = 0x54524945 // "TRIE" in hex
-	trieVersion = 1
+	trieVersion = 2
 	headerSize  = 16
 )
 
@@ -139,7 +140,7 @@ func (m *MmapTrie) isTerminal(nodeOffset int) bool {
 }
 
 func (m *MmapTrie) findChildOffset(nodeOffset int, targetLabel string) int {
-	if nodeOffset < 0 || nodeOffset+3 > m.limit {
+	if nodeOffset < 0 || nodeOffset+5 > m.limit {
 		return -1
 	}
 
@@ -148,9 +149,9 @@ func (m *MmapTrie) findChildOffset(nodeOffset int, targetLabel string) int {
 
 	pos := nodeOffset + 1 // skip isTerminal byte
 
-	// BigEndian: read unsigned short for child count
-	childCount := int(binary.BigEndian.Uint16(m.buffer[pos : pos+2]))
-	pos += 2
+	// BigEndian: read uint32 (4 bytes) for child count
+	childCount := int(binary.BigEndian.Uint32(m.buffer[pos : pos+4]))
+	pos += 4
 
 	for c := 0; c < childCount; c++ {
 		if pos+2 > m.limit {
