@@ -5,9 +5,11 @@ import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.pwhs.blockads.data.dao.DnsLogDao
+import app.pwhs.blockads.data.dao.FilterListDao
 import app.pwhs.blockads.data.dao.ProtectionProfileDao
 import app.pwhs.blockads.data.entities.DailyStat
 import app.pwhs.blockads.data.entities.DnsLogEntry
+import app.pwhs.blockads.data.entities.FilterList
 import app.pwhs.blockads.data.entities.HourlyStat
 import app.pwhs.blockads.data.entities.ProtectionProfile
 import app.pwhs.blockads.data.entities.TopBlockedDomain
@@ -29,6 +31,7 @@ class HomeViewModel(
     dnsLogDao: DnsLogDao,
     private val filterRepo: FilterListRepository,
     profileDao: ProtectionProfileDao,
+    filterListDao: FilterListDao,
 ) : ViewModel() {
 
     // ── Reactive VPN state (derived from the single source of truth) ──
@@ -65,6 +68,10 @@ class HomeViewModel(
 
     val activeProfile: StateFlow<ProtectionProfile?> = profileDao.getActiveFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+
+    val securityFilterIds: StateFlow<Set<String>> = filterListDao.getAll()
+        .map { list -> list.filter { it.category == FilterList.CATEGORY_SECURITY }.map { it.id.toString() }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()

@@ -111,6 +111,7 @@ fun HomeScreen(
     val topBlockedDomains by viewModel.topBlockedDomains.collectAsStateWithLifecycle()
     val protectionUptimeMs by viewModel.protectionUptimeMs.collectAsStateWithLifecycle()
     val activeProfile by viewModel.activeProfile.collectAsStateWithLifecycle()
+    val securityFilterIds by viewModel.securityFilterIds.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -605,7 +606,8 @@ fun HomeScreen(
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         recentBlocked.forEach { entry ->
                             val dotColor =
-                                if (entry.blockedBy == FilterListRepository.BLOCK_REASON_SECURITY)
+                                if (entry.blockedBy == FilterListRepository.BLOCK_REASON_SECURITY
+                                    || securityFilterIds.contains(entry.blockedBy))
                                     SecurityOrange else DangerRed
                             val recentAppIcon: Drawable? = remember(entry.packageName) {
                                 if (entry.packageName.isNotEmpty() && entry.packageName.contains(".")) {
