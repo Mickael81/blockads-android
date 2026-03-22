@@ -82,6 +82,7 @@
     <string name="onboarding_battery_title">Keep Protection Running</string>
     <string name="onboarding_battery_desc">Exclude BlockAds from battery optimization so the VPN service stays active in the background and doesn\'t get killed by the system.</string>
     <string name="onboarding_battery_grant">Disable Battery Optimization</string>
+    <string name="onboarding_battery_unsupported">Not Supported</string>
 
     <!-- Onboarding: Permission Granted -->
     <string name="onboarding_permission_granted">✓ Permission granted</string>

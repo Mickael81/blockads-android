@@ -81,6 +81,7 @@
     <string name="onboarding_battery_title">Duy trì bảo vệ</string>
     <string name="onboarding_battery_desc">Loại trừ BlockAds khỏi tối ưu hóa pin để dịch vụ VPN luôn hoạt động trong nền và không bị hệ thống tắt.</string>
     <string name="onboarding_battery_grant">Tắt tối ưu hóa pin</string>
+    <string name="onboarding_battery_unsupported">Không hỗ trợ</string>
 
     <!-- Onboarding: Permission Granted -->
     <string name="onboarding_permission_granted">✓ Đã cấp quyền</string>

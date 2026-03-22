@@ -587,4 +587,5 @@
     <string name="clear_logs_confirm_message">هل أنت متأكد أنك تريد مسح جميع سجلات DNS؟ لا يمكن التراجع عن هذا الإجراء.</string>
     <string name="add_blocklist_domains_title">إضافة نطاقات محظورة</string>
     <string name="add_whitelisted_domain_title">إضافة نطاق مسموح به</string>
+    <string name="onboarding_battery_unsupported">غير مدعوم</string>
 </resources>

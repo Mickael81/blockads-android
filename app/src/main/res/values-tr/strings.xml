@@ -640,4 +640,5 @@ Desteklenen formatlar:
     <string name="clear_logs_confirm_message">Tüm DNS günlüklerini temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
     <string name="add_blocklist_domains_title">Engellenen Alan Adlarını Ekle</string>
     <string name="add_whitelisted_domain_title">İzin Verilen Alan Adını Ekle</string>
+    <string name="onboarding_battery_unsupported">Desteklenmiyor</string>
 </resources>

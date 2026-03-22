@@ -569,4 +569,5 @@
     <string name="clear_logs_confirm_message">모든 DNS 로그를 지우시겠습니까? 이 작업은 실행 취소할 수 없습니다.</string>
     <string name="add_blocklist_domains_title">차단된 도메인 추가</string>
     <string name="add_whitelisted_domain_title">허용된 도메인 추가</string>
+    <string name="onboarding_battery_unsupported">지원되지 않음</string>
 </resources>

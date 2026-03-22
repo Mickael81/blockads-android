@@ -568,4 +568,5 @@
     <string name="clear_logs_confirm_message">すべてのDNSログを消去してもよろしいですか？この操作は元に戻せません。</string>
     <string name="add_blocklist_domains_title">ブロックリストのドメインを追加</string>
     <string name="add_whitelisted_domain_title">許可リストのドメインを追加</string>
+    <string name="onboarding_battery_unsupported">非対応</string>
 </resources>

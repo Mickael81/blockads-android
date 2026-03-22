@@ -128,6 +128,14 @@ fun OnboardingScreen(
             powerManager.isIgnoringBatteryOptimizations(context.packageName)
     }
 
+    val isBatteryOptSupported = remember {
+        val intent1 = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+            data = "package:${context.packageName}".toUri()
+        }
+        val intent2 = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+        intent1.resolveActivity(context.packageManager) != null || intent2.resolveActivity(context.packageManager) != null
+    }
+
     fun skipToHome() {
         scope.launch {
             viewModel.completeOnboarding()
@@ -232,17 +240,29 @@ fun OnboardingScreen(
                         icon = Icons.Filled.BatteryChargingFull,
                         title = stringResource(R.string.onboarding_battery_title),
                         description = stringResource(R.string.onboarding_battery_desc),
-                        buttonText = stringResource(R.string.onboarding_battery_grant),
+                        buttonText = if (isBatteryOptSupported) {
+                            stringResource(R.string.onboarding_battery_grant)
+                        } else {
+                            stringResource(R.string.onboarding_battery_unsupported)
+                        },
                         accentColor = MaterialTheme.colorScheme.primary,
                         isGranted = batteryOptimizationExcluded,
                         grantedText = stringResource(R.string.onboarding_permission_granted),
+                        isSupported = isBatteryOptSupported,
                         onRequestPermission = {
-                            @Suppress("BatteryLife")
-                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                                data = "package:${context.packageName}".toUri()
-                            }
-                            if (intent.resolveActivity(context.packageManager) != null) {
+                            try {
+                                @Suppress("BatteryLife")
+                                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                    data = "package:${context.packageName}".toUri()
+                                }
                                 batteryOptLauncher.launch(intent)
+                            } catch (e: Exception) {
+                                try {
+                                    val fallbackIntent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                    batteryOptLauncher.launch(fallbackIntent)
+                                } catch (e2: Exception) {
+                                    e2.printStackTrace()
+                                }
                             }
                         }
                     )

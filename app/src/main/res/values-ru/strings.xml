@@ -618,4 +618,5 @@
     <string name="clear_logs_confirm_message">Вы уверены, что хотите очистить все журналы DNS? Это действие нельзя отменить.</string>
     <string name="add_blocklist_domains_title">Добавить заблокированные домены</string>
     <string name="add_whitelisted_domain_title">Добавить разрешенный домен</string>
+    <string name="onboarding_battery_unsupported">Не поддерживается</string>
 </resources>

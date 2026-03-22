@@ -624,4 +624,5 @@
     <string name="clear_logs_confirm_message">Sei sicuro di voler cancellare tutti i registri DNS? Questa azione non può essere annullata.</string>
     <string name="add_blocklist_domains_title">Aggiungi domini bloccati</string>
     <string name="add_whitelisted_domain_title">Aggiungi dominio consentito</string>
+    <string name="onboarding_battery_unsupported">Non supportato</string>
 </resources>

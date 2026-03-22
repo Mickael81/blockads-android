@@ -591,4 +591,5 @@
     <string name="filter_url_domain">URL/Domena filtru</string>
     <string name="add_blocklist_domains_title">Dodaj zablokowane domeny</string>
     <string name="add_whitelisted_domain_title">Dodaj domenę do białej listy</string>
+    <string name="onboarding_battery_unsupported">Nieobsługiwane</string>
 </resources>

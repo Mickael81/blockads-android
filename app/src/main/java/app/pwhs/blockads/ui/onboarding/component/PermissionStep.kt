@@ -41,7 +41,8 @@ fun PermissionStep(
     modifier: Modifier = Modifier,
     accentColor: Color = MaterialTheme.colorScheme.primary,
     isGranted: Boolean = false,
-    grantedText: String = ""
+    grantedText: String = "",
+    isSupported: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -118,10 +119,13 @@ fun PermissionStep(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
+                enabled = isSupported,
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = accentColor,
-                    contentColor = Color.Black
+                    contentColor = Color.Black,
+                    disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             ) {
                 Text(

@@ -569,4 +569,5 @@
     <string name="clear_logs_confirm_message">您确定要清除所有 DNS 日志吗？此操作无法撤销。</string>
     <string name="add_blocklist_domains_title">添加黑名单域名</string>
     <string name="add_whitelisted_domain_title">添加白名单域名</string>
+    <string name="onboarding_battery_unsupported">暂不支持</string>
 </resources>
