@@ -173,12 +173,6 @@
     <string name="settings_high_contrast_desc">Aumentar o contraste para melhor visibilidade</string>
     <string name="settings_accent_color">Cor de destaque</string>
     <string name="settings_accent_color_desc">Personalize a cor principal do aplicativo</string>
-    <string name="accent_green">Verde</string>
-    <string name="accent_blue">Azul</string>
-    <string name="accent_purple">Roxo</string>
-    <string name="accent_orange">Laranja</string>
-    <string name="accent_pink">Rosa</string>
-    <string name="accent_teal">Ciano</string>
     <string name="accent_dynamic">Dinâmico (Material You)</string>
     <string name="accent_dynamic_desc">Usa as cores do seu papel de parede</string>
     <string name="settings_connection">Conexão</string>
@@ -214,9 +208,6 @@
     <string name="settings_youtube_restricted_desc">Filtrar vídeos para adultos no YouTube, bloquear vídeos para adultos incorporados em outros sites e ocultar todos os comentários</string>
     <string name="settings_dns_protocol">Protocolo DNS</string>
     <string name="settings_dns_protocol_plain">DNS comum</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL do servidor DoH</string>
     <string name="settings_save_doh_url">Salvar URL do DoH</string>
     <string name="settings_dot_server">Servidor DoT (nome do host ou IP)</string>
@@ -296,8 +287,6 @@
     <string name="dns_custom_save">Salvar</string>
     <string name="dns_custom_cancel">Cancelar</string>
     <string name="dns_select_server">Selecionar servidor DNS</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
 
     <string name="widget_name">Botão BlockAds</string>
     <string name="widget_description">Ative/desative o bloqueio de anúncios e veja as estatísticas</string>
@@ -333,7 +322,6 @@
     <string name="add">Adicionar</string>
     <string name="delete">Excluir</string>
     <string name="cancel">Cancelar</string>
-    <string name="ok">OK</string>
     <string name="block_this_domain">Bloquear este domínio</string>
     <string name="add_to_custom_rules">Adicionar às regras personalizadas</string>
     <string name="import_from_file">Importar de arquivo</string>

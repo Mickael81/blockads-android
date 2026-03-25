@@ -173,12 +173,6 @@
     <string name="settings_high_contrast_desc">Tăng độ tương phản để dễ nhìn hơn</string>
     <string name="settings_accent_color">Màu nhấn</string>
     <string name="settings_accent_color_desc">Tùy chỉnh màu chủ đạo của ứng dụng</string>
-    <string name="accent_green">Xanh lá</string>
-    <string name="accent_blue">Xanh dương</string>
-    <string name="accent_purple">Tím</string>
-    <string name="accent_orange">Cam</string>
-    <string name="accent_pink">Hồng</string>
-    <string name="accent_teal">Xanh ngọc</string>
     <string name="accent_dynamic">Động (Material You)</string>
     <string name="accent_dynamic_desc">Sử dụng màu từ hình nền của bạn</string>
     <string name="settings_connection">Kết nối</string>
@@ -213,9 +207,6 @@
     <string name="settings_youtube_restricted_desc">Lọc video người lớn trên YouTube, chặn video nhúng người lớn trên các trang khác và ẩn tất cả bình luận</string>
     <string name="settings_dns_protocol">Giao thức DNS</string>
     <string name="settings_dns_protocol_plain">DNS thường</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL máy chủ DoH</string>
     <string name="settings_save_doh_url">Lưu URL DoH</string>
     <string name="settings_dot_server">Máy chủ DoT (hostname hoặc IP)</string>
@@ -297,8 +288,6 @@
     <string name="dns_custom_save">Lưu</string>
     <string name="dns_custom_cancel">Hủy</string>
     <string name="dns_select_server">Chọn máy chủ DNS</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
 
     <!-- Widget -->
     <string name="widget_name">Bật/Tắt BlockAds</string>
@@ -337,7 +326,6 @@
     <string name="add">Thêm</string>
     <string name="delete">Xóa</string>
     <string name="cancel">Hủy</string>
-    <string name="ok">OK</string>
     <string name="block_this_domain">Chặn tên miền này</string>
     <string name="add_to_custom_rules">Thêm vào quy tắc tùy chỉnh</string>
 

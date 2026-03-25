@@ -206,12 +206,6 @@
     <string name="settings_high_contrast_desc">Increase contrast for better visibility</string>
     <string name="settings_accent_color">Accent Color</string>
     <string name="settings_accent_color_desc">Customize the app\'s primary color</string>
-    <string name="accent_green">Green</string>
-    <string name="accent_blue">Blue</string>
-    <string name="accent_purple">Purple</string>
-    <string name="accent_orange">Orange</string>
-    <string name="accent_pink">Pink</string>
-    <string name="accent_teal">Teal</string>
     <string name="accent_dynamic">Dynamic (Material You)</string>
     <string name="accent_dynamic_desc">Uses your wallpaper colors</string>
     <string name="settings_connection">Connection</string>
@@ -339,8 +333,8 @@
     <string name="dns_custom_save">Save</string>
     <string name="dns_custom_cancel">Cancel</string>
     <string name="dns_select_server">Select DNS Server</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
+    <string name="dns_doh_badge" translatable="false">DoH</string>
+    <string name="dns_doq_badge" translatable="false">DoQ</string>
 
     <!-- Widget -->
     <string name="widget_name">BlockAds Toggle</string>
@@ -379,7 +373,7 @@
     <string name="add">Add</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="block_this_domain">Block this domain</string>
     <string name="add_to_custom_rules">Add to custom rules</string>
     <string name="import_from_file">Import from File</string>

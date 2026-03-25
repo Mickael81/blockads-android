@@ -142,12 +142,6 @@
     <string name="settings_high_contrast_desc">เพิ่มคอนทราสต์เพื่อการมองเห็นที่ดีขึ้น</string>
     <string name="settings_accent_color">สีเน้น</string>
     <string name="settings_accent_color_desc">ปรับแต่งสีหลักของแอป</string>
-    <string name="accent_green">เขียว</string>
-    <string name="accent_blue">น้ำเงิน</string>
-    <string name="accent_purple">ม่วง</string>
-    <string name="accent_orange">ส้ม</string>
-    <string name="accent_pink">ชมพู</string>
-    <string name="accent_teal">น้ำเงินเขียว</string>
     <string name="accent_dynamic">ไดนามิก (Material You)</string>
     <string name="accent_dynamic_desc">ใช้สีจากวอลเปเปอร์ของคุณ</string>
     <string name="settings_connection">การเชื่อมต่อ</string>
@@ -182,9 +176,6 @@
     <string name="settings_youtube_restricted_desc">กรองวิดีโอสำหรับผู้ใหญ่บน YouTube บล็อกวิดีโอสำหรับผู้ใหญ่ที่ฝังในเว็บไซต์อื่น และซ่อนความคิดเห็นทั้งหมด</string>
     <string name="settings_dns_protocol">โปรโตคอล DNS</string>
     <string name="settings_dns_protocol_plain">DNS ธรรมดา</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL เซิร์ฟเวอร์ DoH</string>
     <string name="settings_save_doh_url">บันทึก URL DoH</string>
     <string name="settings_dot_server">เซิร์ฟเวอร์ DoT (ชื่อโฮสต์หรือ IP)</string>
@@ -260,8 +251,6 @@
     <string name="dns_custom_save">บันทึก</string>
     <string name="dns_custom_cancel">ยกเลิก</string>
     <string name="dns_select_server">เลือกเซิร์ฟเวอร์ DNS</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
     <string name="widget_name">สลับ BlockAds</string>
     <string name="widget_description">เปิด/ปิดการบล็อกโฆษณาและดูสถิติ</string>
     <string name="widget_toggle_description">สลับการบล็อกโฆษณา</string>
@@ -289,7 +278,6 @@
     <string name="add">เพิ่ม</string>
     <string name="delete">ลบ</string>
     <string name="cancel">ยกเลิก</string>
-    <string name="ok">ตกลง</string>
     <string name="block_this_domain">บล็อกโดเมนนี้</string>
     <string name="add_to_custom_rules">เพิ่มในกฎที่กำหนดเอง</string>
     <string name="app_management_title">การจัดการแอป</string>

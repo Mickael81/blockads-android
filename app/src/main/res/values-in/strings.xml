@@ -20,6 +20,7 @@
     <string name="status_unprotected">Tidak Terlindungi</string>
     <string name="total_queries">Total Kueri</string>
     <string name="blocked_queries">Diblokiir</string>
+    <string name="blocked_queries">Diblokiir</string>
     <string name="nav_home">Beranda</string>
     <string name="nav_logs">Log</string>
     <string name="nav_filter">Filter</string>
@@ -173,12 +174,6 @@
     <string name="settings_high_contrast_desc">Tingkatkan kontras untuk visibilitas yang lebih baik</string>
     <string name="settings_accent_color">Warna Aksen</string>
     <string name="settings_accent_color_desc">Sesuaikan warna utama aplikasi</string>
-    <string name="accent_green">Hijau</string>
-    <string name="accent_blue">Biru</string>
-    <string name="accent_purple">Ungu</string>
-    <string name="accent_orange">Oranye</string>
-    <string name="accent_pink">Merah Muda</string>
-    <string name="accent_teal">Teal</string>
     <string name="accent_dynamic">Dinamis (Material You)</string>
     <string name="accent_dynamic_desc">Menggunakan warna wallpaper Anda</string>
     <string name="settings_connection">Koneksi</string>
@@ -214,9 +209,6 @@
     <string name="settings_youtube_restricted_desc">Saring video dewasa di YouTube, blokir video dewasa yang disematkan di situs lain, dan sembunyikan semua komentar</string>
     <string name="settings_dns_protocol">Protokol DNS</string>
     <string name="settings_dns_protocol_plain">DNS Biasa</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL Server DoH</string>
     <string name="settings_doh_url_placeholder" translatable="false">https://dns.google/dns-query</string>
     <string name="settings_save_doh_url">Simpan URL DoH</string>
@@ -303,8 +295,6 @@
     <string name="dns_custom_save">Simpan</string>
     <string name="dns_custom_cancel">Batal</string>
     <string name="dns_select_server">Pilih Server DNS</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
 
     <string name="widget_name">Tombol BlockAds</string>
     <string name="widget_description">Nyalakan/matikan pemblokiran iklan dan lihat statistik</string>
@@ -340,7 +330,6 @@
     <string name="add">Tambah</string>
     <string name="delete">Hapus</string>
     <string name="cancel">Batal</string>
-    <string name="ok">OKE</string>
     <string name="block_this_domain">Blokir domain ini</string>
     <string name="add_to_custom_rules">Tambahkan ke aturan kustom</string>
     <string name="import_from_file">Impor dari File</string>

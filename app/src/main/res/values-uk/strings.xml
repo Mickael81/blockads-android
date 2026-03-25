@@ -173,12 +173,6 @@
     <string name="settings_high_contrast_desc">Збільшити контраст для кращої видимості</string>
     <string name="settings_accent_color">Колір акценту</string>
     <string name="settings_accent_color_desc">Налаштуйте основний колір додатка</string>
-    <string name="accent_green">Зелений</string>
-    <string name="accent_blue">Синій</string>
-    <string name="accent_purple">Фіолетовий</string>
-    <string name="accent_orange">Помаранчевий</string>
-    <string name="accent_pink">Рожевий</string>
-    <string name="accent_teal">Бірюзовий</string>
     <string name="accent_dynamic">Динамічний (Material You)</string>
     <string name="accent_dynamic_desc">Використовує кольори ваших шпалер</string>
     <string name="settings_connection">З\'єднання</string>
@@ -214,9 +208,6 @@
     <string name="settings_youtube_restricted_desc">Фільтрувати відео для дорослих на YouTube, блокувати вбудовані відео для дорослих на інших сайтах і приховувати всі коментарі</string>
     <string name="settings_dns_protocol">Протокол DNS</string>
     <string name="settings_dns_protocol_plain">Звичайний DNS</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL сервера DoH</string>
     <string name="settings_save_doh_url">Зберегти URL DoH</string>
     <string name="settings_dot_server">Сервер DoT (ім\'я хоста або IP)</string>
@@ -296,8 +287,6 @@
     <string name="dns_custom_save">Зберегти</string>
     <string name="dns_custom_cancel">Скасувати</string>
     <string name="dns_select_server">Виберіть DNS-сервер</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
 
     <string name="widget_name">Перемикач BlockAds</string>
     <string name="widget_description">Вмикайте/вимикайте блокування реклами та дивіться статистику</string>
@@ -333,7 +322,6 @@
     <string name="add">Додати</string>
     <string name="delete">Видалити</string>
     <string name="cancel">Скасувати</string>
-    <string name="ok">ОК</string>
     <string name="block_this_domain">Блокувати цей домен</string>
     <string name="add_to_custom_rules">Додати до власних правил</string>
     <string name="import_from_file">Імпортувати з файлу</string>

@@ -10,14 +10,8 @@
     <string name="about_title">حول</string>
     <string name="about_version">الإصدار %s</string>
     <string name="about_website">الموقع الإلكتروني</string>
-    <string name="accent_blue">أزرق</string>
     <string name="accent_dynamic">ديناميكي (Material You)</string>
     <string name="accent_dynamic_desc">يستخدم ألوان خلفية الشاشة الخاصة بك</string>
-    <string name="accent_green">أخضر</string>
-    <string name="accent_orange">برتقالي</string>
-    <string name="accent_pink">وردي</string>
-    <string name="accent_purple">أرجواني</string>
-    <string name="accent_teal">أزرق مخضر</string>
     <string name="accessibility_block_rate_value">معدل الحظر %1$s بالمائة</string>
     <string name="accessibility_navigate_back">العودة للخلف</string>
     <string name="accessibility_stat_card">%1$s: %2$s</string>
@@ -84,7 +78,6 @@
     <string name="dns_custom_description">أدخل عناوين خادم DNS الخاصة بك</string>
     <string name="dns_custom_save">حفظ</string>
     <string name="dns_custom_title">DNS مخصص</string>
-    <string name="dns_doh_badge">DoH</string>
     <string name="dns_provider_title">خادم DNS</string>
     <string name="dns_response_custom_ip">عنوان IP مخصص (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">إرجاع عنوان توجيه فارغ (افتراضي)</string>
@@ -231,7 +224,6 @@
     <string name="no_rules_to_export">لا توجد قواعد للتصدير</string>
     <string name="notification_channel_description">يظهر عندما يكون حجب الإعلانات VPN نشطًا</string>
     <string name="notification_channel_name">خدمة حجب الإعلانات</string>
-    <string name="ok">موافق</string>
     <string name="onboarding_battery_desc">استبعد BlockAds من تحسين البطارية بحيث تظل خدمة VPN نشطة في الخلفية ولا يتم إيقافها بواسطة النظام.</string>
     <string name="onboarding_battery_grant">تعطيل تحسين البطارية</string>
     <string name="onboarding_battery_title">حافظ على استمرار الحماية</string>
@@ -359,8 +351,6 @@
     <string name="settings_detected_protocol">تم الكشف: %s</string>
     <string name="settings_dns_config">تكوين DNS</string>
     <string name="settings_dns_protocol">بروتوكول DNS</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
     <string name="settings_dns_protocol_plain">Plain DNS</string>
     <string name="settings_dns_response_type">نوع استجابة DNS</string>
     <string name="settings_dns_response_type_desc">نوع الاستجابة للنطاقات المحظورة</string>
@@ -478,7 +468,6 @@
     <string name="whitelist_domain_added">تمت إضافة النطاق إلى القائمة البيضاء: %s</string>
     <string name="whitelist_domain_removed">تمت إزالة النطاق من القائمة البيضاء</string>
     <string name="test_block_ads_title">اختبار حظر الإعلانات</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doq_server_url">عنوان خادم DoQ</string>
     <string name="settings_fallback_dns_desc">يتم استخدام DNS الاحتياطي عندما يفشل خادم DNS الأساسي. أدخل عنوان IP لخادم DNS الاحتياطي.</string>
     <string name="settings_fallback_dns_short_desc">يستخدم كبديل عند فشل DNS الأساسي</string>
@@ -489,7 +478,6 @@
     <string name="dns_error_notification_title">خطأ في تكوين DNS</string>
     <string name="dns_error_notification_no_fallback">فشل اتصال %1$s بـ %2$s. لم يتم تكوين DNS احتياطي — قد لا يتم تحميل مواقع الويب. تحقق من إعدادات DNS الخاصة بك.</string>
     <string name="dns_error_notification_both_failed">فشل كل من اتصال %1$s بـ %2$s والنسخة الاحتياطية %3$s. قد لا يتم تحميل مواقع الويب. تحقق من إعدادات DNS الخاصة بك.</string>
-    <string name="dns_doq_badge">DoQ</string>
     <string name="widget_name">تبديل BlockAds</string>
     <!-- VPN Connecting Phases (progress feedback) -->
     <string name="vpn_phase_loading_filters">جاري تحميل قوائم التصفية…</string>

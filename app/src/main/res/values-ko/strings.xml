@@ -142,12 +142,6 @@
     <string name="settings_high_contrast_desc">가시성 향상을 위해 대비를 높입니다</string>
     <string name="settings_accent_color">강조 색상</string>
     <string name="settings_accent_color_desc">앱의 기본 색상을 사용자 정의합니다</string>
-    <string name="accent_green">초록</string>
-    <string name="accent_blue">파랑</string>
-    <string name="accent_purple">보라</string>
-    <string name="accent_orange">주황</string>
-    <string name="accent_pink">분홍</string>
-    <string name="accent_teal">청록</string>
     <string name="accent_dynamic">다이나믹 (Material You)</string>
     <string name="accent_dynamic_desc">배경화면에서 색상을 가져옵니다</string>
     <string name="settings_connection">연결</string>
@@ -182,9 +176,6 @@
     <string name="settings_youtube_restricted_desc">YouTube에서 성인 동영상을 필터링하고, 다른 사이트의 성인 임베디드 동영상을 차단하며, 모든 댓글을 숨깁니다</string>
     <string name="settings_dns_protocol">DNS 프로토콜</string>
     <string name="settings_dns_protocol_plain">일반 DNS</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">DoH 서버 URL</string>
     <string name="settings_save_doh_url">DoH URL 저장</string>
     <string name="settings_dot_server">DoT 서버 (호스트명 또는 IP)</string>
@@ -252,8 +243,6 @@
     <string name="dns_custom_save">저장</string>
     <string name="dns_custom_cancel">취소</string>
     <string name="dns_select_server">DNS 서버 선택</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
     <string name="widget_name">BlockAds 토글</string>
     <string name="widget_description">광고 차단 켜기/끄기 전환 및 통계 보기</string>
     <string name="widget_toggle_description">광고 차단 전환</string>
@@ -281,7 +270,6 @@
     <string name="add">추가</string>
     <string name="delete">삭제</string>
     <string name="cancel">취소</string>
-    <string name="ok">확인</string>
     <string name="block_this_domain">이 도메인 차단</string>
     <string name="add_to_custom_rules">사용자 정의 규칙에 추가</string>
     <string name="app_management_title">앱 관리</string>

@@ -142,12 +142,6 @@
     <string name="settings_high_contrast_desc">Aumenta el contraste para mejorar la visibilidad</string>
     <string name="settings_accent_color">Color de acento</string>
     <string name="settings_accent_color_desc">Personaliza el color principal de la app</string>
-    <string name="accent_green">Verde</string>
-    <string name="accent_blue">Azul</string>
-    <string name="accent_purple">Morado</string>
-    <string name="accent_orange">Naranja</string>
-    <string name="accent_pink">Rosa</string>
-    <string name="accent_teal">Verde azulado</string>
     <string name="accent_dynamic">Dinámico (Material You)</string>
     <string name="accent_dynamic_desc">Usa los colores de tu fondo de pantalla</string>
     <string name="settings_connection">Conexión</string>
@@ -182,9 +176,6 @@
     <string name="settings_youtube_restricted_desc">Filtra videos para adultos en YouTube, bloquea videos para adultos incrustados en otros sitios y oculta todos los comentarios</string>
     <string name="settings_dns_protocol">Protocolo DNS</string>
     <string name="settings_dns_protocol_plain">DNS simple</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL del servidor DoH</string>
     <string name="settings_save_doh_url">Guardar URL DoH</string>
     <string name="settings_dot_server">Servidor DoT (nombre de host o IP)</string>
@@ -260,8 +251,6 @@
     <string name="dns_custom_save">Guardar</string>
     <string name="dns_custom_cancel">Cancelar</string>
     <string name="dns_select_server">Seleccionar servidor DNS</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
     <string name="widget_name">Control de BlockAds</string>
     <string name="widget_description">Activa o desactiva el bloqueo de anuncios y consulta las estadísticas</string>
     <string name="widget_toggle_description">Alternar bloqueo de anuncios</string>
@@ -289,7 +278,6 @@
     <string name="add">Añadir</string>
     <string name="delete">Eliminar</string>
     <string name="cancel">Cancelar</string>
-    <string name="ok">OK</string>
     <string name="block_this_domain">Bloquear este dominio</string>
     <string name="add_to_custom_rules">Añadir a reglas personalizadas</string>
     <string name="app_management_title">Gestión de aplicaciones</string>

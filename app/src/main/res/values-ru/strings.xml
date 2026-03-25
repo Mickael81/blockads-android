@@ -172,12 +172,6 @@
     <string name="settings_high_contrast_desc">Повышает контраст для лучшей читаемости</string>
     <string name="settings_accent_color">Акцентный цвет</string>
     <string name="settings_accent_color_desc">Настройте основной цвет приложения</string>
-    <string name="accent_green">Зелёный</string>
-    <string name="accent_blue">Синий</string>
-    <string name="accent_purple">Фиолетовый</string>
-    <string name="accent_orange">Оранжевый</string>
-    <string name="accent_pink">Розовый</string>
-    <string name="accent_teal">Бирюзовый</string>
     <string name="accent_dynamic">Динамический (Material You)</string>
     <string name="accent_dynamic_desc">Использует цвета ваших обоев</string>
     <string name="settings_connection">Подключение</string>
@@ -212,9 +206,6 @@
     <string name="settings_youtube_restricted_desc">Фильтрует видео 18+ на YouTube, блокирует встроенные видео 18+ на других сайтах и скрывает все комментарии</string>
     <string name="settings_dns_protocol">Протокол DNS</string>
     <string name="settings_dns_protocol_plain">Обычный DNS</string>
-    <string name="settings_dns_protocol_doh">DoH</string>
-    <string name="settings_dns_protocol_dot">DoT</string>
-    <string name="settings_dns_protocol_doq">DoQ</string>
     <string name="settings_doh_server_url">URL сервера DoH</string>
     <string name="settings_save_doh_url">Сохранить URL DoH</string>
     <string name="settings_dot_server">Сервер DoT (имя хоста или IP)</string>
@@ -296,8 +287,6 @@
     <string name="dns_custom_save">Сохранить</string>
     <string name="dns_custom_cancel">Отмена</string>
     <string name="dns_select_server">Выберите DNS-сервер</string>
-    <string name="dns_doh_badge">DoH</string>
-    <string name="dns_doq_badge">DoQ</string>
 
     <!-- Widget -->
     <string name="widget_name">Переключатель BlockAds</string>
@@ -336,7 +325,6 @@
     <string name="add">Добавить</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отмена</string>
-    <string name="ok">ОК</string>
     <string name="block_this_domain">Заблокировать этот домен</string>
     <string name="add_to_custom_rules">Добавить в пользовательские правила</string>
 
