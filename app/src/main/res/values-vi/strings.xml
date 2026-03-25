@@ -618,4 +618,8 @@
     <string name="settings_network_switch_delay">Độ trễ khi chuyển mạng</string>
     <string name="settings_network_switch_delay_desc">Tạm dừng kết nối lại VPN sau khi chuyển mạng (hữu ích cho Gọi qua Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">Độ trễ: %1$d giây</string>
+    <string name="settings_root_proxy">Chế độ Proxy (Yêu cầu Root)</string>
+    <string name="settings_root_proxy_desc">Chuyển hướng DNS qua iptables thay vì VPN (cần quyền Root)</string>
+    <string name="root_not_available">Không có quyền Root. Vui lòng cấp quyền trong trình quản lý root của bạn (ví dụ: Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Chế độ Root Proxy đang hoạt động — lưu lượng DNS được chuyển hướng qua iptables</string>
 </resources>

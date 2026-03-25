@@ -597,4 +597,8 @@
     <string name="settings_network_switch_delay">השהיית החלפת רשת</string>
     <string name="settings_network_switch_delay_desc">השהה חיבור מחדש של VPN לאחר שינויי רשת (שימושי לשיחות Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">השהייה: %1$d שניות</string>
+    <string name="settings_root_proxy">מצב Proxy עם Root</string>
+    <string name="settings_root_proxy_desc">נתב מחדש DNS דרך iptables במקום VPN (דורש Root)</string>
+    <string name="root_not_available">גישת Root אינה זמינה. אנא הענק הרשאה במנהל ה-Root שלך (למשל, Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">מצב Proxy עם Root פעיל — תעבורת ה-DNS מנותבת דרך iptables</string>
 </resources>

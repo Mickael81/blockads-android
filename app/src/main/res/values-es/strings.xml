@@ -569,4 +569,8 @@
     <string name="settings_network_switch_delay">Penundaan Peralihan Jaringan</string>
     <string name="settings_network_switch_delay_desc">Jeda penyambungan ulang VPN setelah perubahan jaringan (berguna untuk Panggilan Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">Penundaan: %1$d detik</string>
+    <string name="settings_root_proxy">Modo Proxy Root</string>
+    <string name="settings_root_proxy_desc">Redirigir DNS vía iptables en lugar de VPN (requiere Root)</string>
+    <string name="root_not_available">Acceso Root no disponible. Por favor, concede el permiso en tu administrador root (ej. Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Modo Proxy Root activo — Tráfico DNS redirigido vía iptables</string>
 </resources>

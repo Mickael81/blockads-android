@@ -101,6 +101,10 @@ type Engine struct {
 	// MITM Proxy
 	mitmProxy *MitmProxy
 
+	// Standalone Servers
+	standaloneUdp *dns.Server
+	standaloneTcp *dns.Server
+
 	// Stats
 	totalQueries   atomic.Int64
 	blockedQueries atomic.Int64
@@ -440,6 +444,15 @@ func (e *Engine) Stop() {
 	}
 	e.secBlooms = nil
 
+	if e.standaloneUdp != nil {
+		e.standaloneUdp.Shutdown()
+		e.standaloneUdp = nil
+	}
+	if e.standaloneTcp != nil {
+		e.standaloneTcp.Shutdown()
+		e.standaloneTcp = nil
+	}
+
 	e.mu.Unlock()
 
 	// Stop proxy OUTSIDE the lock (proxy.Stop() may block briefly)
@@ -463,6 +476,267 @@ func (e *Engine) GetStats() string {
 	}
 	data, _ := json.Marshal(stats)
 	return string(data)
+}
+
+// ── Standalone DNS Server (Root/Proxy Mode) ──────────────────────────────────
+
+// ServeDNS handles incoming DNS queries directly from a socket (no TUN fd).
+func (e *Engine) ServeDNS(w dns.ResponseWriter, r *dns.Msg) {
+	startTime := time.Now()
+	if len(r.Question) == 0 {
+		return
+	}
+
+	domain := strings.ToLower(r.Question[0].Name)
+	domain = strings.TrimSuffix(domain, ".")
+	queryType := r.Question[0].Qtype
+	appName := "RootProxy"
+
+	// 1. Custom Rules Override
+	if e.domainChecker != nil {
+		override := e.domainChecker.HasCustomRule(domain)
+		if override == 0 {
+			e.standaloneForward(w, r, appName, startTime)
+			return
+		} else if override == 1 {
+			reason := e.domainChecker.GetBlockReason(domain)
+			if reason == "" {
+				reason = "custom"
+			}
+			e.standaloneBlock(w, r, reason, appName, startTime)
+			return
+		}
+	}
+
+	// 2. SafeSearch / YouTube Check
+	ssResult := e.safeSearch.Check(domain, queryType)
+	if ssResult.Action == ActionRedirect {
+		if e.standaloneRedirect(w, r, ssResult.RedirectDomain, appName, startTime) {
+			return
+		}
+	}
+	if isYT, ytDomain := e.safeSearch.CheckYouTube(domain, queryType); isYT {
+		if e.standaloneRedirect(w, r, ytDomain, appName, startTime) {
+			return
+		}
+	}
+
+	// 3. Fast Native Go Tries (Security then Ads)
+	e.mu.Lock()
+	secBlooms := e.secBlooms
+	secTries := e.secTries
+	adBlooms := e.adBlooms
+	adTries := e.adTries
+	e.mu.Unlock()
+
+	for i, secTrie := range secTries {
+		if secTrie == nil { continue }
+		var secBloom *BloomFilter
+		if i < len(secBlooms) { secBloom = secBlooms[i] }
+		if secBloom == nil || secBloom.MightContainDomainOrParent(domain) {
+			if secTrie.ContainsOrParent(domain) {
+				reason := "security"
+				if i < len(e.secTrieIDs) { reason = e.secTrieIDs[i] }
+				e.standaloneBlock(w, r, reason, appName, startTime)
+				return
+			}
+		}
+	}
+
+	for i, adTrie := range adTries {
+		if adTrie == nil { continue }
+		var adBloom *BloomFilter
+		if i < len(adBlooms) { adBloom = adBlooms[i] }
+		if adBloom == nil || adBloom.MightContainDomainOrParent(domain) {
+			if adTrie.ContainsOrParent(domain) {
+				reason := "filter_list"
+				if i < len(e.adTrieIDs) { reason = e.adTrieIDs[i] }
+				e.standaloneBlock(w, r, reason, appName, startTime)
+				return
+			}
+		}
+	}
+
+	// 4. Fallback Kotlin DomainChecker
+	if e.domainChecker != nil && e.domainChecker.IsBlocked(domain) {
+		reason := e.domainChecker.GetBlockReason(domain)
+		if reason == "" {
+			reason = "filter_list"
+		}
+		e.standaloneBlock(w, r, reason, appName, startTime)
+		return
+	}
+
+	// 5. Forward to Upstream
+	e.standaloneForward(w, r, appName, startTime)
+}
+
+func (e *Engine) standaloneBlock(w dns.ResponseWriter, r *dns.Msg, blockedBy, appName string, startTime time.Time) {
+	m := new(dns.Msg)
+	m.SetReply(r)
+
+	switch e.responseType {
+	case ResponseNXDomain:
+		m.Rcode = dns.RcodeNameError
+	case ResponseRefused:
+		m.Rcode = dns.RcodeRefused
+	default:
+		m.Rcode = dns.RcodeSuccess
+		if r.Question[0].Qtype == dns.TypeA {
+			rr, _ := dns.NewRR(fmt.Sprintf("%s 300 IN A 0.0.0.0", r.Question[0].Name))
+			m.Answer = append(m.Answer, rr)
+		} else if r.Question[0].Qtype == dns.TypeAAAA {
+			rr, _ := dns.NewRR(fmt.Sprintf("%s 300 IN AAAA ::", r.Question[0].Name))
+			m.Answer = append(m.Answer, rr)
+		}
+	}
+
+	_ = w.WriteMsg(m)
+	e.totalQueries.Add(1)
+	e.blockedQueries.Add(1)
+	elapsed := time.Since(startTime).Milliseconds()
+	e.notifyLog(strings.TrimSuffix(r.Question[0].Name, "."), true, r.Question[0].Qtype, elapsed, appName, "", blockedBy)
+}
+
+func (e *Engine) standaloneForward(w dns.ResponseWriter, r *dns.Msg, appName string, startTime time.Time) {
+	raw, err := r.Pack()
+	if err != nil {
+		dns.HandleFailed(w, r)
+		return
+	}
+
+	respRaw, err := e.resolver.Resolve(raw)
+	if err != nil {
+		logf("DNS resolve failed standalone %s: %v", r.Question[0].Name, err)
+		dns.HandleFailed(w, r)
+		e.totalQueries.Add(1)
+		elapsed := time.Since(startTime).Milliseconds()
+		e.notifyLog(strings.TrimSuffix(r.Question[0].Name, "."), false, r.Question[0].Qtype, elapsed, appName, "", "")
+		return
+	}
+
+	var respMsg dns.Msg
+	if err := respMsg.Unpack(respRaw); err != nil {
+		dns.HandleFailed(w, r)
+		return
+	}
+
+	if isUpstreamBlocked(respRaw) {
+		e.totalQueries.Add(1)
+		e.blockedQueries.Add(1)
+		elapsed := time.Since(startTime).Milliseconds()
+		e.notifyLog(strings.TrimSuffix(r.Question[0].Name, "."), true, r.Question[0].Qtype, elapsed, appName, "", "upstream_dns")
+	} else {
+		e.totalQueries.Add(1)
+		elapsed := time.Since(startTime).Milliseconds()
+		e.notifyLog(strings.TrimSuffix(r.Question[0].Name, "."), false, r.Question[0].Qtype, elapsed, appName, "", "")
+	}
+
+	respMsg.Id = r.Id
+	_ = w.WriteMsg(&respMsg)
+}
+
+func (e *Engine) standaloneRedirect(w dns.ResponseWriter, r *dns.Msg, redirectDomain, appName string, startTime time.Time) bool {
+	ip := e.safeSearch.GetCachedIP(redirectDomain)
+	if ip == nil {
+		var err error
+		ip, err = e.resolver.ResolveARecord(redirectDomain, e.primaryDNS)
+		if err != nil {
+			return false
+		}
+		e.safeSearch.CacheIP(redirectDomain, ip)
+	}
+
+	m := new(dns.Msg)
+	m.SetReply(r)
+	m.Rcode = dns.RcodeSuccess
+
+	if r.Question[0].Qtype == dns.TypeA {
+		rr, _ := dns.NewRR(fmt.Sprintf("%s 300 IN A %s", r.Question[0].Name, ip.String()))
+		m.Answer = append(m.Answer, rr)
+	}
+
+	_ = w.WriteMsg(m)
+	e.totalQueries.Add(1)
+	elapsed := time.Since(startTime).Milliseconds()
+	e.notifyLog(strings.TrimSuffix(r.Question[0].Name, "."), false, r.Question[0].Qtype, elapsed, appName, ip.String(), "")
+	return true
+}
+
+// StartStandalone starts the engine in DNS-only standalone mode on 127.0.0.1:port
+// It bypasses TUN and directly serves incoming UDP/TCP DNS queries.
+func (e *Engine) StartStandalone(port int) error {
+	e.mu.Lock()
+
+	// If already running, stop everything first to release the port
+	if e.running {
+		if e.standaloneUdp != nil {
+			e.standaloneUdp.Shutdown()
+			e.standaloneUdp = nil
+		}
+		if e.standaloneTcp != nil {
+			e.standaloneTcp.Shutdown()
+			e.standaloneTcp = nil
+		}
+		if e.resolver != nil {
+			e.resolver.Shutdown()
+		}
+		e.running = false
+	}
+
+	e.running = true
+	e.totalQueries.Store(0)
+	e.blockedQueries.Store(0)
+
+	// Since we are not using a TUN interface, we don't need a SocketProtector
+	// Root/Proxy mode traffic naturally avoids loops due to iptables owner UID matching.
+	e.resolver = NewResolver(nil)
+	e.resolver.Configure(ParseProtocol(e.protocol), e.primaryDNS, e.fallbackDNS, e.dohURL)
+	e.mu.Unlock()
+
+	addr := fmt.Sprintf("127.0.0.1:%d", port)
+
+	udpServer := &dns.Server{Addr: addr, Net: "udp", Handler: dns.HandlerFunc(e.ServeDNS)}
+	tcpServer := &dns.Server{Addr: addr, Net: "tcp", Handler: dns.HandlerFunc(e.ServeDNS)}
+
+	e.mu.Lock()
+	e.standaloneUdp = udpServer
+	e.standaloneTcp = tcpServer
+	e.mu.Unlock()
+
+	udpReady := make(chan error, 1)
+	tcpReady := make(chan error, 1)
+
+	go func() {
+		if err := udpServer.ListenAndServe(); err != nil {
+			logf("Standalone UDP server stopped: %v", err)
+			udpReady <- err
+		}
+	}()
+	go func() {
+		if err := tcpServer.ListenAndServe(); err != nil {
+			logf("Standalone TCP server stopped: %v", err)
+			tcpReady <- err
+		}
+	}()
+
+	// Give servers a moment to bind
+	time.Sleep(100 * time.Millisecond)
+
+	// Check if either server failed to start
+	select {
+	case err := <-udpReady:
+		return fmt.Errorf("UDP server failed to start: %v", err)
+	default:
+	}
+	select {
+	case err := <-tcpReady:
+		return fmt.Errorf("TCP server failed to start: %v", err)
+	default:
+	}
+
+	logf("Engine started in STANDALONE mode on %s", addr)
+	return nil
 }
 
 // ── MITM Proxy API ───────────────────────────────────────────────────────────

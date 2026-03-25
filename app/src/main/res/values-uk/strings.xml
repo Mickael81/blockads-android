@@ -591,4 +591,8 @@
     <string name="settings_network_switch_delay">Затримка зміни мережі</string>
     <string name="settings_network_switch_delay_desc">Призупинити перепідключення VPN після зміни мережі (корисно для викликів через Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">Затримка: %1$d сек.</string>
+    <string name="settings_root_proxy">Режим Root Proxy</string>
+    <string name="settings_root_proxy_desc">Переспрямування DNS через iptables замість VPN (потрібні Root-права)</string>
+    <string name="root_not_available">Root-доступ недоступний. Будь ласка, надайте дозвіл у вашому root-менеджері (наприклад, Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Режим Root Proxy активний — DNS-трафік переспрямовано через iptables</string>
 </resources>

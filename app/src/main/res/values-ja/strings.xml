@@ -567,4 +567,8 @@
     <string name="settings_network_switch_delay">ネットワーク切り替えの遅延</string>
     <string name="settings_network_switch_delay_desc">ネットワーク変更後のVPN再接続を一時停止（Wi-Fi通話に便利）</string>
     <string name="settings_network_switch_delay_value">遅延: %1$d秒</string>
+    <string name="settings_root_proxy">Rootプロキシモード</string>
+    <string name="settings_root_proxy_desc">VPNの代わりにiptables経由でDNSをリダイレクト（Rootが必要）</string>
+    <string name="root_not_available">Rootアクセスを利用できません。Rootマネージャー（Magisk/KernelSUなど）で権限を付与してください。</string>
+    <string name="root_proxy_notification_text">Rootプロキシモードがアクティブです — DNSトラフィックはiptables経由でリダイレクトされています</string>
 </resources>

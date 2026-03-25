@@ -593,4 +593,8 @@
     <string name="settings_network_switch_delay">Zpoždění při změně sítě</string>
     <string name="settings_network_switch_delay_desc">Pozastavit opětovné připojení VPN po změně sítě (užitečné pro Wi-Fi volání)</string>
     <string name="settings_network_switch_delay_value">Zpoždění: %1$d sekund</string>
+    <string name="settings_root_proxy">Režim Root Proxy</string>
+    <string name="settings_root_proxy_desc">Přesměrovat DNS přes iptables místo VPN (vyžaduje Root)</string>
+    <string name="root_not_available">Přístup Root není k dispozici. Udělte prosím oprávnění ve správci root (např. Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Režim Root Proxy je aktivní — provoz DNS je přesměrován přes iptables</string>
 </resources>

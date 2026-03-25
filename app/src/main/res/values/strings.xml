@@ -658,4 +658,8 @@
     <string name="settings_network_switch_delay">Network Switch Delay</string>
     <string name="settings_network_switch_delay_desc">Pause VPN reconnect after network changes (useful for Wi-Fi Calling)</string>
     <string name="settings_network_switch_delay_value">Delay: %1$d seconds</string>
+    <string name="settings_root_proxy">Root Proxy Mode</string>
+    <string name="settings_root_proxy_desc">Redirect DNS via iptables instead of VPN (requires Root)</string>
+    <string name="root_not_available">Root access not available. Please grant permission in your root manager (e.g., Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Root Proxy mode active — DNS traffic redirected via iptables</string>
 </resources>

@@ -590,4 +590,8 @@
     <string name="settings_network_switch_delay">Opóźnienie zmiany sieci</string>
     <string name="settings_network_switch_delay_desc">Wstrzymaj ponowne połączenie VPN po zmianie sieci (przydatne przy połączeniach Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">Opóźnienie: %1$d sekund</string>
+    <string name="settings_root_proxy">Tryb Root Proxy</string>
+    <string name="settings_root_proxy_desc">Przekieruj DNS przez iptables zamiast VPN (wymaga Roota)</string>
+    <string name="root_not_available">Brak dostępu do roota. Przyznaj uprawnienia w menedżerze roota (np. Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Tryb Root Proxy jest aktywny — ruch DNS jest przekierowywany przez iptables</string>
 </resources>

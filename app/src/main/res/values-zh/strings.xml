@@ -568,4 +568,8 @@
     <string name="settings_network_switch_delay">网络切换延迟</string>
     <string name="settings_network_switch_delay_desc">网络更改后暂停重新连接 VPN（适用于 Wi-Fi 通话）</string>
     <string name="settings_network_switch_delay_value">延迟：%1$d秒</string>
+    <string name="settings_root_proxy">Root 代理模式</string>
+    <string name="settings_root_proxy_desc">通过 iptables 而不是 VPN 重定向 DNS（需要 Root）</string>
+    <string name="root_not_available">无法获取 Root 权限。请在您的 root 管理器（例如 Magisk/KernelSU）中授予权限。</string>
+    <string name="root_proxy_notification_text">Root 代理模式已激活 — DNS 流量已通过 iptables 重定向</string>
 </resources>

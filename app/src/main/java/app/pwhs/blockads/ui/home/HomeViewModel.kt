@@ -16,12 +16,17 @@ import app.pwhs.blockads.data.entities.TopBlockedDomain
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.service.AdBlockVpnService
 import app.pwhs.blockads.service.VpnState
+import app.pwhs.blockads.service.RootProxyService
+import app.pwhs.blockads.data.datastore.AppPreferences
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -35,13 +40,20 @@ class HomeViewModel(
 ) : ViewModel() {
 
     // ── Reactive VPN state (derived from the single source of truth) ──
-    val vpnEnabled: StateFlow<Boolean> = AdBlockVpnService.state
-        .map { it == VpnState.RUNNING }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AdBlockVpnService.isRunning)
+    val vpnEnabled: StateFlow<Boolean> = combine(
+        AdBlockVpnService.state,
+        RootProxyService.state
+    ) { state1, state2 ->
+        state1 == VpnState.RUNNING || state2 == VpnState.RUNNING
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AdBlockVpnService.isRunning || RootProxyService.isRunning)
 
-    val vpnConnecting: StateFlow<Boolean> = AdBlockVpnService.state
-        .map { it == VpnState.STARTING || it == VpnState.RESTARTING }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AdBlockVpnService.isConnecting)
+    val vpnConnecting: StateFlow<Boolean> = combine(
+        AdBlockVpnService.state,
+        RootProxyService.state
+    ) { state1, state2 ->
+        state1 == VpnState.STARTING || state1 == VpnState.RESTARTING ||
+        state2 == VpnState.STARTING || state2 == VpnState.RESTARTING
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AdBlockVpnService.isConnecting)
 
     val blockedCount: StateFlow<Int> = dnsLogDao.getBlockedCount()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
@@ -86,25 +98,32 @@ class HomeViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), filterRepo.domainCount)
 
     init {
-        // Uptime ticker — only ticks while VPN is RUNNING
+        // Uptime ticker — only ticks while VPN or Root Proxy is RUNNING
         viewModelScope.launch {
             while (isActive) {
-                val startTime = AdBlockVpnService.startTimestamp
-                _protectionUptimeMs.value = if (AdBlockVpnService.isRunning && startTime > 0) {
-                    System.currentTimeMillis() - startTime
-                } else {
-                    0L
+                var uptime = 0L
+                if (AdBlockVpnService.isRunning && AdBlockVpnService.startTimestamp > 0) {
+                    uptime = System.currentTimeMillis() - AdBlockVpnService.startTimestamp
+                } else if (RootProxyService.isRunning && RootProxyService.startTimestamp > 0) {
+                    uptime = System.currentTimeMillis() - RootProxyService.startTimestamp
                 }
+                _protectionUptimeMs.value = uptime
                 delay(1000)
             }
         }
     }
 
     fun stopVpn(context: Context) {
-        val intent = Intent(context, AdBlockVpnService::class.java).apply {
-            action = AdBlockVpnService.ACTION_STOP
+        val appPrefs = AppPreferences(context)
+        val mode = runBlocking { appPrefs.routingMode.first() }
+        if (mode == AppPreferences.ROUTING_MODE_ROOT) {
+            RootProxyService.stop(context)
+        } else {
+            val intent = Intent(context, AdBlockVpnService::class.java).apply {
+                action = AdBlockVpnService.ACTION_STOP
+            }
+            context.startService(intent)
         }
-        context.startService(intent)
     }
 
     fun preloadFilter() {

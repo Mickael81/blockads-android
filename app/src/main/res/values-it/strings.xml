@@ -623,4 +623,8 @@
     <string name="enable_all_user_apps">Abilita tutte le app utente</string>
     <string name="disable_all_system_apps">Disabilita tutte le app di sistema</string>
     <string name="enable_all_system_apps">Abilita tutte le app di sistema</string>
+    <string name="settings_root_proxy">Modalità Proxy Root</string>
+    <string name="settings_root_proxy_desc">Reindirizza il DNS tramite iptables invece della VPN (richiede il Root)</string>
+    <string name="root_not_available">Accesso Root non disponibile. Concedi l\'autorizzazione nel tuo gestore root (es. Magisk/KernelSU).</string>
+    <string name="root_proxy_notification_text">Modalità Proxy Root attiva — Traffico DNS reindirizzato tramite iptables</string>
 </resources>

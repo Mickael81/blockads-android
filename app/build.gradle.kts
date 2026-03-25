@@ -144,6 +144,10 @@ dependencies {
     // ComposeCharts
     implementation(libs.compose.charts)
 
+    // libsu — root shell access for iptables mode
+    implementation("com.github.topjohnwu.libsu:core:6.0.0")
+    implementation("com.github.topjohnwu.libsu:service:6.0.0")
+
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
 

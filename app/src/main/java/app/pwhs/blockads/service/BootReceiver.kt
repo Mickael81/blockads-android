@@ -24,8 +24,14 @@ class BootReceiver : BroadcastReceiver() {
             try {
                 val autoReconnect = prefs.autoReconnect.first()
                 val wasEnabled = prefs.vpnEnabled.first()
+                val routingMode = prefs.routingMode.first()
 
-                if (autoReconnect && wasEnabled) {
+                // Root Mode: iptables rules are volatile (cleared on reboot).
+                // Re-apply rules by starting RootProxyService.
+                if (routingMode == AppPreferences.ROUTING_MODE_ROOT && wasEnabled) {
+                    Timber.d("Auto-starting Root Proxy mode after boot")
+                    RootProxyService.start(context)
+                } else if (autoReconnect && wasEnabled) {
                     Timber.d("Auto-reconnecting VPN after boot")
                     val serviceIntent = Intent(context, AdBlockVpnService::class.java).apply {
                         action = AdBlockVpnService.ACTION_START
@@ -38,7 +44,7 @@ class BootReceiver : BroadcastReceiver() {
                     }
                 }
             } catch (e: Exception) {
-                Timber.e(e, "Error starting VPN after boot")
+                Timber.e(e, "Error starting service after boot")
             } finally {
                 pendingResult.finish()
             }

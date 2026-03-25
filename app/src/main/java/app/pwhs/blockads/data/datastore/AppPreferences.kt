@@ -57,6 +57,7 @@ class AppPreferences(private val context: Context) {
 
         const val ROUTING_MODE_DIRECT = "direct"
         const val ROUTING_MODE_WIREGUARD = "wireguard"
+        const val ROUTING_MODE_ROOT = "root"
 
         const val PROTECTION_BASIC = "BASIC"
         const val PROTECTION_STANDARD = "STANDARD"

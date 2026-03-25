@@ -180,7 +180,7 @@ class AdBlockVpnService : VpnService() {
 
         appNameResolver = AppNameResolver(this)
         goTunnelAdapter = GoTunnelAdapter(
-            vpnService = this,
+            context = this,
             filterRepo = filterRepo,
             dnsLogDao = dnsLogDao,
             scope = serviceScope,
@@ -504,11 +504,19 @@ class AdBlockVpnService : VpnService() {
                     // start() blocks the coroutine while reading from TUN
                     // WireGuard init happens atomically inside Go before any packets are read
                     goTunnelAdapter.start(
-                        it,
-                        wgConfigJson,
-                        httpsFilteringEnabled,
-                        selectedBrowsers,
-                        certDir
+                        vpnInterface = it,
+                        wgConfigJson = wgConfigJson,
+                        httpsFilteringEnabled = httpsFilteringEnabled,
+                        selectedBrowsers = selectedBrowsers,
+                        certDir = certDir,
+                        socketProtector = { fd ->
+                            try {
+                                protect(fd)
+                            } catch (e: Exception) {
+                                Timber.e(e, "Failed to protect socket $fd")
+                                false
+                            }
+                        }
                     )
                 }
 

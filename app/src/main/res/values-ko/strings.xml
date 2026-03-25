@@ -568,4 +568,8 @@
     <string name="settings_network_switch_delay">네트워크 전환 지연</string>
     <string name="settings_network_switch_delay_desc">네트워크 변경 후 VPN 재연결 일시 중지 (Wi-Fi 통화에 유용함)</string>
     <string name="settings_network_switch_delay_value">지연: %1$d초</string>
+    <string name="settings_root_proxy">Root 프록시 모드</string>
+    <string name="settings_root_proxy_desc">VPN 대신 iptables를 통해 DNS 리디렉션 (Root 필요)</string>
+    <string name="root_not_available">Root 권한을 사용할 수 없습니다. 루팅 매니저(예: Magisk/KernelSU)에서 권한을 허용해 주세요.</string>
+    <string name="root_proxy_notification_text">Root 프록시 모드 활성화됨 — iptables를 통해 DNS 트래픽이 리디렉션됨</string>
 </resources>

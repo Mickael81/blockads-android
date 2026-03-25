@@ -1,6 +1,6 @@
 package app.pwhs.blockads.service
 
-import android.os.ParcelFileDescriptor
+import android.content.Context
 import app.pwhs.blockads.data.dao.DnsLogDao
 import app.pwhs.blockads.data.entities.DnsLogEntry
 import app.pwhs.blockads.data.repository.FilterListRepository
@@ -26,7 +26,7 @@ import tunnel.SocketProtector
  * - Pass WireGuard config JSON to Go engine on startup (unified pipeline)
  */
 class GoTunnelAdapter(
-    private val vpnService: AdBlockVpnService,
+    private val context: Context,
     private val filterRepo: FilterListRepository,
     private val dnsLogDao: DnsLogDao,
     private val scope: CoroutineScope,
@@ -136,7 +136,7 @@ class GoTunnelAdapter(
                     // Try to resolve the user-friendly App Name string from the package name
                     val friendlyAppName = if (packageNameOrAppName.isNotEmpty() && packageNameOrAppName.contains(".")) {
                         try {
-                            val pm = vpnService.packageManager
+                            val pm = context.packageManager
                             val info = pm.getApplicationInfo(packageNameOrAppName, 0)
                             pm.getApplicationLabel(info).toString()
                         } catch (e: Exception) {
@@ -176,11 +176,12 @@ class GoTunnelAdapter(
      * @param certDir Directory to store the proxy's root CA certificate
      */
     fun start(
-        vpnInterface: ParcelFileDescriptor, 
+        vpnInterface: android.os.ParcelFileDescriptor, 
         wgConfigJson: String = "",
         httpsFilteringEnabled: Boolean = false,
         selectedBrowsers: Set<String> = emptySet(),
-        certDir: String = ""
+        certDir: String = "",
+        socketProtector: ((Int) -> Boolean)? = null
     ) {
         if (isRunning) return
         isRunning = true
@@ -189,7 +190,7 @@ class GoTunnelAdapter(
         if (httpsFilteringEnabled && certDir.isNotEmpty()) {
             try {
                 // Map package names to UIDs and set them in Go
-                val pm = vpnService.packageManager
+                val pm = context.packageManager
                 val uids = selectedBrowsers.mapNotNull { pkg ->
                     try {
                         pm.getPackageUid(pkg, 0)
@@ -221,19 +222,44 @@ class GoTunnelAdapter(
         val fd = vpnInterface.fd
         Timber.d("Starting Go tunnel engine with fd=$fd, wg=${wgConfigJson.isNotEmpty()}")
 
-        // Create socket protector that delegates to VpnService.protect()
+        // Create socket protector that delegates to VpnService.protect() (if provided)
         val protector = SocketProtector { fd ->
-            try {
-                vpnService.protectSocket(fd.toInt())
-            } catch (e: Exception) {
-                Timber.e(e, "Failed to protect socket fd=$fd")
-                false
-            }
+            socketProtector?.invoke(fd.toInt()) ?: false
         }
 
         // Start the Go engine (this blocks the thread)
         // WireGuard setup happens atomically inside Go before any packets are read.
         engine.start(fd.toLong(), protector, wgConfigJson)
+    }
+
+    /**
+     * Start the Go engine in Standalone DNS server mode (for Root/Proxy Mode).
+     */
+    fun startStandalone(port: Int) {
+        // Ensure any previous engine is fully stopped to release the port
+        if (isRunning) {
+            stop()
+            Thread.sleep(300) // Give OS time to release the socket
+        }
+        isRunning = true
+
+        setupAppResolver()
+        setupDomainChecker()
+        setupFirewallChecker()
+        setupLogCallback()
+
+        updateTries()
+        updateCosmeticRules()
+
+        Timber.d("Starting Go tunnel engine in STANDALONE mode on port $port")
+        scope.launch(Dispatchers.IO) {
+            try {
+                engine.startStandalone(port.toLong())
+            } catch (e: Exception) {
+                Timber.e(e, "Go standalone engine crashed or failed to start")
+                isRunning = false
+            }
+        }
     }
 
     /**

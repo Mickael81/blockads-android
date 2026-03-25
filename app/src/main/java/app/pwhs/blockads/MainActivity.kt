@@ -21,9 +21,15 @@ import androidx.core.content.ContextCompat
 import app.pwhs.blockads.data.datastore.AppPreferences
 import app.pwhs.blockads.utils.LocaleHelper
 import app.pwhs.blockads.service.AdBlockVpnService
+import app.pwhs.blockads.service.IptablesManager
+import app.pwhs.blockads.service.RootProxyService
 import app.pwhs.blockads.ui.BlockAdsApp
 import app.pwhs.blockads.ui.theme.BlockadsTheme
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent.getKoin
 
@@ -129,22 +135,37 @@ class MainActivity : ComponentActivity() {
     private fun handleWidgetIntent(intent: Intent?) {
         if (!widgetIntentHandled && intent?.getBooleanExtra(EXTRA_START_VPN, false) == true) {
             widgetIntentHandled = true
-            if (!AdBlockVpnService.isRunning) {
-                handleVpnToggle()
+            val appPrefs: AppPreferences = getKoin().get()
+            val routingMode = runBlocking { appPrefs.routingMode.first() }
+            
+            if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
+                if (!RootProxyService.isRunning) handleVpnToggle()
+            } else {
+                if (!AdBlockVpnService.isRunning) handleVpnToggle()
             }
         }
     }
 
     private fun handleShortcutIntent(intent: Intent?) {
         if (intent?.action == ACTION_TOGGLE_SHORTCUT) {
-            if (AdBlockVpnService.isRunning) {
-                // Stop VPN
-                val stopIntent = Intent(this, AdBlockVpnService::class.java).apply {
-                    action = AdBlockVpnService.ACTION_STOP
+            val appPrefs: AppPreferences = getKoin().get()
+            val routingMode = runBlocking { appPrefs.routingMode.first() }
+            
+            if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
+                if (RootProxyService.isRunning) {
+                    RootProxyService.stop(this)
+                } else {
+                    handleVpnToggle()
                 }
-                startService(stopIntent)
             } else {
-                handleVpnToggle()
+                if (AdBlockVpnService.isRunning) {
+                    val stopIntent = Intent(this, AdBlockVpnService::class.java).apply {
+                        action = AdBlockVpnService.ACTION_STOP
+                    }
+                    startService(stopIntent)
+                } else {
+                    handleVpnToggle()
+                }
             }
             // Clear the action so it doesn't re-trigger
             intent.action = null
@@ -162,7 +183,29 @@ class MainActivity : ComponentActivity() {
                 return
             }
         }
-        requestVpnPermission()
+        
+        val appPrefs: AppPreferences = getKoin().get()
+        lifecycleScope.launch(Dispatchers.IO) {
+            val routingMode = appPrefs.routingMode.first()
+            
+            if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
+                if (IptablesManager.isRootAvailable()) {
+                    withContext(Dispatchers.Main) {
+                        RootProxyService.start(this@MainActivity)
+                    }
+                } else {
+                    // If root is lost, fallback to Direct mode and request VPN permission
+                    appPrefs.setRoutingMode(AppPreferences.ROUTING_MODE_DIRECT)
+                    withContext(Dispatchers.Main) {
+                        requestVpnPermission()
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    requestVpnPermission()
+                }
+            }
+        }
     }
 
     private fun requestVpnPermission() {

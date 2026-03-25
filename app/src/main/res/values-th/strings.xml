@@ -570,4 +570,8 @@
     <string name="settings_network_switch_delay">หน่วงเวลาสลับเครือข่าย</string>
     <string name="settings_network_switch_delay_desc">หยุดพักการเชื่อมต่อ VPN ใหม่หลังจากเครือข่ายเปลี่ยน (มีประโยชน์สำหรับการโทรผ่าน Wi-Fi)</string>
     <string name="settings_network_switch_delay_value">หน่วงเวลา: %1$d วินาที</string>
+    <string name="settings_root_proxy">โหมด Root Proxy</string>
+    <string name="settings_root_proxy_desc">เปลี่ยนเส้นทาง DNS ผ่าน iptables แทน VPN (ต้องการ Root)</string>
+    <string name="root_not_available">ไม่สามารถเข้าถึง Root ได้ โปรดให้สิทธิ์ในเครื่องมือจัดการรูทของคุณ (เช่น Magisk/KernelSU)</string>
+    <string name="root_proxy_notification_text">โหมด Root Proxy ทำงานอยู่ — เปลี่ยนเส้นทางข้อมูล DNS ผ่าน iptables แล้ว</string>
 </resources>

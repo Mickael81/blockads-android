@@ -108,6 +108,9 @@ class SettingsViewModel(
     val networkSwitchDelaySec: StateFlow<Int> = appPrefs.networkSwitchDelaySec
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 30)
 
+    val routingMode: StateFlow<String> = appPrefs.routingMode
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppPreferences.ROUTING_MODE_DIRECT)
+
     private val _events = MutableSharedFlow<UiEvent>(extraBufferCapacity = 1)
     val events: SharedFlow<UiEvent> = _events.asSharedFlow()
 
@@ -127,6 +130,10 @@ class SettingsViewModel(
 
     fun setNetworkSwitchDelaySec(seconds: Int) {
         viewModelScope.launch { appPrefs.setNetworkSwitchDelaySec(seconds) }
+    }
+
+    fun setRoutingMode(mode: String) {
+        viewModelScope.launch { appPrefs.setRoutingMode(mode) }
     }
 
     fun setAutoUpdateEnabled(enabled: Boolean) {

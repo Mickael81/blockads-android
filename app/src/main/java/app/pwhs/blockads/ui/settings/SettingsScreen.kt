@@ -42,6 +42,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PhoneAndroid
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material.icons.filled.Upload
@@ -61,6 +62,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +76,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pwhs.blockads.R
 import app.pwhs.blockads.data.datastore.AppPreferences
+import app.pwhs.blockads.service.IptablesManager
 import app.pwhs.blockads.ui.event.UiEventEffect
 import app.pwhs.blockads.ui.logs.dialog.ConfirmClearLogDialog
 import app.pwhs.blockads.ui.settings.component.DnsResponseTypeDialog
@@ -82,6 +85,8 @@ import app.pwhs.blockads.ui.settings.component.SectionHeader
 import app.pwhs.blockads.ui.settings.component.SettingsToggleItem
 import app.pwhs.blockads.ui.theme.DangerRed
 import app.pwhs.blockads.ui.theme.TextSecondary
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -109,6 +114,8 @@ fun SettingsScreen(
     val autoUpdateWifiOnly by viewModel.autoUpdateWifiOnly.collectAsStateWithLifecycle()
     val autoUpdateNotification by viewModel.autoUpdateNotification.collectAsStateWithLifecycle()
 
+    val routingMode by viewModel.routingMode.collectAsStateWithLifecycle()
+
     val dnsResponseType by viewModel.dnsResponseType.collectAsStateWithLifecycle()
     var showDnsResponseTypeDialog by remember { mutableStateOf(false) }
     var showClearConfirm by remember { mutableStateOf(false) }
@@ -126,6 +133,8 @@ fun SettingsScreen(
     val importLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri -> uri?.let { viewModel.importSettings(it) } }
+
+    val coroutineScope = rememberCoroutineScope()
 
     UiEventEffect(viewModel.events)
 
@@ -163,13 +172,38 @@ fun SettingsScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(16.dp)
             ) {
-                SettingsToggleItem(
-                    icon = Icons.Default.Replay,
-                    title = stringResource(R.string.settings_auto_reconnect),
-                    subtitle = stringResource(R.string.settings_auto_reconnect_desc),
-                    isChecked = autoReconnect,
-                    onCheckedChange = { viewModel.setAutoReconnect(it) }
-                )
+                Column {
+                    SettingsToggleItem(
+                        icon = Icons.Default.Replay,
+                        title = stringResource(R.string.settings_auto_reconnect),
+                        subtitle = stringResource(R.string.settings_auto_reconnect_desc),
+                        isChecked = autoReconnect,
+                        onCheckedChange = { viewModel.setAutoReconnect(it) }
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    val context = LocalContext.current
+                    SettingsToggleItem(
+                        icon = Icons.Default.Security,
+                        title = stringResource(R.string.settings_root_proxy),
+                        subtitle = stringResource(R.string.settings_root_proxy_desc),
+                        isChecked = routingMode == AppPreferences.ROUTING_MODE_ROOT,
+                        onCheckedChange = { isEnabled ->
+                            if (isEnabled) {
+                                coroutineScope.launch(Dispatchers.IO) {
+                                    if (IptablesManager.isRootAvailable()) {
+                                        viewModel.setRoutingMode(AppPreferences.ROUTING_MODE_ROOT)
+                                    } else {
+                                        kotlinx.coroutines.withContext(Dispatchers.Main) {
+                                            android.widget.Toast.makeText(context, R.string.root_not_available, android.widget.Toast.LENGTH_LONG).show()
+                                        }
+                                    }
+                                }
+                            } else {
+                                viewModel.setRoutingMode(AppPreferences.ROUTING_MODE_DIRECT)
+                            }
+                        }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
