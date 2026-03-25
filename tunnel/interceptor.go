@@ -73,6 +73,17 @@ func (i *DnsInterceptor) Run(tunFile *os.File) {
 			continue
 		}
 
+		// ── VoWiFi bypass (MUST be checked FIRST) ──────────────
+		// UDP ports 500 (IKEv2) and 4500 (IPSec NAT-T) are used
+		// by Wi-Fi Calling (VoWiFi) for carrier IPSec tunnels.
+		// Writing the packet back to TUN lets it re-enter the
+		// Android IP stack and route via the physical interface,
+		// bypassing the VPN tunnel entirely.
+		if isVoWiFiPacket(buf, n) {
+			tunFile.Write(buf[:n])
+			continue
+		}
+
 		// Classify the packet: DNS (port 53) or non-DNS?
 		if isDNSPacket(buf, n) {
 			// DNS path → parse and handle via adblock engine
@@ -140,6 +151,52 @@ func isDNSPacket(packet []byte, length int) bool {
 		}
 		destPort := binary.BigEndian.Uint16(packet[ipv6HeaderSize+2 : ipv6HeaderSize+4])
 		return destPort == 53
+
+	default:
+		return false
+	}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// isVoWiFiPacket — Fast check: is this a UDP packet to port 500 or 4500?
+//
+// These ports are used by Wi-Fi Calling (VoWiFi) for IKEv2 key exchange (500)
+// and IPSec NAT-Traversal (4500). Traffic to these ports must bypass the
+// VPN filtering pipeline to avoid breaking the carrier's IPSec tunnel.
+//
+// Zero allocations — operates directly on the packet byte slice.
+// ─────────────────────────────────────────────────────────────────────────────
+
+func isVoWiFiPacket(packet []byte, length int) bool {
+	if length < ipv4HeaderSize+udpHeaderSize {
+		return false
+	}
+
+	version := packet[0] >> 4
+
+	switch version {
+	case 4:
+		// IPv4: check protocol is UDP (17)
+		if packet[9] != 17 {
+			return false
+		}
+		ihl := int(packet[0]&0x0F) * 4
+		if length < ihl+udpHeaderSize {
+			return false
+		}
+		destPort := binary.BigEndian.Uint16(packet[ihl+2 : ihl+4])
+		return destPort == 500 || destPort == 4500
+
+	case 6:
+		// IPv6: check next header is UDP (17)
+		if length < ipv6HeaderSize+udpHeaderSize {
+			return false
+		}
+		if packet[6] != 17 {
+			return false
+		}
+		destPort := binary.BigEndian.Uint16(packet[ipv6HeaderSize+2 : ipv6HeaderSize+4])
+		return destPort == 500 || destPort == 4500
 
 	default:
 		return false
