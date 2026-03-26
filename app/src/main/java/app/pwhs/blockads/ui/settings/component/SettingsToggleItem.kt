@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -16,6 +17,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.pwhs.blockads.ui.theme.TextSecondary
 
@@ -31,6 +34,12 @@ fun SettingsToggleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .toggleable(
+                value = isChecked,
+                onValueChange = { onCheckedChange(it) },
+                role = Role.Switch
+            )
+            .semantics(mergeDescendants = true, properties = { })
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -45,7 +54,7 @@ fun SettingsToggleItem(
         }
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = null,
             colors = SwitchDefaults.colors(
                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                 checkedTrackColor = MaterialTheme.colorScheme.primary

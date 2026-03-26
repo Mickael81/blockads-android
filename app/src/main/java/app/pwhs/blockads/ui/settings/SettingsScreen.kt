@@ -185,7 +185,7 @@ fun SettingsScreen(
                         title = stringResource(R.string.settings_network_switch_delay),
                         subtitle = stringResource(R.string.settings_network_switch_delay_desc),
                         isChecked = networkSwitchDelayEnabled,
-                        onCheckedChange = { viewModel.setNetworkSwitchDelayEnabled(it) }
+                        onCheckedChange = { viewModel.setNetworkSwitchDelayEnabled(it) },
                     )
                     AnimatedVisibility(
                         visible = networkSwitchDelayEnabled,
