@@ -131,6 +131,20 @@ class AdBlockVpnService : VpnService() {
                 context.startService(intent)
             }
         }
+
+        fun start(context: Context) {
+            val intent = Intent(context, AdBlockVpnService::class.java).apply {
+                action = ACTION_START
+            }
+            androidx.core.content.ContextCompat.startForegroundService(context, intent)
+        }
+
+        fun stop(context: Context) {
+            val intent = Intent(context, AdBlockVpnService::class.java).apply {
+                action = ACTION_STOP
+            }
+            context.startService(intent)
+        }
     }
 
     private var vpnInterface: ParcelFileDescriptor? = null
