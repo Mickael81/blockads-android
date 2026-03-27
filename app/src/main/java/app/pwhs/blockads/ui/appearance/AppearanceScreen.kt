@@ -516,9 +516,16 @@ fun AppearanceScreen(
                             R.string.settings_lang_zh,
                             Icons.Default.Language,
                             AppPreferences.LANGUAGE_ZH
-                        )
+                        ),
+                        Triple(
+                            R.string.settings_lang_fr,
+                            Icons.Default.Language,
+                            AppPreferences.LANGUAGE_FR
+                        ),
                     )
-                    languages.forEachIndexed { index, (labelRes, icon, langCode) ->
+                    val sortedLanguages =
+                        languages.subList(0, 2) + languages.drop(2).sortedBy { it.third }
+                    sortedLanguages.forEachIndexed { index, (labelRes, icon, langCode) ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
