@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent.getKoin
+import io.sentry.Sentry
 
 class MainActivity : ComponentActivity() {
 
@@ -68,6 +69,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // waiting for view to draw to better represent a captured error with a screenshot
+        findViewById<android.view.View>(android.R.id.content).viewTreeObserver.addOnGlobalLayoutListener {
+            try {
+                throw Exception("This app uses Sentry! :)")
+            } catch (e: Exception) {
+                Sentry.captureException(e)
+            }
+        }
+
         enableEdgeToEdge()
         setContent {
             val appPrefs: AppPreferences = getKoin().get()
@@ -137,7 +147,7 @@ class MainActivity : ComponentActivity() {
             widgetIntentHandled = true
             val appPrefs: AppPreferences = getKoin().get()
             val routingMode = runBlocking { appPrefs.routingMode.first() }
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (!RootProxyService.isRunning) handleVpnToggle()
             } else {
@@ -150,7 +160,7 @@ class MainActivity : ComponentActivity() {
         if (intent?.action == ACTION_TOGGLE_SHORTCUT) {
             val appPrefs: AppPreferences = getKoin().get()
             val routingMode = runBlocking { appPrefs.routingMode.first() }
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (RootProxyService.isRunning) {
                     RootProxyService.stop(this)
@@ -190,7 +200,7 @@ class MainActivity : ComponentActivity() {
         val appPrefs: AppPreferences = getKoin().get()
         lifecycleScope.launch(Dispatchers.IO) {
             val routingMode = appPrefs.routingMode.first()
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (IptablesManager.isRootAvailable()) {
                     withContext(Dispatchers.Main) {
