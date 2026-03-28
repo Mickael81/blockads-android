@@ -575,7 +575,6 @@
     <string name="disable_all_user_apps">تعطيل جميع تطبيقات المستخدم</string>
     <string name="enable_all_user_apps">تمكين جميع تطبيقات المستخدم</string>
     <string name="disable_all_system_apps">تعطيل جميع تطبيقات النظام</string>
-    <string name="disable_all_system_apps">تعطيل جميع تطبيقات النظام</string>
     <string name="enable_all_system_apps">تمكين جميع تطبيقات النظام</string>
     <string name="vpn_network_switch_waiting">في انتظار استقرار الشبكة… %1$ds</string>
     <string name="settings_network_switch_delay">تأخير تبديل الشبكة</string>
