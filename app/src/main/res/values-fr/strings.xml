@@ -8,7 +8,7 @@
     <string name="vpn_notification_reconnecting">BlockAds se reconnecte</string>
     <string name="vpn_notification_reconnecting_text">Changement de réseau, reconnexion au VPN…</string>
     <string name="vpn_notification_retrying">BlockAds effectue une nouvelle tentative</string>
-    <string name="vpn_notification_retry_text">Tentative de réessai n° %1 sur %2</string>
+    <string name="vpn_notification_retry_text">Tentative de réessai %1 sur %2</string>
     <string name="vpn_alert_channel_name">Alertes VPN</string>
     <string name="vpn_alert_channel_description">Alertes importantes concernant les changements d\'état du VPN</string>
     <string name="vpn_revoked_title">Le blocage des publicités a été désactivé</string>
@@ -452,7 +452,7 @@
     <string name="stats_all_time_blocked">Toujours bloqué</string>
     <string name="stats_today_queries">Requêtes du jour</string>
     <string name="stats_today_blocked">Bloqué aujourd\'hui</string>
-    <string name="stats_today_security">Menaces d\'aujourd'hui</string>
+    <string name="stats_today_security">Menaces d\'aujourd\'hui</string>
     <string name="stats_charts">Tableaux d\'activités</string>
     <string name="stats_chart_4w">4 semaines</string>
     <string name="stats_chart_12m">12 mois</string>
