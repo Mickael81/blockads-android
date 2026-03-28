@@ -54,6 +54,7 @@ class AppPreferences(private val context: Context) {
         private val KEY_SELECTED_BROWSERS = stringSetPreferencesKey("selected_browsers")
         private val KEY_NETWORK_SWITCH_DELAY_ENABLED = booleanPreferencesKey("network_switch_delay_enabled")
         private val KEY_NETWORK_SWITCH_DELAY_SEC = intPreferencesKey("network_switch_delay_sec")
+        private val KEY_CRASH_REPORTING_ENABLED = booleanPreferencesKey("crash_reporting_enabled")
 
         const val ROUTING_MODE_DIRECT = "direct"
         const val ROUTING_MODE_WIREGUARD = "wireguard"
@@ -255,6 +256,10 @@ class AppPreferences(private val context: Context) {
 
     val wgConfigJson: Flow<String?> = context.dataStore.data.map { prefs ->
         prefs[KEY_WG_CONFIG_JSON]
+    }
+
+    val crashReportingEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[KEY_CRASH_REPORTING_ENABLED] ?: false
     }
 
     suspend fun setVpnEnabled(enabled: Boolean) {
@@ -500,6 +505,12 @@ class AppPreferences(private val context: Context) {
             }
         } catch (_: Exception) {
             emptySet()
+        }
+    }
+
+    suspend fun setCrashReportingEnabled(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_CRASH_REPORTING_ENABLED] = enabled
         }
     }
 }

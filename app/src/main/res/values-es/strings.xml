@@ -381,7 +381,6 @@
     <string name="firewall_notification_text">Se ha bloqueado el acceso a internet para %s</string>
     <string name="firewall_network_mobile">Móvil</string>
     <string name="firewall_network_all">Todas</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Hora +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -453,9 +452,7 @@
     <string name="settings_sponsor">Patrocínanos</string>
     <string name="settings_sponsor_desc">Apoya el desarrollo de BlockAds en GitHub</string>
     <string name="settings_community">Comunidad</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Únete a nuestra comunidad en Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Únete a nuestro chat en Telegram</string>
     <string name="widget_protected">Protegido</string>
     <string name="widget_unprotected">Apagado</string>
@@ -573,4 +570,18 @@
     <string name="settings_root_proxy_desc">Redirigir DNS vía iptables en lugar de VPN (requiere Root)</string>
     <string name="root_not_available">Acceso Root no disponible. Por favor, concede el permiso en tu administrador root (ej. Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Modo Proxy Root activo — Tráfico DNS redirigido vía iptables</string>
+    <string name="onboarding_crash_report_title">Ayuda a mejorar BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds prioriza la privacidad. Nos gustaría pedir tu permiso para recopilar informes de fallos anónimos y ayudarnos a corregir errores rápidamente.\n\nEsto es estrictamente OPCIONAL, NO contiene información de identificación personal (PII) y puede desactivarse en cualquier momento en los Ajustes.</string>
+    <string name="onboarding_crash_report_btn_yes">Sí, ayudar a mejorar BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">No, gracias</string>
+    <string name="settings_privacy_diagnostics_title">Privacidad &amp; Diagnóstico</string>
+    <string name="settings_privacy_diagnostics_desc">Gestionar informes de fallos y registros locales</string>
+
+    <string name="settings_crash_reporting_title">Informes de fallos anónimos</string>
+    <string name="settings_crash_reporting_subtitle">Enviar automáticamente registros de errores para ayudarnos a solucionar problemas. No se incluyen datos personales.</string>
+
+    <string name="settings_export_logs_title">Exportar registros locales</string>
+    <string name="settings_export_logs_subtitle">Comparte registros de depuración sin conexión directamente por correo electrónico, Telegram, etc.</string>
+    <string name="settings_export_logs_chooser_title">Compartir registros</string>
+    <string name="settings_export_logs_not_found">No se encontraron registros para exportar</string>
 </resources>

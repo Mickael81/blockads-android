@@ -500,7 +500,6 @@
     <string name="firewall_notification_text">%s wurde am Internetugriff gehindert</string>
     <string name="firewall_network_mobile">Mobil</string>
     <string name="firewall_network_all">Alle</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Std +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -511,9 +510,7 @@
     <string name="settings_sponsor">Sponsern Sie uns</string>
     <string name="settings_sponsor_desc">Unterstützen Sie die Entwicklung auf GitHub</string>
     <string name="settings_community">Community</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Besuchen Sie uns auf Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Chatten Sie mit uns auf Telegram</string>
     <string name="filter_setup_active_count">%1$d aktiv</string>
     <string name="copied_url">URL kopiert</string>
@@ -603,4 +600,18 @@
     <string name="settings_root_proxy_desc">DNS über iptables statt VPN umleiten (erfordert Root)</string>
     <string name="root_not_available">Root-Zugriff nicht verfügbar. Bitte erteilen Sie die Berechtigung in Ihrem Root-Manager (z. B. Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Root-Proxy-Modus aktiv — DNS-Verkehr über iptables umgeleitet</string>
+    <string name="onboarding_crash_report_title">Hilf mit, BlockAds zu verbessern</string>
+    <string name="onboarding_crash_report_desc">BlockAds ist zu 100% datenschutzorientiert. Wir bitten um deine Erlaubnis, anonyme Absturzberichte zu sammeln, um Fehler schnell beheben zu können.\n\nDies ist streng OPTIONAL (Opt-in), enthält KEINE personenbezogenen Daten (PII) und kann jederzeit in den Einstellungen deaktiviert werden.</string>
+    <string name="onboarding_crash_report_btn_yes">Ja, BlockAds verbessern</string>
+    <string name="onboarding_crash_report_btn_no">Nein, danke</string>
+    <string name="settings_privacy_diagnostics_title">Datenschutz &amp; Diagnose</string>
+    <string name="settings_privacy_diagnostics_desc">Absturzberichte und lokale Protokolle verwalten</string>
+
+    <string name="settings_crash_reporting_title">Anonyme Absturzberichte</string>
+    <string name="settings_crash_reporting_subtitle">Fehlerprotokolle automatisch senden, um Probleme zu beheben. Es werden keine persönlichen Daten erfasst.</string>
+
+    <string name="settings_export_logs_title">Lokale Protokolle exportieren</string>
+    <string name="settings_export_logs_subtitle">Offline-Debug-Protokolle direkt per E-Mail, Telegram usw. teilen.</string>
+    <string name="settings_export_logs_chooser_title">Protokolle teilen</string>
+    <string name="settings_export_logs_not_found">Keine Protokolle zum Exportieren gefunden</string>
 </resources>

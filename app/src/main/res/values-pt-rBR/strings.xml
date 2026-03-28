@@ -490,7 +490,6 @@
     <string name="firewall_notification_text">%s foi bloqueado de acessar a internet</string>
     <string name="firewall_network_mobile">Móvel</string>
     <string name="firewall_network_all">Tudo</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Hora +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -501,9 +500,7 @@
     <string name="settings_sponsor">Patrocine-nos</string>
     <string name="settings_sponsor_desc">Apoie o desenvolvimento do BlockAds no GitHub</string>
     <string name="settings_community">Comunidade</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Junte-se à nossa comunidade no Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Participe do nosso chat no Telegram</string>
     <string name="filter_setup_active_count">%1$d ativas</string>
     <string name="copied_url">URL copiada</string>
@@ -594,4 +591,18 @@
     <string name="settings_root_proxy_desc">Redirecionar DNS via iptables em vez de VPN (requer Root)</string>
     <string name="root_not_available">Acesso Root não disponível. Por favor, conceda a permissão no seu gerenciador root (ex: Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Modo Proxy Root ativo — tráfego DNS redirecionado via iptables</string>
+    <string name="onboarding_crash_report_title">Ajude a melhorar o BlockAds</string>
+    <string name="onboarding_crash_report_desc">O BlockAds prioriza a privacidade. Gostaríamos da sua permissão para coletar relatórios anônimos de falhas e nos ajudar a corrigir bugs rapidamente.\n\nIsto é estritamente OPCIONAL, NÃO contém informações de identificação pessoal (PII) e pode ser desativado a qualquer momento nas Configurações.</string>
+    <string name="onboarding_crash_report_btn_yes">Sim, ajudar a melhorar</string>
+    <string name="onboarding_crash_report_btn_no">Não, obrigado</string>
+    <string name="settings_privacy_diagnostics_title">Privacidade &amp; Diagnóstico</string>
+    <string name="settings_privacy_diagnostics_desc">Gerenciar relatórios de falhas e logs locais</string>
+
+    <string name="settings_crash_reporting_title">Relatórios anônimos de falhas</string>
+    <string name="settings_crash_reporting_subtitle">Enviar automaticamente logs de erros para nos ajudar a corrigir problemas. Nenhum dado pessoal é incluído.</string>
+
+    <string name="settings_export_logs_title">Exportar Logs Locais</string>
+    <string name="settings_export_logs_subtitle">Compartilhe logs de depuração offline diretamente via Email, Telegram, etc.</string>
+    <string name="settings_export_logs_chooser_title">Compartilhar Logs</string>
+    <string name="settings_export_logs_not_found">Nenhum log encontrado para exportar</string>
 </resources>

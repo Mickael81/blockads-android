@@ -10,6 +10,8 @@ import app.pwhs.blockads.ui.onboarding.data.ProtectionLevel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import androidx.lifecycle.viewModelScope
 
 class OnboardingViewModel(
     private val appPrefs: AppPreferences,
@@ -19,7 +21,7 @@ class OnboardingViewModel(
     private val _selectedProtectionLevel = MutableStateFlow(ProtectionLevel.STANDARD)
     val selectedProtectionLevel: StateFlow<ProtectionLevel> = _selectedProtectionLevel.asStateFlow()
 
-    private val _selectedDnsProvider = MutableStateFlow(DnsProviders.QUAD9)
+    private val _selectedDnsProvider = MutableStateFlow(DnsProviders.SYSTEM)
     val selectedDnsProvider: StateFlow<DnsProvider> = _selectedDnsProvider.asStateFlow()
 
     fun selectProtectionLevel(level: ProtectionLevel) {
@@ -28,6 +30,14 @@ class OnboardingViewModel(
 
     fun selectDnsProvider(provider: DnsProvider) {
         _selectedDnsProvider.value = provider
+    }
+
+    fun setCrashReportingEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            appPrefs.setCrashReportingEnabled(enabled)
+            // also toggle it immediately so it starts or stops
+            app.pwhs.blockads.utils.CrashReportingManager.toggleSentry(getApplication(), enabled)
+        }
     }
 
     suspend fun completeOnboarding() {

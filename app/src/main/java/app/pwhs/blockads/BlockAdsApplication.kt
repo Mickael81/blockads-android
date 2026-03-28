@@ -16,6 +16,8 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import timber.log.Timber
 import timber.log.Timber.DebugTree
+import app.pwhs.blockads.utils.CrashReportingManager
+import app.pwhs.blockads.utils.FileLoggingTree
 
 
 class BlockAdsApplication : Application() {
@@ -32,10 +34,17 @@ class BlockAdsApplication : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(DebugTree())
         }
+        
+        // Plant File logging tree for all builds to allow log export
+        Timber.plant(FileLoggingTree(this))
 
         // Schedule auto-update for filter lists after Koin is initialized
         val appPreferences: AppPreferences by inject()
         applicationScope.launch {
+            // Restore Crash Reporting state dynamically
+            val isCrashReportingEnabled = appPreferences.crashReportingEnabled.first()
+            CrashReportingManager.toggleSentry(this@BlockAdsApplication, isCrashReportingEnabled)
+
             FilterUpdateScheduler.scheduleFilterUpdate(this@BlockAdsApplication, appPreferences)
 
             // Schedule daily summary only if enabled

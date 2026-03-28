@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             val appPrefs: AppPreferences = getKoin().get()
@@ -137,7 +138,7 @@ class MainActivity : ComponentActivity() {
             widgetIntentHandled = true
             val appPrefs: AppPreferences = getKoin().get()
             val routingMode = runBlocking { appPrefs.routingMode.first() }
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (!RootProxyService.isRunning) handleVpnToggle()
             } else {
@@ -150,7 +151,7 @@ class MainActivity : ComponentActivity() {
         if (intent?.action == ACTION_TOGGLE_SHORTCUT) {
             val appPrefs: AppPreferences = getKoin().get()
             val routingMode = runBlocking { appPrefs.routingMode.first() }
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (RootProxyService.isRunning) {
                     RootProxyService.stop(this)
@@ -190,7 +191,7 @@ class MainActivity : ComponentActivity() {
         val appPrefs: AppPreferences = getKoin().get()
         lifecycleScope.launch(Dispatchers.IO) {
             val routingMode = appPrefs.routingMode.first()
-            
+
             if (routingMode == AppPreferences.ROUTING_MODE_ROOT) {
                 if (IptablesManager.isRootAvailable()) {
                     withContext(Dispatchers.Main) {

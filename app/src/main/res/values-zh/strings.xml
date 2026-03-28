@@ -373,7 +373,6 @@
     <string name="firewall_notification_text">%s 的联网请求已被拦截</string>
     <string name="firewall_network_mobile">移动数据</string>
     <string name="firewall_network_all">全部</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">小时 +</string>
     <string name="firewall_schedule_minute_plus">分钟 +</string>
     <string name="block_reason_firewall">防火墙</string>
@@ -448,9 +447,7 @@
     <string name="settings_sponsor">赞助我们</string>
     <string name="settings_sponsor_desc">在 GitHub 上支持 BlockAds 的开发</string>
     <string name="settings_community">社区</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">加入我们的 Reddit 社区</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">加入我们的 Telegram 群聊</string>
     <string name="widget_protected">受保护</string>
     <string name="widget_unprotected">已关闭</string>
@@ -572,4 +569,18 @@
     <string name="settings_root_proxy_desc">通过 iptables 而不是 VPN 重定向 DNS（需要 Root）</string>
     <string name="root_not_available">无法获取 Root 权限。请在您的 root 管理器（例如 Magisk/KernelSU）中授予权限。</string>
     <string name="root_proxy_notification_text">Root 代理模式已激活 — DNS 流量已通过 iptables 重定向</string>
+    <string name="onboarding_crash_report_title">帮助改进 BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds 完全以隐私为先。我们希望获得您的许可来收集匿名崩溃报告，以帮助我们及时修复错误。\n\n这完全是自愿的，不包含任何个人身份信息 (PII)，并且可以随时在设置中禁用。</string>
+    <string name="onboarding_crash_report_btn_yes">是的，帮助改进 BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">不，谢谢</string>
+    <string name="settings_privacy_diagnostics_title">隐私 &amp; 诊断</string>
+    <string name="settings_privacy_diagnostics_desc">管理崩溃报告和本地日志</string>
+
+    <string name="settings_crash_reporting_title">匿名崩溃报告</string>
+    <string name="settings_crash_reporting_subtitle">自动发送错误日志以帮助我们修复问题。不包含任何个人数据。</string>
+
+    <string name="settings_export_logs_title">导出本地日志</string>
+    <string name="settings_export_logs_subtitle">直接通过电子邮件、Telegram 等分享离线调试日志。</string>
+    <string name="settings_export_logs_chooser_title">分享日志</string>
+    <string name="settings_export_logs_not_found">未找到可导出的日志</string>
 </resources>

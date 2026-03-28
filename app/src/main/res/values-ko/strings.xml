@@ -373,7 +373,6 @@
     <string name="firewall_notification_text">%s의 인터넷 액세스가 차단되었습니다</string>
     <string name="firewall_network_mobile">모바일</string>
     <string name="firewall_network_all">모두</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">시간 +</string>
     <string name="firewall_schedule_minute_plus">분 +</string>
     <string name="block_reason_firewall">방화벽</string>
@@ -445,9 +444,7 @@
     <string name="settings_sponsor">스폰서 되기</string>
     <string name="settings_sponsor_desc">GitHub에서 BlockAds 개발 지원하기</string>
     <string name="settings_community">커뮤니티</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Reddit 커뮤니티에 참여하세요</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Telegram 채팅에 참여하세요</string>
     <string name="widget_protected">보호됨</string>
     <string name="widget_unprotected">꺼짐</string>
@@ -572,4 +569,18 @@
     <string name="settings_root_proxy_desc">VPN 대신 iptables를 통해 DNS 리디렉션 (Root 필요)</string>
     <string name="root_not_available">Root 권한을 사용할 수 없습니다. 루팅 매니저(예: Magisk/KernelSU)에서 권한을 허용해 주세요.</string>
     <string name="root_proxy_notification_text">Root 프록시 모드 활성화됨 — iptables를 통해 DNS 트래픽이 리디렉션됨</string>
+    <string name="onboarding_crash_report_title">BlockAds 개선에 참여해 주세요</string>
+    <string name="onboarding_crash_report_desc">BlockAds는 개인정보 보호를 최우선으로 생각합니다. 버그를 신속하게 수정할 수 있도록 익명 크래시 보고서 수집에 대한 권한을 요청합니다.\n\n이 기능은 전적으로 선택 사항이며, 개인 식별 정보(PII)를 포함하지 않습니다. 설정에서 언제든지 비활성화할 수 있습니다.</string>
+    <string name="onboarding_crash_report_btn_yes">네, BlockAds 개선에 참여합니다</string>
+    <string name="onboarding_crash_report_btn_no">아니요, 괜찮습니다</string>
+    <string name="settings_privacy_diagnostics_title">개인정보 보호 &amp; 진단</string>
+    <string name="settings_privacy_diagnostics_desc">크래시 보고서 및 로컬 로그 관리</string>
+
+    <string name="settings_crash_reporting_title">익명 크래시 보고서</string>
+    <string name="settings_crash_reporting_subtitle">문제 해결을 돕기 위해 오류 로그를 자동으로 보냅니다. 개인 데이터는 포함되지 않습니다.</string>
+
+    <string name="settings_export_logs_title">로컬 로그 내보내기</string>
+    <string name="settings_export_logs_subtitle">오프라인 디버그 로그를 이메일, Telegram 등을 통해 직접 공유하세요.</string>
+    <string name="settings_export_logs_chooser_title">로그 공유</string>
+    <string name="settings_export_logs_not_found">내보낼 로그를 찾을 수 없습니다</string>
 </resources>

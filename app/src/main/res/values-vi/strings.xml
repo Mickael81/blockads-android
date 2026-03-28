@@ -500,7 +500,6 @@
     <string name="firewall_notification_text">%s đã bị chặn truy cập internet</string>
     <string name="firewall_network_mobile">Di động</string>
     <string name="firewall_network_all">Tất cả</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Giờ +</string>
     <string name="firewall_schedule_minute_plus">Phút +</string>
     <string name="block_reason_firewall">Tường lửa</string>
@@ -511,9 +510,7 @@
     <string name="settings_sponsor">Tài trợ</string>
     <string name="settings_sponsor_desc">Hỗ trợ phát triển BlockAds trên GitHub</string>
     <string name="settings_community">Cộng đồng</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Tham gia cộng đồng trên Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Tham gia nhóm chat trên Telegram</string>
     <string name="filter_setup_active_count">%1$d active</string>
     <string name="copied_url">Đã sao chép URL</string>
@@ -622,4 +619,18 @@
     <string name="settings_root_proxy_desc">Chuyển hướng DNS qua iptables thay vì VPN (cần quyền Root)</string>
     <string name="root_not_available">Không có quyền Root. Vui lòng cấp quyền trong trình quản lý root của bạn (ví dụ: Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Chế độ Root Proxy đang hoạt động — lưu lượng DNS được chuyển hướng qua iptables</string>
+    <string name="onboarding_crash_report_title">Giúp cải thiện BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds luôn đặt quyền riêng tư lên hàng đầu. Chúng tôi xin phép thu thập các báo cáo sự cố ẩn danh để giúp khắc phục lỗi nhanh chóng.\n\nĐiều này hoàn toàn TỰ NGUYỆN, KHÔNG chứa thông tin cá nhân (PII) và có thể tắt bất cứ lúc nào trong Cài đặt.</string>
+    <string name="onboarding_crash_report_btn_yes">Đồng ý, giúp cải thiện BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">Không, cảm ơn</string>
+    <string name="settings_privacy_diagnostics_title">Quyền riêng tư &amp; Chẩn đoán</string>
+    <string name="settings_privacy_diagnostics_desc">Quản lý báo cáo sự cố và nhật ký cục bộ</string>
+
+    <string name="settings_crash_reporting_title">Gửi báo cáo sự cố ẩn danh</string>
+    <string name="settings_crash_reporting_subtitle">Tự động gửi nhật ký lỗi để giúp chúng tôi khắc phục sự cố. Không bao gồm dữ liệu cá nhân của bạn.</string>
+
+    <string name="settings_export_logs_title">Xuất nhật ký cục bộ</string>
+    <string name="settings_export_logs_subtitle">Chia sẻ trực tiếp tệp nhật ký ngoại tuyến qua Email, Telegram, v.v.</string>
+    <string name="settings_export_logs_chooser_title">Chia sẻ nhật ký</string>
+    <string name="settings_export_logs_not_found">Không tìm thấy nhật ký để xuất</string>
 </resources>

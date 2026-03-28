@@ -207,21 +207,17 @@
     <string name="settings_dns_protocol">Protocollo DNS</string>
     <string name="settings_dns_protocol_plain">DNS Normale</string>
     <string name="settings_doh_server_url">URL Server DoH</string>
-    <string name="settings_doh_url_placeholder" translatable="false">https://dns.google/dns-query</string>
     <string name="settings_save_doh_url">Salva URL DoH</string>
     <string name="settings_dot_server">Server DoT (hostname o IP)</string>
     <string name="settings_dot_server_placeholder">dns.google</string>
     <string name="settings_upstream_dns">Server DNS Primario</string>
-    <string name="settings_upstream_dns_placeholder" translatable="false">8.8.8.8</string>
     <string name="settings_fallback_dns">Server DNS di Fallback</string>
-    <string name="settings_fallback_dns_placeholder" translatable="false">1.1.1.1</string>
     <string name="settings_fallback_dns_desc">Il DNS di fallback viene utilizzato quando il server DNS principale fallisce. Inserisci l\'indirizzo IP di un server DNS di backup.</string>
     <string name="settings_fallback_dns_short_desc">Usato come backup quando il DNS principale fallisce</string>
     <string name="dns_error_duplicate">Il DNS di fallback non può essere uguale al DNS personalizzato</string>
     <string name="dns_category_fallback">Fallback</string>
     <string name="settings_fallback_dns_not_set">Non impostato (nessun backup)</string>
     <string name="settings_custom_dns_server">Server DNS Personalizzato</string>
-    <string name="settings_custom_dns_placeholder" translatable="false">8.8.8.8, https://…, tls://…</string>
     <string name="settings_custom_dns_hint">Inserisci IP per DNS Normale, https:// per DoH, o tls:// per DoT</string>
     <string name="settings_detected_plain">DNS Normale</string>
     <string name="settings_detected_doh">DNS-over-HTTPS (DoH)</string>
@@ -231,9 +227,7 @@
     <string name="settings_save_custom_dns">Salva DNS</string>
     <string name="settings_dns_response_type">Tipo di risposta DNS</string>
     <string name="settings_dns_response_type_desc">Tipo di risposta per i domini bloccati</string>
-    <string name="dns_response_nxdomain" translatable="false">NXDOMAIN</string>
     <string name="dns_response_nxdomain_desc">Il dominio non esiste (standard)</string>
-    <string name="dns_response_refused" translatable="false">REFUSED</string>
     <string name="dns_response_refused_desc">Query rifiutata (migliore compatibilità)</string>
     <string name="dns_response_custom_ip">IP Personalizzato (0.0.0.0)</string>
     <string name="dns_response_custom_ip_desc">Restituisce un indirizzo di null route (predefinito)</string>
@@ -497,7 +491,6 @@
     <string name="firewall_notification_text">A %s è stato bloccato l\'accesso a internet</string>
     <string name="firewall_network_mobile">Dati Mobili</string>
     <string name="firewall_network_all">Tutte</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Ora +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -508,9 +501,7 @@
     <string name="settings_sponsor">Sostienici</string>
     <string name="settings_sponsor_desc">Supporta lo sviluppo di BlockAds su GitHub</string>
     <string name="settings_community">Community</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Unisciti alla nostra community su Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Unisciti alla nostra chat su Telegram</string>
     <string name="filter_setup_active_count">%1$d attivi</string>
     <string name="copied_url">URL copiato</string>
@@ -627,4 +618,18 @@
     <string name="settings_root_proxy_desc">Reindirizza il DNS tramite iptables invece della VPN (richiede il Root)</string>
     <string name="root_not_available">Accesso Root non disponibile. Concedi l\'autorizzazione nel tuo gestore root (es. Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Modalità Proxy Root attiva — Traffico DNS reindirizzato tramite iptables</string>
+    <string name="onboarding_crash_report_title">Aiuta a migliorare BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds mette la privacy al primo posto. Vorremmo il tuo permesso per raccogliere segnalazioni di arresti anomali in modo anonimo, per aiutarci a risolvere tempestivamente i bug.\n\nQuesto è strettamente FACOLTATIVO, NON contiene informazioni di identificazione personale (PII) e può essere disabilitato in qualsiasi momento nelle Impostazioni.</string>
+    <string name="onboarding_crash_report_btn_yes">Sì, aiuta a migliorare BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">No, grazie</string>
+    <string name="settings_privacy_diagnostics_title">Privacy &amp; Diagnostica</string>
+    <string name="settings_privacy_diagnostics_desc">Gestisci le segnalazioni di arresti anomali e i log locali</string>
+
+    <string name="settings_crash_reporting_title">Segnalazione anonima arresti anomali</string>
+    <string name="settings_crash_reporting_subtitle">Invia automaticamente i log degli errori per aiutarci a risolvere i problemi. Non sono inclusi dati personali.</string>
+
+    <string name="settings_export_logs_title">Esporta log locali</string>
+    <string name="settings_export_logs_subtitle">Condividi i log di debug offline direttamente tramite Email, Telegram, ecc.</string>
+    <string name="settings_export_logs_chooser_title">Condividi log</string>
+    <string name="settings_export_logs_not_found">Nessun log trovato da esportare</string>
 </resources>

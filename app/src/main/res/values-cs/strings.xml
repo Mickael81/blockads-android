@@ -405,7 +405,6 @@
     <string name="firewall_notification_text">Aplikaci %s byl zamezen přístup k internetu</string>
     <string name="firewall_network_mobile">Mobilní data</string>
     <string name="firewall_network_all">Vše</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Hod +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -416,9 +415,7 @@
     <string name="settings_sponsor">Podpořte nás</string>
     <string name="settings_sponsor_desc">Podpořte vývoj BlockAds na GitHubu</string>
     <string name="settings_community">Komunita</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Připojte se k naší komunitě na Redditu</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Připojte se k našemu chatu na Telegramu</string>
     <string name="filter_setup_active_count">%1$d aktivních</string>
     <string name="copied_url">URL zkopírována</string>
@@ -597,4 +594,18 @@
     <string name="settings_root_proxy_desc">Přesměrovat DNS přes iptables místo VPN (vyžaduje Root)</string>
     <string name="root_not_available">Přístup Root není k dispozici. Udělte prosím oprávnění ve správci root (např. Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Režim Root Proxy je aktivní — provoz DNS je přesměrován přes iptables</string>
+    <string name="onboarding_crash_report_title">Pomozte vylepšit BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds klade soukromí na první místo. Rádi bychom vás požádali o svolení shromažďovat anonymní zprávy o chybách, které nám pomohou rychle řešit problémy.\n\nTato volba je přísně DOBROVOLNÁ, neobsahuje ŽÁDNÉ osobní identifikační údaje (PII) a lze ji kdykoli vypnout v Nastavení.</string>
+    <string name="onboarding_crash_report_btn_yes">Ano, chci pomoci vylepšit BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">Ne, děkuji</string>
+    <string name="settings_privacy_diagnostics_title">Soukromí &amp; Diagnostika</string>
+    <string name="settings_privacy_diagnostics_desc">Správa hlášení o chybách a místních protokolů</string>
+
+    <string name="settings_crash_reporting_title">Anonymní hlášení o chybách</string>
+    <string name="settings_crash_reporting_subtitle">Automaticky odesílat protokoly o chybách, aby nám to pomohlo vyřešit problémy. Nejsou zahrnuty žádné osobní údaje.</string>
+
+    <string name="settings_export_logs_title">Exportovat místní protokoly</string>
+    <string name="settings_export_logs_subtitle">Sdílejte offline protokoly ladění přímo přes e-mail, Telegram atd.</string>
+    <string name="settings_export_logs_chooser_title">Sdílet protokoly</string>
+    <string name="settings_export_logs_not_found">Nebyly nalezeny žádné protokoly k exportu</string>
 </resources>

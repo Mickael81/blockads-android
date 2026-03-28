@@ -1,10 +1,8 @@
 package app.pwhs.blockads.ui.home
 
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,24 +25,19 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.DataSaverOn
 import androidx.compose.material.icons.filled.GppGood
 import androidx.compose.material.icons.filled.QueryStats
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,12 +58,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pwhs.blockads.R
 import app.pwhs.blockads.data.datastore.AppPreferences
 import app.pwhs.blockads.data.repository.FilterListRepository
 import app.pwhs.blockads.ui.home.component.DailyStatsChart
+import app.pwhs.blockads.ui.home.component.HomeAppBar
 import app.pwhs.blockads.ui.home.component.PowerButton
 import app.pwhs.blockads.ui.home.component.StatCard
 import app.pwhs.blockads.ui.home.component.StatsChart
@@ -79,12 +72,12 @@ import app.pwhs.blockads.ui.theme.DangerRed
 import app.pwhs.blockads.ui.theme.SecurityOrange
 import app.pwhs.blockads.ui.theme.TextSecondary
 import app.pwhs.blockads.utils.AppConstants.AVG_AD_SIZE_KB
+import app.pwhs.blockads.utils.VpnUtils
 import app.pwhs.blockads.utils.formatCount
 import app.pwhs.blockads.utils.formatDataSize
 import app.pwhs.blockads.utils.formatTimeSince
 import app.pwhs.blockads.utils.formatUptimeShort
 import app.pwhs.blockads.utils.profileIcon
-import app.pwhs.blockads.utils.VpnUtils
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import org.koin.androidx.compose.koinViewModel
 import java.util.Locale
@@ -92,9 +85,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     onShowVpnConflictDialog: () -> Unit = {},
     onRequestVpnPermission: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: HomeViewModel = koinViewModel(),
     onNavigateToStatisticsScreen: () -> Unit = {},
     onNavigateToLogScreen: () -> Unit = {},
@@ -125,83 +118,12 @@ fun HomeScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                navigationIcon = {
-                    IconButton(onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                            data = "https://adblock.turtlecute.org/".toUri()
-                        }
-                        context.startActivity(intent)
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_bug),
-                            contentDescription = stringResource(R.string.test_block_ads),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                title = {
-                    if (isLoading) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            CircularProgressIndicator(
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(16.dp),
-                                strokeWidth = 2.dp
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "Loading filters…",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
-                            )
-                        }
-                    } else if (filterLoadFailed) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(20.dp))
-                                .background(DangerRed.copy(alpha = 0.1f))
-                                .clickable { viewModel.retryLoadFilter() }
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Retry",
-                                tint = DangerRed,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                text = "Filter load failed · Tap to retry",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = DangerRed,
-                                fontWeight = FontWeight.Medium
-                            )
-                        }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToStatisticsScreen) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_chart_bar),
-                            contentDescription = stringResource(R.string.nav_statistics),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = onNavigateToLogScreen) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_history),
-                            contentDescription = stringResource(R.string.nav_logs),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    actionIconContentColor = MaterialTheme.colorScheme.primary
-                )
+            HomeAppBar(
+                isLoading = isLoading,
+                filterLoadFailed = filterLoadFailed,
+                viewModel = viewModel,
+                onNavigateToStatisticsScreen = onNavigateToStatisticsScreen,
+                onNavigateToLogScreen = onNavigateToLogScreen
             )
         }
     ) { innerPadding ->

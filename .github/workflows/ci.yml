@@ -39,6 +39,10 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
+      - name: Create Sentry properties file
+        run: |
+          echo "auth.token=${{ secrets.SENTRY_AUTH_TOKEN }}" > sentry.properties
+
       - name: Lint
         run: ./gradlew lint
 

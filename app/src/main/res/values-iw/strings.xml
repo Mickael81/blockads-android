@@ -501,7 +501,6 @@
     <string name="firewall_notification_text">הגישה לאינטרנט של %s נחסמה</string>
     <string name="firewall_network_mobile">סלולרי</string>
     <string name="firewall_network_all">הכל</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">שעה +</string>
     <string name="firewall_schedule_minute_plus">דקה +</string>
     <string name="block_reason_firewall">חומת אש</string>
@@ -512,9 +511,7 @@
     <string name="settings_sponsor">תמוך בנו (Sponsor)</string>
     <string name="settings_sponsor_desc">תמוך בפיתוח של BlockAds ב-GitHub</string>
     <string name="settings_community">קהילה</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">הצטרף לקהילה שלנו ב-Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">הצטרף לצ\'אט שלנו ב-Telegram</string>
     <string name="filter_setup_active_count">%1$d פעילות</string>
     <string name="copied_url">כתובת ה-URL הועתקה</string>
@@ -601,4 +598,18 @@
     <string name="settings_root_proxy_desc">נתב מחדש DNS דרך iptables במקום VPN (דורש Root)</string>
     <string name="root_not_available">גישת Root אינה זמינה. אנא הענק הרשאה במנהל ה-Root שלך (למשל, Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">מצב Proxy עם Root פעיל — תעבורת ה-DNS מנותבת דרך iptables</string>
+    <string name="onboarding_crash_report_title">עזור לשפר את BlockAds</string>
+    <string name="onboarding_crash_report_desc">הפרטיות נמצאת בראש סדר העדיפויות של BlockAds. נשמח לקבל את רשותך לאסוף דוחות קריסה אנונימיים כדי לעזור לנו לתקן באגים במהירות.\n\nפעולה זו היא לבחירתך בלבד (OPT-IN), אינה מכילה מידע מזהה אישי (PII), וניתן לבטל אותה בכל עת בהגדרות.</string>
+    <string name="onboarding_crash_report_btn_yes">כן, אשמח לעזור לשפר את BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">לא, תודה</string>
+    <string name="settings_privacy_diagnostics_title">פרטיות &amp; אבחון</string>
+    <string name="settings_privacy_diagnostics_desc">נהל דוחות קריסה ויומנים מקומיים</string>
+
+    <string name="settings_crash_reporting_title">דיווח קריסות אנונימי</string>
+    <string name="settings_crash_reporting_subtitle">שלח יומני שגיאות באופן אוטומטי כדי לעזור לנו לתקן בעיות. לא נכלל מידע אישי.</string>
+
+    <string name="settings_export_logs_title">ייצוא יומנים מקומיים</string>
+    <string name="settings_export_logs_subtitle">שתף יומני איתור באגים לא מקוונים ישירות דרך דוא"ל, Telegram וכו\'.</string>
+    <string name="settings_export_logs_chooser_title">שתף יומנים</string>
+    <string name="settings_export_logs_not_found">לא נמצאו יומנים לייצוא</string>
 </resources>

@@ -144,7 +144,6 @@
     <string name="firewall_schedule_minute_plus">دقيقة +</string>
     <string name="firewall_schedule_to">إلى</string>
     <string name="firewall_search">البحث في التطبيقات…</string>
-    <string name="firewall_status_schedule">· %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_title">جدار الحماية</string>
     <string name="home_block_rate">معدل الحظر</string>
     <string name="home_chart_24h">24 ساعة</string>
@@ -339,7 +338,6 @@
     <string name="settings_community">المجتمع</string>
     <string name="settings_connection">الاتصال</string>
     <string name="settings_custom_dns_hint">أدخل IP لـ Plain DNS، أو https:// لـ DoH، أو tls:// لـ DoT</string>
-    <string name="settings_custom_dns_placeholder">8.8.8.8, https://…, tls://…</string>
     <string name="settings_custom_dns_server">خادم DNS مخصص</string>
     <string name="settings_daily_summary">ملخص يومي</string>
     <string name="settings_daily_summary_desc">إظهار ملخص الحظر في نهاية اليوم</string>
@@ -354,7 +352,6 @@
     <string name="settings_dns_response_type">نوع استجابة DNS</string>
     <string name="settings_dns_response_type_desc">نوع الاستجابة للنطاقات المحظورة</string>
     <string name="settings_doh_server_url">عنوان URL لخادم DoH</string>
-    <string name="settings_doh_url_placeholder">https://dns.google/dns-query</string>
     <string name="settings_dot_server">خادم DoT (اسم المضيف أو IP)</string>
     <string name="settings_dot_server_placeholder">dns.google</string>
     <string name="settings_export">تصدير</string>
@@ -374,7 +371,6 @@
     <string name="settings_milestone_notifications_desc">إعلامك عند الوصول إلى إنجازات الحظر</string>
     <string name="settings_profiles">ملفات تعريف الحماية</string>
     <string name="settings_profiles_desc">تكوينات معدة مسبقًا لحالات استخدام مختلفة</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">انضم إلى مجتمعنا على Reddit</string>
     <string name="settings_safe_search">البحث الآمن</string>
     <string name="settings_safe_search_desc">فرض البحث الآمن على محركات البحث المدعومة (Google, Bing)</string>
@@ -385,7 +381,6 @@
     <string name="settings_search_hint">البحث في الإعدادات…</string>
     <string name="settings_sponsor">رعايتنا</string>
     <string name="settings_sponsor_desc">ادعم تطوير BlockAds على GitHub</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">انضم إلى محادثتنا على Telegram</string>
     <string name="settings_theme">السمة</string>
     <string name="settings_theme_dark">داكن</string>
@@ -590,4 +585,18 @@
     <string name="settings_root_proxy_desc">إعادة توجيه DNS عبر iptables بدلاً من VPN (يتطلب روت)</string>
     <string name="root_not_available">صلاحيات الروت غير متوفرة. يرجى منح الإذن في مدير الروت الخاص بك (مثل Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">وضع البروكسي بالروت نشط — تم إعادة توجيه حركة مرور DNS عبر iptables</string>
+    <string name="onboarding_crash_report_title">ساعد في تحسين BlockAds</string>
+    <string name="onboarding_crash_report_desc">تطبيق BlockAds يضع الخصوصية أولاً. نود الحصول على إذنك لجمع تقارير الأعطال المجهولة لمساعدتنا في إصلاح الأخطاء على الفور.\n\nهذا اختياري تمامًا، ولا يحتوي على معلومات تعريف شخصية (PII)، ويمكن تعطيله في أي وقت من الإعدادات.</string>
+    <string name="onboarding_crash_report_btn_yes">نعم، سأساعد في تحسين BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">لا، شكرًا</string>
+    <string name="settings_privacy_diagnostics_title">الخصوصية &amp; التشخيصات</string>
+    <string name="settings_privacy_diagnostics_desc">إدارة تقارير الأعطال والسجلات المحلية</string>
+
+    <string name="settings_crash_reporting_title">الإبلاغ عن الأعطال المجهولة</string>
+    <string name="settings_crash_reporting_subtitle">إرسال سجلات الأخطاء تلقائيًا لمساعدتنا في إصلاح المشكلات. لا يتم تضمين أي بيانات شخصية.</string>
+
+    <string name="settings_export_logs_title">تصدير السجلات المحلية</string>
+    <string name="settings_export_logs_subtitle">شارك سجلات التصحيح في وضع عدم الاتصال مباشرة عبر البريد الإلكتروني، Telegram، إلخ.</string>
+    <string name="settings_export_logs_chooser_title">مشاركة السجلات</string>
+    <string name="settings_export_logs_not_found">لم يتم العثور على سجلات للتصدير</string>
 </resources>

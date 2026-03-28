@@ -490,7 +490,6 @@
     <string name="firewall_notification_text">Zablokowano dostęp do internetu dla %s</string>
     <string name="firewall_network_mobile">Sieć komórkowa</string>
     <string name="firewall_network_all">Wszystkie</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">Godz +</string>
     <string name="firewall_schedule_minute_plus">Min +</string>
     <string name="block_reason_firewall">Firewall</string>
@@ -501,9 +500,7 @@
     <string name="settings_sponsor">Wesprzyj nas</string>
     <string name="settings_sponsor_desc">Wesprzyj rozwój BlockAds na GitHubie</string>
     <string name="settings_community">Społeczność</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">Dołącz do naszej społeczności na Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">Dołącz do naszego czatu na Telegramie</string>
     <string name="filter_setup_active_count">%1$d aktywnych</string>
     <string name="copied_url">Skopiowano URL</string>
@@ -594,4 +591,18 @@
     <string name="settings_root_proxy_desc">Przekieruj DNS przez iptables zamiast VPN (wymaga Roota)</string>
     <string name="root_not_available">Brak dostępu do roota. Przyznaj uprawnienia w menedżerze roota (np. Magisk/KernelSU).</string>
     <string name="root_proxy_notification_text">Tryb Root Proxy jest aktywny — ruch DNS jest przekierowywany przez iptables</string>
+    <string name="onboarding_crash_report_title">Pomóż ulepszyć BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds stawia prywatność na pierwszym miejscu. Prosimy o zgodę na zbieranie anonimowych raportów o błędach, co pomoże nam szybko naprawiać usterki.\n\nTa opcja jest całkowicie DOBROWOLNA, NIE zawiera żadnych danych osobowych (PII) i może być w każdej chwili wyłączona w Ustawieniach.</string>
+    <string name="onboarding_crash_report_btn_yes">Tak, pomogę ulepszyć BlockAds</string>
+    <string name="onboarding_crash_report_btn_no">Nie, dziękuję</string>
+    <string name="settings_privacy_diagnostics_title">Prywatność &amp; Diagnostyka</string>
+    <string name="settings_privacy_diagnostics_desc">Zarządzaj raportami o awariach i lokalnymi logami</string>
+
+    <string name="settings_crash_reporting_title">Anonimowe raportowanie awarii</string>
+    <string name="settings_crash_reporting_subtitle">Automatycznie wysyłaj logi błędów, aby pomóc nam rozwiązywać problemy. Żadne dane osobowe nie są przesyłane.</string>
+
+    <string name="settings_export_logs_title">Eksportuj lokalne logi</string>
+    <string name="settings_export_logs_subtitle">Udostępnij logi debugowania offline bezpośrednio przez E-mail, Telegram itp.</string>
+    <string name="settings_export_logs_chooser_title">Udostępnij logi</string>
+    <string name="settings_export_logs_not_found">Nie znaleziono logów do wyeksportowania</string>
 </resources>

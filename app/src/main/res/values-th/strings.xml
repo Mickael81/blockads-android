@@ -383,7 +383,6 @@
     <string name="firewall_notification_text">%s ถูกบล็อกจากการเข้าถึงอินเทอร์เน็ต</string>
     <string name="firewall_network_mobile">มือถือ</string>
     <string name="firewall_network_all">ทั้งหมด</string>
-    <string name="firewall_status_schedule"> · %1$02d:%2$02d–%3$02d:%4$02d</string>
     <string name="firewall_schedule_hour_plus">ชั่วโมง +</string>
     <string name="firewall_schedule_minute_plus">นาที +</string>
     <string name="block_reason_firewall">ไฟร์วอลล์</string>
@@ -458,9 +457,7 @@
     <string name="settings_sponsor">สนับสนุนเรา</string>
     <string name="settings_sponsor_desc">สนับสนุนการพัฒนา BlockAds บน GitHub</string>
     <string name="settings_community">ชุมชน</string>
-    <string name="settings_reddit">Reddit</string>
     <string name="settings_reddit_desc">เข้าร่วมชุมชนของเราบน Reddit</string>
-    <string name="settings_telegram">Telegram</string>
     <string name="settings_telegram_desc">เข้าร่วมแชทของเราบน Telegram</string>
     <string name="widget_protected">ได้รับการป้องกัน</string>
     <string name="widget_unprotected">ปิด</string>
@@ -574,4 +571,18 @@
     <string name="settings_root_proxy_desc">เปลี่ยนเส้นทาง DNS ผ่าน iptables แทน VPN (ต้องการ Root)</string>
     <string name="root_not_available">ไม่สามารถเข้าถึง Root ได้ โปรดให้สิทธิ์ในเครื่องมือจัดการรูทของคุณ (เช่น Magisk/KernelSU)</string>
     <string name="root_proxy_notification_text">โหมด Root Proxy ทำงานอยู่ — เปลี่ยนเส้นทางข้อมูล DNS ผ่าน iptables แล้ว</string>
+    <string name="onboarding_crash_report_title">ช่วยปรับปรุง BlockAds</string>
+    <string name="onboarding_crash_report_desc">BlockAds ให้ความสำคัญกับความเป็นส่วนตัวเป็นอันดับแรก เราขออนุญาตเก็บรวบรวมรายงานข้อขัดข้องแบบไม่ระบุตัวตนเพื่อช่วยให้เราแก้ไขข้อบกพร่องได้อย่างรวดเร็ว\n\nการดำเนินการนี้เป็นไปตามความสมัครใจ (OPT-IN) จะไม่มีข้อมูลที่สามารถระบุตัวบุคคลได้ (PII) และสามารถปิดใช้งานได้ตลอดเวลาในการตั้งค่า</string>
+    <string name="onboarding_crash_report_btn_yes">ใช่ ฉันต้องการช่วยปรับปรุง</string>
+    <string name="onboarding_crash_report_btn_no">ไม่ล่ะ ขอบคุณ</string>
+    <string name="settings_privacy_diagnostics_title">ความเป็นส่วนตัว &amp; การวินิจฉัย</string>
+    <string name="settings_privacy_diagnostics_desc">จัดการรายงานข้อขัดข้องและบันทึกในเครื่อง</string>
+
+    <string name="settings_crash_reporting_title">รายงานข้อขัดข้องแบบไม่ระบุตัวตน</string>
+    <string name="settings_crash_reporting_subtitle">ส่งบันทึกข้อผิดพลาดโดยอัตโนมัติเพื่อช่วยเราแก้ไขปัญหา ไม่มีข้อมูลส่วนบุคคลรวมอยู่ด้วย</string>
+
+    <string name="settings_export_logs_title">ส่งออกบันทึกในเครื่อง</string>
+    <string name="settings_export_logs_subtitle">แชร์บันทึกการแก้ไขจุดบกพร่องแบบออฟไลน์โดยตรงผ่านอีเมล, Telegram ฯลฯ</string>
+    <string name="settings_export_logs_chooser_title">แชร์บันทึก</string>
+    <string name="settings_export_logs_not_found">ไม่พบบันทึกที่ต้องการส่งออก</string>
 </resources>

@@ -59,6 +59,10 @@ jobs:
           keyPassword=${{ secrets.KEY_PASSWORD }}
           EOF
 
+      - name: Create Sentry properties file
+        run: |
+          echo "auth.token=${{ secrets.SENTRY_AUTH_TOKEN }}" > sentry.properties    
+
       # Build & Deploy
       - name: Grant execute permission
         run: chmod +x gradlew
