@@ -165,5 +165,8 @@ dependencies {
 sentry {
     org.set("nqm")
     projectName.set("android")
-    includeSourceContext.set(true)
+    val hasSentryConfig = file("sentry.properties").exists() || System.getenv("SENTRY_AUTH_TOKEN") != null
+
+    autoUploadProguardMapping.set(hasSentryConfig)
+    includeSourceContext.set(hasSentryConfig)
 }
