@@ -12,22 +12,23 @@ AutoName: BlockAds
 
 RepoType: git
 Repo: https://github.com/pass-with-high-score/blockads-android.git
+Binaries: 
+  https://github.com/pass-with-high-score/blockads-android/releases/download/v%v/app-universal-release.apk
 
 Builds:
-  - versionName: 6.1.0
-    versionCode: 37
-    commit: 977d450b631dbe2665da37512e5dde48dd4bc4cb
+  - versionName: 6.1.2
+    versionCode: 39
+    commit: 199ec4619daf80f4cb5ea00e29d55648c47f2edb
     subdir: app
     sudo:
       - apt-get update
-      - apt-get install -y wget tar
-      - wget https://go.dev/dl/go1.22.12.linux-amd64.tar.gz
-      - rm -rf /usr/local/go && tar -C /usr/local -xzf go1.22.12.linux-amd64.tar.gz
+      - apt-get install -y golang-go
     gradle:
       - yes
     output: build/outputs/apk/release/app-universal-release-unsigned.apk
-    prebuild:
-      - rm -rf app/libs
+    rm:
+      - app/libs
+    build:
       - sdkmanager 'platforms;android-24'
       - export PATH="/usr/local/go/bin:$PATH"
       - export GOPATH="$PWD/.gopath"
@@ -35,18 +36,13 @@ Builds:
       - go version
       - go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20240404231514-09dbf07665ed
       - gomobile init
-      - mkdir -p libs
-      - cd ../tunnel
-      - gomobile bind -target=android -androidapi 24 -trimpath -ldflags='-s -w -extldflags=-Wl,-z,max-page-size=16384'
-        -o ../app/libs/tunnel.aar .
-    scanignore:
-      - app/libs/tunnel.aar
-      - app/libs/tunnel-sources.jar
-      - app/.gopath
+      - ./gradlew buildGoTunnel
     ndk: r26b
+
+AllowedAPKSigningKeys: 229ea49584360b22a8c7e7e530cfb7e1103faa1b6ba5f32837691fb96fdcfe5a
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 UpdateCheckData: app/build.gradle.kts|versionCode\s=\s(\d+)|.|versionName\s=\s"([\d.]+)"
-CurrentVersion: 6.1.0
-CurrentVersionCode: 37
+CurrentVersion: 6.1.2
+CurrentVersionCode: 39

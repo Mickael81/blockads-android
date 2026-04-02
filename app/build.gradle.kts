@@ -10,11 +10,45 @@ plugins {
     alias(libs.plugins.sentry)
 }
 
+tasks.register<Exec>("buildGoTunnel") {
+    val libsDir = file("libs")
+    val aarFile = file("libs/tunnel.aar")
+    val tunnelDir = rootProject.file("tunnel")
+    
+    // Only rebuild if the tunnel source code changes (or if aar is missing)
+    inputs.dir(tunnelDir)
+    outputs.file(aarFile)
+
+    workingDir = tunnelDir
+    
+    // For local development, gomobile might not be in PATH for Gradle, so we use bash
+    // to load user's profile which usually exports GOPATH/bin to PATH.
+    commandLine(
+        "bash", "-c",
+        "export PATH=\"\$PATH:\$GOPATH/bin:\$HOME/go/bin:/usr/local/go/bin\" && " +
+        "gomobile bind -target=android -androidapi 24 -trimpath " +
+        "-ldflags=\"-s -w -extldflags=-Wl,-z,max-page-size=16384\" " +
+        "-o ${aarFile.absolutePath} ."
+    )
+
+    doFirst {
+        if (!libsDir.exists()) {
+            libsDir.mkdirs()
+        }
+        println("Building Go tunnel for Android...")
+    }
+    
+    doLast {
+        println("Go tunnel built successfully.")
+    }
+}
+
 android {
     namespace = "app.pwhs.blockads"
     compileSdk {
         version = release(36)
     }
+    ndkVersion = "26.1.10909125"
 
     defaultConfig {
         applicationId = "app.pwhs.blockads"

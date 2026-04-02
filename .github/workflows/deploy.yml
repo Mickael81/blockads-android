@@ -67,6 +67,24 @@ jobs:
       - name: Grant execute permission
         run: chmod +x gradlew
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache: true
+
+      - name: Install gomobile
+        run: |
+          go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20240404231514-09dbf07665ed
+          export PATH="$HOME/go/bin:$PATH"
+          gomobile init
+
+      - name: Add gomobile to PATH
+        run: echo "$HOME/go/bin" >> $GITHUB_PATH
+
+      - name: Build Go Tunnel (tunnel.aar)
+        run: ./gradlew buildGoTunnel
+
       - name: Build APK
         run: bundle exec fastlane build_release
 
