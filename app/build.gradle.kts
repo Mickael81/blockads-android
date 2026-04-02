@@ -120,6 +120,12 @@ android {
     }
 
     packaging {
+        jniLibs {
+            // Disable stripping native libraries to ensure byte-for-byte reproducible builds
+            // across different CI environments (F-Droid vs GitHub Actions).
+            keepDebugSymbols.add("**/*.so")
+        }
+
         resources {
             excludes += "**/sentry-debug-meta.properties"
         }

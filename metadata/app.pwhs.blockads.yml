@@ -22,7 +22,8 @@ Builds:
     subdir: app
     sudo:
       - apt-get update
-      - apt-get install -y golang-go
+      - apt-get install -y wget
+      - wget -qO- https://go.dev/dl/go1.22.2.linux-amd64.tar.gz | tar -C /usr/local -xzf -
     gradle:
       - yes
     output: build/outputs/apk/release/app-universal-release-unsigned.apk
@@ -37,7 +38,8 @@ Builds:
       - go install golang.org/x/mobile/cmd/gomobile@v0.0.0-20240404231514-09dbf07665ed
       - gomobile init
       - mkdir -p libs
-      - ./gradlew buildGoTunnel
+      - cd ../tunnel
+      - gomobile bind -target=android -androidapi 24 -trimpath -ldflags='-s -w -extldflags=-Wl,-z,max-page-size=16384' -o ../app/libs/tunnel.aar .
     ndk: r26b
 
 AllowedAPKSigningKeys: 229ea49584360b22a8c7e7e530cfb7e1103faa1b6ba5f32837691fb96fdcfe5a
