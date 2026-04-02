@@ -26,10 +26,11 @@ tasks.register<Exec>("buildGoTunnel") {
     commandLine(
         "bash", "-c",
         "mkdir -p \"${libsDir.absolutePath}\" && " +
+        "export GOFLAGS=\"-buildvcs=false\" && " +
         "export PATH=\"\$PATH:\$GOPATH/bin:\$HOME/go/bin:/usr/local/go/bin\" && " +
         "gomobile bind -target=android -androidapi 24 -trimpath " +
-        "-ldflags=\"-s -w -extldflags=-Wl,-z,max-page-size=16384\" " +
-        "-o ${aarFile.absolutePath} ."
+        "-ldflags=\"-s -w -buildid= -extldflags=-Wl,-z,max-page-size=16384\" " +
+        "-o ${aarFile.absolutePath} github.com/nqmgaming/blockads-tunnel"
     )
 
     doFirst {
@@ -55,8 +56,8 @@ android {
         applicationId = "app.pwhs.blockads"
         minSdk = 24
         targetSdk = 36
-        versionCode = 40
-        versionName = "6.1.3"
+        versionCode = 41
+        versionName = "6.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -123,7 +124,8 @@ android {
         jniLibs {
             // Disable stripping native libraries to ensure byte-for-byte reproducible builds
             // across different CI environments (F-Droid vs GitHub Actions).
-            keepDebugSymbols.add("**/*.so")
+            keepDebugSymbols.add("**/libdatastore_shared_counter.so")
+            keepDebugSymbols.add("**/libgojni.so")
         }
 
         resources {
