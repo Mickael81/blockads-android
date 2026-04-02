@@ -25,6 +25,7 @@ tasks.register<Exec>("buildGoTunnel") {
     // to load user's profile which usually exports GOPATH/bin to PATH.
     commandLine(
         "bash", "-c",
+        "mkdir -p \"${libsDir.absolutePath}\" && " +
         "export PATH=\"\$PATH:\$GOPATH/bin:\$HOME/go/bin:/usr/local/go/bin\" && " +
         "gomobile bind -target=android -androidapi 24 -trimpath " +
         "-ldflags=\"-s -w -extldflags=-Wl,-z,max-page-size=16384\" " +
