@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8' ?>
 <resources>
+    <string name="app_name" translatable="false">BlockAds</string>
     <string name="app_tagline">Navigation sans publicité</string>
     <string name="notification_channel_name">Service de blocage des publicités</string>
     <string name="notification_channel_description">Indique quand le bloqueur de publicités VPN est activé</string>
@@ -187,6 +188,25 @@
     <string name="settings_show_bottom_nav_labels_desc">Afficher le texte sous les icônes dans la barre de navigation inférieure</string>
     <string name="settings_theme_dark">Sombre</string>
     <string name="settings_lang_system">Système</string>
+    <string name="settings_lang_en" translatable="false">English</string>
+    <string name="settings_lang_vi" translatable="false">Tiếng Việt</string>
+    <string name="settings_lang_ja" translatable="false">日本語</string>
+    <string name="settings_lang_ko" translatable="false">한국어</string>
+    <string name="settings_lang_zh" translatable="false">中文</string>
+    <string name="settings_lang_th" translatable="false">ไทย</string>
+    <string name="settings_lang_es" translatable="false">Español</string>
+    <string name="settings_lang_ru" translatable="false">Русский</string>
+    <string name="settings_lang_it" translatable="false">Italiano</string>
+    <string name="settings_lang_ar" translatable="false">العربية</string>
+    <string name="settings_lang_tr" translatable="false">Türkçe</string>
+    <string name="settings_lang_pl" translatable="false">Polski</string>
+    <string name="settings_lang_in" translatable="false">Bahasa Indonesia</string>
+    <string name="settings_lang_pt_br" translatable="false">Português (Brasil)</string>
+    <string name="settings_lang_uk" translatable="false">Українська</string>
+    <string name="settings_lang_de" translatable="false">Deutsch</string>
+    <string name="settings_lang_cs" translatable="false">Čeština</string>
+    <string name="settings_lang_iw" translatable="false">עברית</string>
+    <string name="settings_lang_fr" translatable="false">Français</string>
     <string name="settings_high_contrast">Contraste élevé</string>
     <string name="settings_high_contrast_desc">Augmentez le contraste pour une meilleure visibilité</string>
     <string name="settings_accent_color">Couleur d\'accentuation</string>
