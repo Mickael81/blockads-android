@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.pwhs.blockads.R
-import kotlinx.coroutines.delay
 import org.koin.compose.koinInject
 
 @Composable
@@ -46,7 +45,7 @@ fun SplashScreen(
     val scale by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0.5f,
         animationSpec = tween(
-            durationMillis = 800,
+            durationMillis = 400,
             easing = FastOutSlowInEasing
         ),
         label = "scale_animation"
@@ -57,12 +56,10 @@ fun SplashScreen(
         viewModel.events.collect { event ->
             when (event) {
                 is SplashEvent.Home -> {
-                    delay(500) // Allow animation to finish
                     onNavigateToHome()
                 }
 
                 is SplashEvent.Onboarding -> {
-                    delay(500) // Allow animation to finish
                     onNavigateToOnboarding()
                 }
 

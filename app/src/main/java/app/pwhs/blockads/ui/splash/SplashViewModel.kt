@@ -21,7 +21,7 @@ class SplashViewModel(
         // Observe onboarding completion status
         viewModelScope.launch {
             val onboardingCompleted = appPrefs.onboardingCompleted.first()
-            delay(1500)
+            delay(500)
             if (onboardingCompleted) {
                 _events.emit(SplashEvent.Home)
             } else {
