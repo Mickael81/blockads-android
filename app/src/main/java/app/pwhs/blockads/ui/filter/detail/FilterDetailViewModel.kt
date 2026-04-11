@@ -121,6 +121,44 @@ class FilterDetailViewModel(
         }
     }
 
+    fun switchBuildMode() {
+        viewModelScope.launch {
+            val f = filter.value ?: return@launch
+            if (f.isBuiltIn) return@launch
+
+            _isUpdating.value = true
+            val isCurrentlyLocal = f.trieUrl.startsWith("local://")
+            val url = f.originalUrl.ifEmpty { f.url }
+
+            val result = if (isCurrentlyLocal) {
+                // Switch to server: re-compile via backend API
+                customFilterManager.updateCustomFilter(
+                    f.copy(trieUrl = "", bloomUrl = "")  // clear local:// so it uses API
+                )
+            } else {
+                // Switch to local: re-compile on-device
+                customFilterManager.addCustomFilterLocally(url, f.name).map { updated ->
+                    // Delete old entry, keep new one
+                    filterListDao.delete(f)
+                    updated
+                }
+            }
+
+            _isUpdating.value = false
+
+            result.fold(
+                onSuccess = { updated ->
+                    _events.toast(R.string.filter_updated, listOf(updated.ruleCount))
+                    filterRepo.loadAllEnabledFilters()
+                    ServiceController.requestRestart(application.applicationContext)
+                },
+                onFailure = {
+                    _events.toast(R.string.filter_update_failed)
+                }
+            )
+        }
+    }
+
     fun deleteFilter() {
         viewModelScope.launch {
             val f = filter.value ?: return@launch

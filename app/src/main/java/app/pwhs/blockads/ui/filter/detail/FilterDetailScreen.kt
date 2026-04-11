@@ -357,6 +357,53 @@ fun FilterDetailScreen(
                 }
             }
 
+            // Build mode switch (custom filters only)
+            if (!f.isBuiltIn) {
+                item {
+                    val isLocal = f.trieUrl.startsWith("local://")
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = stringResource(R.string.filter_build_mode),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    text = if (isLocal) stringResource(R.string.filter_build_mode_local)
+                                    else stringResource(R.string.filter_build_mode_server),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextSecondary
+                                )
+                            }
+                            OutlinedButton(
+                                onClick = { viewModel.switchBuildMode() },
+                                enabled = !isUpdating,
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (isLocal) stringResource(R.string.filter_switch_to_server)
+                                    else stringResource(R.string.filter_switch_to_local),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
             // Filter Statistics section
             item {
                 Text(

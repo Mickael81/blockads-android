@@ -691,6 +691,11 @@
     <string name="split_dns_title">Split DNS Zones</string>
     <string name="split_dns_description">Comma-separated domain zones to resolve via WireGuard DNS instead of upstream (e.g., internal,local,lan)</string>
     <string name="filter_build_locally">Build locally (no server)</string>
+    <string name="filter_build_mode">Build Mode</string>
+    <string name="filter_build_mode_local">Built on-device</string>
+    <string name="filter_build_mode_server">Built via server</string>
+    <string name="filter_switch_to_server">Switch to Server</string>
+    <string name="filter_switch_to_local">Switch to Local</string>
     <string name="exclude_lan_title">Exclude LAN Traffic</string>
     <string name="exclude_lan_description">Allow access to local network devices (printers, NAS, local servers) while WireGuard is active</string>
     <string name="settings_hide_from_recents_title">Hide from Recent Apps</string>
