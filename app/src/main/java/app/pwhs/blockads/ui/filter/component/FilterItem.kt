@@ -97,25 +97,25 @@ fun FilterItem(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (filter.domainCount > 0) {
+            if (filter.domainCount > 0) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = "${formatCount(filter.domainCount)} rules",
                         style = MaterialTheme.typography.labelSmall,
                         color = TextSecondary
                     )
-                }
-                if (filter.lastUpdated > 0) {
-                    Text(
-                        text = "·",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TextSecondary
-                    )
-                    Text(
-                        text = formatDate(filter.lastUpdated),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = TextSecondary
-                    )
+                    if (filter.lastUpdated > 0) {
+                        Text(
+                            text = "·",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextSecondary
+                        )
+                        Text(
+                            text = formatDate(filter.lastUpdated),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextSecondary
+                        )
+                    }
                 }
             }
             Text(
