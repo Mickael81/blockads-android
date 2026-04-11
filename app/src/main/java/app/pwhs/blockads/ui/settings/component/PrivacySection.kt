@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,6 +25,8 @@ import java.io.File
 fun PrivacySection(
     crashReportingEnabled: Boolean,
     onSetCrashReportingEnabled: (Boolean) -> Unit,
+    hideFromRecents: Boolean,
+    onSetHideFromRecents: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -37,6 +40,17 @@ fun PrivacySection(
         )
         SettingsCard {
             Column {
+                SettingsToggleItem(
+                    icon = Icons.Default.VisibilityOff,
+                    title = stringResource(id = R.string.settings_hide_from_recents_title),
+                    subtitle = stringResource(id = R.string.settings_hide_from_recents_subtitle),
+                    isChecked = hideFromRecents,
+                    onCheckedChange = onSetHideFromRecents
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                )
                 SettingsToggleItem(
                     icon = Icons.Default.BugReport,
                     title = stringResource(id = R.string.settings_crash_reporting_title),

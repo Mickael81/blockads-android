@@ -55,6 +55,7 @@ class AppPreferences(private val context: Context) {
         private val KEY_NETWORK_SWITCH_DELAY_ENABLED = booleanPreferencesKey("network_switch_delay_enabled")
         private val KEY_NETWORK_SWITCH_DELAY_SEC = intPreferencesKey("network_switch_delay_sec")
         private val KEY_CRASH_REPORTING_ENABLED = booleanPreferencesKey("crash_reporting_enabled")
+        private val KEY_HIDE_FROM_RECENTS = booleanPreferencesKey("hide_from_recents")
 
         const val ROUTING_MODE_DIRECT = "direct"
         const val ROUTING_MODE_WIREGUARD = "wireguard"
@@ -260,6 +261,10 @@ class AppPreferences(private val context: Context) {
 
     val crashReportingEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[KEY_CRASH_REPORTING_ENABLED] ?: false
+    }
+
+    val hideFromRecents: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[KEY_HIDE_FROM_RECENTS] ?: false
     }
 
     suspend fun setVpnEnabled(enabled: Boolean) {
@@ -511,6 +516,12 @@ class AppPreferences(private val context: Context) {
     suspend fun setCrashReportingEnabled(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[KEY_CRASH_REPORTING_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setHideFromRecents(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[KEY_HIDE_FROM_RECENTS] = enabled
         }
     }
 }

@@ -674,6 +674,9 @@
     <string name="settings_privacy_diagnostics_title">Privacy &amp; Diagnostics</string>
     <string name="settings_privacy_diagnostics_desc">Manage crash reporting and local logs</string>
 
+    <string name="settings_hide_from_recents_title">Hide from Recent Apps</string>
+    <string name="settings_hide_from_recents_subtitle">Hide BlockAds from the recent apps screen</string>
+
     <string name="settings_crash_reporting_title">Anonymous Crash Reporting</string>
     <string name="settings_crash_reporting_subtitle">Automatically send error logs to help us fix issues. No personal data is included.</string>
 

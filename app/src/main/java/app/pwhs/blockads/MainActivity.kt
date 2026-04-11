@@ -69,6 +69,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Apply hide-from-recents preference
+        val appPrefsInit = AppPreferences(this)
+        val hideFromRecents = runBlocking { appPrefsInit.hideFromRecents.first() }
+        val am = getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager
+        am.appTasks.firstOrNull()?.setExcludeFromRecents(hideFromRecents)
+
         enableEdgeToEdge()
         setContent {
             val appPrefs: AppPreferences = getKoin().get()

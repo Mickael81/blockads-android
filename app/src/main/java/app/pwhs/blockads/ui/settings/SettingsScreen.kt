@@ -67,6 +67,7 @@ fun SettingsScreen(
     val autoUpdateWifiOnly by viewModel.autoUpdateWifiOnly.collectAsStateWithLifecycle()
     val autoUpdateNotification by viewModel.autoUpdateNotification.collectAsStateWithLifecycle()
     val crashReportingEnabled by viewModel.crashReportingEnabled.collectAsStateWithLifecycle()
+    val hideFromRecents by viewModel.hideFromRecents.collectAsStateWithLifecycle()
     val routingMode by viewModel.routingMode.collectAsStateWithLifecycle()
     val dnsResponseType by viewModel.dnsResponseType.collectAsStateWithLifecycle()
     val safeSearchEnabled by viewModel.safeSearchEnabled.collectAsStateWithLifecycle()
@@ -192,7 +193,9 @@ fun SettingsScreen(
             // ── Privacy & Diagnostics ────────────────────────────
             PrivacySection(
                 crashReportingEnabled = crashReportingEnabled,
-                onSetCrashReportingEnabled = { viewModel.setCrashReportingEnabled(it) }
+                onSetCrashReportingEnabled = { viewModel.setCrashReportingEnabled(it) },
+                hideFromRecents = hideFromRecents,
+                onSetHideFromRecents = { viewModel.setHideFromRecents(it) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))

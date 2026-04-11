@@ -68,6 +68,9 @@ class SettingsViewModel(
     val crashReportingEnabled: StateFlow<Boolean> = appPrefs.crashReportingEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
+    val hideFromRecents: StateFlow<Boolean> = appPrefs.hideFromRecents
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     val autoUpdateEnabled: StateFlow<Boolean> = appPrefs.autoUpdateEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
@@ -141,6 +144,10 @@ class SettingsViewModel(
             appPrefs.setCrashReportingEnabled(enabled)
             CrashReportingManager.toggleSentry(getApplication(), enabled)
         }
+    }
+
+    fun setHideFromRecents(enabled: Boolean) {
+        viewModelScope.launch { appPrefs.setHideFromRecents(enabled) }
     }
 
     fun setNetworkSwitchDelayEnabled(enabled: Boolean) {
