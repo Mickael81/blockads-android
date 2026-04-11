@@ -588,4 +588,13 @@
     <string name="status_disconnecting">연결 끊는 중</string>
     <string name="vpn_notification_stopping">BlockAds 중지 중</string>
     <string name="vpn_notification_stopping_text">VPN 터널 닫는 중…</string>
+    <string name="split_dns_title">Split DNS 영역</string>
+    <string name="split_dns_description">WireGuard DNS를 통해 확인할 쉼표로 구분된 도메인 영역 (업스트림 대신) (예: internal,local,lan)</string>
+    <string name="filter_build_locally">로컬에서 빌드 (서버 없음)</string>
+    <string name="exclude_lan_title">LAN 트래픽 제외</string>
+    <string name="exclude_lan_description">WireGuard 활성화 중 로컬 네트워크 장치(프린터, NAS, 로컬 서버)에 대한 접근 허용</string>
+    <string name="settings_hide_from_recents_title">최근 앱에서 숨기기</string>
+    <string name="settings_hide_from_recents_subtitle">최근 앱 화면에서 BlockAds 숨기기</string>
+    <string name="home_connecting_desc_root">Root Proxy 연결 중…</string>
+    <string name="home_disconnecting_desc_root">Root Proxy 중지 중…</string>
 </resources>

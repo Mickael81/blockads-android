@@ -589,4 +589,13 @@
     <string name="status_disconnecting">Desconectando</string>
     <string name="vpn_notification_stopping">BlockAds se está deteniendo</string>
     <string name="vpn_notification_stopping_text">Cerrando el túnel VPN…</string>
+    <string name="split_dns_title">Zonas DNS divididas</string>
+    <string name="split_dns_description">Zonas de dominio separadas por comas para resolver a través de DNS de WireGuard en lugar del servidor principal (ej. internal,local,lan)</string>
+    <string name="filter_build_locally">Compilar localmente (sin servidor)</string>
+    <string name="exclude_lan_title">Excluir tráfico LAN</string>
+    <string name="exclude_lan_description">Permitir el acceso a dispositivos de red local (impresoras, NAS, servidores locales) mientras WireGuard está activo</string>
+    <string name="settings_hide_from_recents_title">Ocultar de apps recientes</string>
+    <string name="settings_hide_from_recents_subtitle">Ocultar BlockAds de la pantalla de aplicaciones recientes</string>
+    <string name="home_connecting_desc_root">Estableciendo Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">Deteniendo Root Proxy…</string>
 </resources>

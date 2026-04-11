@@ -637,4 +637,13 @@
     <string name="status_disconnecting">Отключение</string>
     <string name="vpn_notification_stopping">BlockAds останавливается</string>
     <string name="vpn_notification_stopping_text">Закрытие VPN-туннеля…</string>
+    <string name="split_dns_title">Разделённые зоны DNS</string>
+    <string name="split_dns_description">Зоны доменов через запятую для разрешения через DNS WireGuard вместо вышестоящего сервера (напр. internal,local,lan)</string>
+    <string name="filter_build_locally">Собрать локально (без сервера)</string>
+    <string name="exclude_lan_title">Исключить трафик LAN</string>
+    <string name="exclude_lan_description">Разрешить доступ к устройствам локальной сети (принтеры, NAS, локальные серверы) при активном WireGuard</string>
+    <string name="settings_hide_from_recents_title">Скрыть из недавних приложений</string>
+    <string name="settings_hide_from_recents_subtitle">Скрыть BlockAds с экрана недавних приложений</string>
+    <string name="home_connecting_desc_root">Установка Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">Остановка Root Proxy…</string>
 </resources>

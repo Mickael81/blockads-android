@@ -590,4 +590,13 @@
     <string name="status_disconnecting">กำลังยกเลิกการเชื่อมต่อ</string>
     <string name="vpn_notification_stopping">BlockAds กำลังหยุดทำงาน</string>
     <string name="vpn_notification_stopping_text">กำลังปิดอุโมงค์ VPN…</string>
+    <string name="split_dns_title">โซน DNS แยก</string>
+    <string name="split_dns_description">โซนโดเมนที่คั่นด้วยเครื่องหมายจุลภาคเพื่อแก้ไขผ่าน DNS ของ WireGuard แทน upstream (เช่น internal,local,lan)</string>
+    <string name="filter_build_locally">สร้างในเครื่อง (ไม่ใช้เซิร์ฟเวอร์)</string>
+    <string name="exclude_lan_title">ยกเว้นการรับส่งข้อมูล LAN</string>
+    <string name="exclude_lan_description">อนุญาตให้เข้าถึงอุปกรณ์เครือข่ายภายใน (เครื่องพิมพ์, NAS, เซิร์ฟเวอร์ภายใน) ขณะที่ WireGuard ทำงานอยู่</string>
+    <string name="settings_hide_from_recents_title">ซ่อนจากแอปล่าสุด</string>
+    <string name="settings_hide_from_recents_subtitle">ซ่อน BlockAds จากหน้าจอแอปล่าสุด</string>
+    <string name="home_connecting_desc_root">กำลังสร้าง Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">กำลังหยุด Root Proxy…</string>
 </resources>

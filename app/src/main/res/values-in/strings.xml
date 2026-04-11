@@ -610,4 +610,13 @@
     <string name="status_disconnecting">Memutuskan koneksi</string>
     <string name="vpn_notification_stopping">BlockAds sedang berhenti</string>
     <string name="vpn_notification_stopping_text">Menutup terowongan VPN…</string>
+    <string name="split_dns_title">Zona DNS Terpisah</string>
+    <string name="split_dns_description">Zona domain yang dipisahkan koma untuk diselesaikan melalui DNS WireGuard alih-alih upstream (mis. internal,local,lan)</string>
+    <string name="filter_build_locally">Bangun secara lokal (tanpa server)</string>
+    <string name="exclude_lan_title">Kecualikan Lalu Lintas LAN</string>
+    <string name="exclude_lan_description">Izinkan akses ke perangkat jaringan lokal (printer, NAS, server lokal) saat WireGuard aktif</string>
+    <string name="settings_hide_from_recents_title">Sembunyikan dari Aplikasi Terbaru</string>
+    <string name="settings_hide_from_recents_subtitle">Sembunyikan BlockAds dari layar aplikasi terbaru</string>
+    <string name="home_connecting_desc_root">Membangun Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">Menghentikan Root Proxy…</string>
 </resources>

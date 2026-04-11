@@ -603,4 +603,13 @@
     <string name="status_disconnecting">جاري قطع الاتصال</string>
     <string name="vpn_notification_stopping">BlockAds يتوقف</string>
     <string name="vpn_notification_stopping_text">إغلاق نفق VPN…</string>
+    <string name="split_dns_title">مناطق DNS المقسمة</string>
+    <string name="split_dns_description">نطاقات مفصولة بفواصل لحلها عبر DNS الخاص بـ WireGuard بدلاً من المصدر الأعلى (مثال: internal,local,lan)</string>
+    <string name="filter_build_locally">البناء محلياً (بدون خادم)</string>
+    <string name="exclude_lan_title">استثناء حركة مرور LAN</string>
+    <string name="exclude_lan_description">السماح بالوصول إلى أجهزة الشبكة المحلية (الطابعات، NAS، الخوادم المحلية) أثناء تفعيل WireGuard</string>
+    <string name="settings_hide_from_recents_title">إخفاء من التطبيقات الأخيرة</string>
+    <string name="settings_hide_from_recents_subtitle">إخفاء BlockAds من شاشة التطبيقات الأخيرة</string>
+    <string name="home_connecting_desc_root">جاري إنشاء Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">جاري إيقاف Root Proxy…</string>
 </resources>

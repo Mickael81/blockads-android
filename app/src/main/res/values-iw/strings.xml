@@ -617,4 +617,13 @@
     <string name="status_disconnecting">מתנתק</string>
     <string name="vpn_notification_stopping">BlockAds נעצר</string>
     <string name="vpn_notification_stopping_text">סוגר את מנהרת ה-VPN…</string>
+    <string name="split_dns_title">אזורי DNS מפוצלים</string>
+    <string name="split_dns_description">אזורי דומיין מופרדים בפסיקים לפתרון דרך DNS של WireGuard במקום upstream (לדוגמה: internal,local,lan)</string>
+    <string name="filter_build_locally">בנייה מקומית (ללא שרת)</string>
+    <string name="exclude_lan_title">החרג תעבורת LAN</string>
+    <string name="exclude_lan_description">אפשר גישה להתקני רשת מקומית (מדפסות, NAS, שרתים מקומיים) בזמן ש-WireGuard פעיל</string>
+    <string name="settings_hide_from_recents_title">הסתר מאפליקציות אחרונות</string>
+    <string name="settings_hide_from_recents_subtitle">הסתר את BlockAds ממסך האפליקציות האחרונות</string>
+    <string name="home_connecting_desc_root">מתחבר ל-Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">עוצר את Root Proxy…</string>
 </resources>

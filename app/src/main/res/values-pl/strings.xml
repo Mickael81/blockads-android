@@ -610,4 +610,13 @@
     <string name="status_disconnecting">Rozłączanie</string>
     <string name="vpn_notification_stopping">BlockAds zatrzymuje się</string>
     <string name="vpn_notification_stopping_text">Zamykanie tunelu VPN…</string>
+    <string name="split_dns_title">Podzielone strefy DNS</string>
+    <string name="split_dns_description">Rozdzielone przecinkami strefy domen do rozwiązywania przez DNS WireGuard zamiast upstream (np. internal,local,lan)</string>
+    <string name="filter_build_locally">Buduj lokalnie (bez serwera)</string>
+    <string name="exclude_lan_title">Wyklucz ruch LAN</string>
+    <string name="exclude_lan_description">Zezwól na dostęp do urządzeń sieci lokalnej (drukarki, NAS, serwery lokalne) przy aktywnym WireGuard</string>
+    <string name="settings_hide_from_recents_title">Ukryj z ostatnich aplikacji</string>
+    <string name="settings_hide_from_recents_subtitle">Ukryj BlockAds z ekranu ostatnich aplikacji</string>
+    <string name="home_connecting_desc_root">Nawiązywanie Root Proxy…</string>
+    <string name="home_disconnecting_desc_root">Zatrzymywanie Root Proxy…</string>
 </resources>

@@ -619,4 +619,13 @@
     <string name="status_disconnecting">Wird getrennt</string>
     <string name="vpn_notification_stopping">BlockAds stoppt</string>
     <string name="vpn_notification_stopping_text">Schließe VPN-Tunnel…</string>
+    <string name="split_dns_title">Split-DNS-Zonen</string>
+    <string name="split_dns_description">Kommagetrennte Domänenzonen, die über WireGuard DNS statt über den Upstream aufgelöst werden (z.B. internal,local,lan)</string>
+    <string name="filter_build_locally">Lokal erstellen (kein Server)</string>
+    <string name="exclude_lan_title">LAN-Verkehr ausschließen</string>
+    <string name="exclude_lan_description">Zugriff auf lokale Netzwerkgeräte (Drucker, NAS, lokale Server) bei aktivem WireGuard erlauben</string>
+    <string name="settings_hide_from_recents_title">Aus letzten Apps ausblenden</string>
+    <string name="settings_hide_from_recents_subtitle">BlockAds aus der Übersicht der letzten Apps ausblenden</string>
+    <string name="home_connecting_desc_root">Root Proxy wird aufgebaut…</string>
+    <string name="home_disconnecting_desc_root">Root Proxy wird gestoppt…</string>
 </resources>
