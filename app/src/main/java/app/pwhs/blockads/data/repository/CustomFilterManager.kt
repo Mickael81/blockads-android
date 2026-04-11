@@ -398,6 +398,9 @@ class CustomFilterManager(
         val trimmedUrl = url.trim()
         val remoteFilterDir = File(context.filesDir, REMOTE_FILTERS_DIR).apply { mkdirs() }
         val tempFile = File(context.cacheDir, "filter_download_${System.currentTimeMillis()}.txt")
+        // Use a temp ID for compilation, insert DB only after success
+        val tempTrieFile = File(context.cacheDir, "compile_${System.currentTimeMillis()}.trie")
+        val tempBloomFile = File(context.cacheDir, "compile_${System.currentTimeMillis()}.bloom")
 
         try {
             // Download filter list to temp file
@@ -412,9 +415,16 @@ class CustomFilterManager(
                 }
             }
 
+            // Compile to temp files FIRST (before any DB insert)
+            val ruleCount = tunnel.Tunnel.compileFilterList(
+                tempFile.absolutePath, tempTrieFile.absolutePath, tempBloomFile.absolutePath
+            ).toInt()
+
+            Timber.d("Local compile: $ruleCount rules")
+
             val finalName = displayName?.takeIf { it.isNotBlank() } ?: deriveFilterName(trimmedUrl)
 
-            // Insert entity to get auto-generated ID
+            // Only insert to DB after successful compile
             val filterEntity = FilterList(
                 name = finalName,
                 url = trimmedUrl,
@@ -422,8 +432,8 @@ class CustomFilterManager(
                 isEnabled = true,
                 isBuiltIn = false,
                 category = FilterList.CATEGORY_AD,
-                ruleCount = 0,
-                domainCount = 0,
+                ruleCount = ruleCount,
+                domainCount = ruleCount,
                 bloomUrl = "",
                 trieUrl = "",
                 cssUrl = "",
@@ -432,21 +442,15 @@ class CustomFilterManager(
             )
             val insertedId = filterListDao.insert(filterEntity)
 
-            // Compile .trie and .bloom using Go
-            val triePath = File(remoteFilterDir, "$insertedId.trie").absolutePath
-            val bloomPath = File(remoteFilterDir, "$insertedId.bloom").absolutePath
+            // Move compiled files to final location
+            val finalTrie = File(remoteFilterDir, "$insertedId.trie")
+            val finalBloom = File(remoteFilterDir, "$insertedId.bloom")
+            tempTrieFile.copyTo(finalTrie, overwrite = true)
+            tempBloomFile.copyTo(finalBloom, overwrite = true)
 
-            val ruleCount = tunnel.Tunnel.compileFilterList(
-                tempFile.absolutePath, triePath, bloomPath
-            ).toInt()
-
-            Timber.d("Local compile: $ruleCount rules → $triePath, $bloomPath")
-
-            // Update entity
+            // Update entity with local file markers
             val updatedEntity = filterEntity.copy(
                 id = insertedId,
-                ruleCount = ruleCount,
-                domainCount = ruleCount,
                 bloomUrl = "local://$insertedId.bloom",
                 trieUrl = "local://$insertedId.trie",
             )
@@ -458,6 +462,8 @@ class CustomFilterManager(
             Result.failure(CustomFilterException("Local compile failed: ${e.message}", e))
         } finally {
             tempFile.delete()
+            tempTrieFile.delete()
+            tempBloomFile.delete()
         }
     }
 
