@@ -635,6 +635,7 @@
 
     <string name="settings_crash_reporting_title">Rapports de plantage anonymes</string>
     <string name="settings_crash_reporting_subtitle">"Envoyer automatiquement les journaux d'erreurs pour nous aider à résoudre les problèmes. Aucune donnée personnelle n'est incluse."</string>
+    
     <string name="settings_export_logs_title">Exporter les journaux locaux</string>
     <string name="settings_export_logs_subtitle">Partagez les journaux de débogage hors ligne directement via Email, Telegram, etc.</string>
     <string name="settings_export_logs_chooser_title">Partager les journaux</string>
