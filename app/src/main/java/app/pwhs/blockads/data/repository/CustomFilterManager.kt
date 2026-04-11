@@ -522,14 +522,33 @@ class CustomFilterManager(
 
     /**
      * Enqueues a WorkManager job to download and compile a filter locally.
-     * Returns immediately — compilation happens in the background with a notification.
+     * Inserts a placeholder DB entry immediately so the filter shows in the UI,
+     * then the worker updates it with the actual rule count when done.
      */
-    fun enqueueLocalCompile(url: String, name: String) {
+    suspend fun enqueueLocalCompile(url: String, name: String) {
+        // Insert placeholder so it shows in the list immediately
+        val placeholder = FilterList(
+            name = name,
+            url = url,
+            description = "Compiling…",
+            isEnabled = true,
+            isBuiltIn = false,
+            category = FilterList.CATEGORY_AD,
+            ruleCount = 0,
+            domainCount = 0,
+            bloomUrl = "local://pending.bloom",
+            trieUrl = "local://pending.trie",
+            originalUrl = url,
+            lastUpdated = System.currentTimeMillis()
+        )
+        val insertedId = filterListDao.insert(placeholder)
+        Timber.d("Inserted placeholder filter id=$insertedId for: $name")
+
         val workRequest = OneTimeWorkRequestBuilder<FilterCompileWorker>()
-            .setInputData(FilterCompileWorker.buildInputData(url, name))
+            .setInputData(FilterCompileWorker.buildInputData(url, name, insertedId))
             .build()
         WorkManager.getInstance(context).enqueueUniqueWork(
-            FilterCompileWorker.WORK_NAME_PREFIX + url.hashCode(),
+            FilterCompileWorker.WORK_NAME_PREFIX + insertedId,
             ExistingWorkPolicy.REPLACE,
             workRequest
         )

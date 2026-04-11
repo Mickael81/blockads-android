@@ -99,12 +99,13 @@ class FilterCompileWorker(
 
             // DB insert or update
             val filterId = if (existingId > 0) {
-                // Recompile existing filter
+                // Update existing filter (placeholder or recompile)
                 val existing = filterListDao.getById(existingId)
                 if (existing != null) {
                     val updated = existing.copy(
                         ruleCount = ruleCount,
                         domainCount = ruleCount,
+                        description = "Custom filter: ${existing.name}",
                         bloomUrl = "local://$existingId.bloom",
                         trieUrl = "local://$existingId.trie",
                         lastUpdated = System.currentTimeMillis()
@@ -156,6 +157,14 @@ class FilterCompileWorker(
         } catch (e: Exception) {
             Timber.e(e, "FilterCompileWorker failed")
             showResultNotification(name, false, e.message ?: "Compilation failed")
+            // Delete placeholder if it was a new filter that failed
+            if (existingId > 0) {
+                val existing = filterListDao.getById(existingId)
+                if (existing != null && existing.ruleCount == 0) {
+                    filterListDao.delete(existing)
+                    Timber.d("Deleted failed placeholder filter id=$existingId")
+                }
+            }
             return Result.failure()
         } finally {
             tempFile.delete()
