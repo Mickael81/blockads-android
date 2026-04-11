@@ -281,6 +281,13 @@ class CustomFilterManager(
      */
     suspend fun updateCustomFilter(filter: FilterList): Result<FilterList> =
         withContext(Dispatchers.IO) {
+            val isLocallyBuilt = filter.trieUrl.startsWith("local://") &&
+                    filter.bloomUrl.startsWith("local://")
+
+            if (isLocallyBuilt) {
+                return@withContext updateCustomFilterLocally(filter)
+            }
+
             try {
                 val url = filter.originalUrl.ifEmpty { filter.url }
 
@@ -336,6 +343,50 @@ class CustomFilterManager(
                 Result.failure(CustomFilterException("Update failed: ${e.message}", e))
             }
         }
+
+    /**
+     * Re-downloads and re-compiles a locally-built custom filter.
+     */
+    private suspend fun updateCustomFilterLocally(filter: FilterList): Result<FilterList> {
+        val url = filter.originalUrl.ifEmpty { filter.url }
+        val remoteFilterDir = File(context.filesDir, REMOTE_FILTERS_DIR).apply { mkdirs() }
+        val tempFile = File(context.cacheDir, "filter_update_${System.currentTimeMillis()}.txt")
+
+        return try {
+            Timber.d("Local update: downloading $url")
+            val response = client.get(url)
+            val channel = response.bodyAsChannel()
+            tempFile.outputStream().use { output ->
+                val buffer = ByteArray(8 * 1024)
+                while (!channel.isClosedForRead) {
+                    val read = channel.readAvailable(buffer)
+                    if (read > 0) output.write(buffer, 0, read)
+                }
+            }
+
+            val triePath = File(remoteFilterDir, "${filter.id}.trie").absolutePath
+            val bloomPath = File(remoteFilterDir, "${filter.id}.bloom").absolutePath
+
+            val ruleCount = tunnel.Tunnel.compileFilterList(
+                tempFile.absolutePath, triePath, bloomPath
+            ).toInt()
+
+            val updated = filter.copy(
+                ruleCount = ruleCount,
+                domainCount = ruleCount,
+                lastUpdated = System.currentTimeMillis()
+            )
+            filterListDao.update(updated)
+
+            Timber.d("Local update: ${filter.name}, rules=$ruleCount")
+            Result.success(updated)
+        } catch (e: Exception) {
+            Timber.e(e, "Local update failed: ${filter.name}")
+            Result.failure(CustomFilterException("Local update failed: ${e.message}", e))
+        } finally {
+            tempFile.delete()
+        }
+    }
 
     // ── Local Compile (fallback when backend is unreachable) ──────────
 
